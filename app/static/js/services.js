@@ -10,8 +10,8 @@ angular.module('knowBase').service('DataService', ['$http', function ($http) {
 }]);
 
 angular.module('knowBase').factory('AuthService',
-  ['$q', '$timeout', '$http',
-  function ($q, $timeout, $http) {
+  ['$q', '$timeout', '$http', '$cookies',
+  function ($q, $timeout, $http, $cookies) {
 
     // create user variable
     var user = null;
@@ -36,7 +36,8 @@ angular.module('knowBase').factory('AuthService',
 
     // create a new instance of deferred
     var deferred = $q.defer();
-
+    var today = new Date();
+    var expired = new Date(today);
     // send a post request to the server
     $http.post('/api/login', {email: email, password: password})
       // handle success
@@ -44,6 +45,8 @@ angular.module('knowBase').factory('AuthService',
         
         if(status === 200 && data.response){
           user = true;
+          expired.setDate(today.getDate() + 1);
+          $cookies.put('user', user, {expires : expired});
           deferred.resolve();
         } else {
           user = false;
@@ -72,11 +75,13 @@ angular.module('knowBase').factory('AuthService',
       .success(function (data) {
         user = false;
         deferred.resolve();
+        $cookies.remove('user');
       })
       // handle error
       .error(function (data) {
         user = false;
         deferred.reject();
+        $cookies.remove('user');
       });
 
     // return promise object

@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify, abort, session, redirect, url_for
 from models import db, User, Education, Profile
+from functools import update_wrapper
 
 
 app = Flask(__name__)
@@ -7,11 +8,26 @@ app.secret_key = 'devkey'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://test_user:pass@localhost:5432/knowledge_test'
 db.init_app(app)
 
+def require_login():
+	def decorator(fn):
+		def decorated_function(*args, **kwargs):
+			if 'email' not in session:
+			    return abort(401)
+			user = User.query.filter_by(email = session['email']).first()
+			if user is None:
+				return abort(401)
+			
+			return fn(*args, **kwargs)
+		return update_wrapper(decorated_function, fn)
+	return decorator
+
+
 @app.route('/')
 def home():
 	return app.send_static_file('base.html')
 
 @app.route('/api/profile', methods=['GET'])
+@require_login()
 def profile():
 	user = User.query.filter(User.email == session['email']);
 	if user.count() == 0:
@@ -28,6 +44,7 @@ def profile():
 
 
 @app.route('/api/profile', methods=['POST'])
+@require_login()
 def update_profile():
 	user = User.query.filter(User.email == session['email']);
 	if user.count() == 0:
@@ -51,6 +68,7 @@ def update_profile():
 
 
 @app.route('/api/login', methods=['POST'])
+@require_login()
 def login():
 	json_data = request.json
 	email = json_data['email']
@@ -67,12 +85,14 @@ def login():
 	return jsonify(response=False)
 
 @app.route('/api/logout', methods=['GET'])
+@require_login()
 def logout():
 	session.pop('email',None)
 	return jsonify(response='success')
 
 
 @app.route('/api/signup', methods=['POST'])
+@require_login()
 def signup_post():
 	json_data = request.json
 	email = json_data['email']
@@ -89,11 +109,13 @@ def signup_post():
 
 
 @app.route('/api/educations', methods=['GET'])
+@require_login()
 def get_educations():	
 	return jsonify(educations=[e.serialize for e in Education.query.all()])
 
 
 @app.route('/api/educations/<int:ideducation>', methods=['GET'])
+@require_login()
 def get_education(ideducation):
 	education = Education.query.filter(Education.ideducation == ideducation)
 	if education.count() == 0:
@@ -102,6 +124,7 @@ def get_education(ideducation):
 
 
 @app.route('/api/educations', methods=['POST'])
+@require_login()
 def create_education():
 	if not request.json or not 'title' in request.json:
 		abort(400)

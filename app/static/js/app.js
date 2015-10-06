@@ -1,4 +1,4 @@
-var knowBase = angular.module('knowBase',  ['ui.router']);
+var knowBase = angular.module('knowBase',  ['ui.router','ngCookies']);
 
 knowBase.config(function($stateProvider, $urlRouterProvider) {
     
@@ -126,13 +126,12 @@ knowBase.config(function($stateProvider, $urlRouterProvider) {
 });
 
 
-knowBase.run(function ($rootScope,$state, AuthService) {
+knowBase.run(function ($rootScope,$state, $cookies) {
 
 	$rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-
-		if (toState.access == 'restricted' && AuthService.isLoggedIn() === false) {
-			// event.preventDefault();
-		  	// $state.go('start');
+		if (toState.access == 'restricted' && !$cookies.get('user')) {
+			event.preventDefault();
+		  	$state.go('start');
 		}
 	});
 });
