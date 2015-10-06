@@ -1,23 +1,70 @@
-﻿CREATE TABLE education(
-	 ideducation BIGSERIAL PRIMARY KEY NOT NULL,
-	 title CHAR(64) NOT NULL,
-	 school CHAR(32) NOT NULL,
-	 enddate  DATE,
-	 description CHAR(512) NOT NULL,
-	 "user" INT,
-	 timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	 createdtime  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-	 createduser INT,
-	 updateduser  INT
-)
+﻿
+-- Table: education
 
-CREATE TABLE "user"(
-	email CHAR(128) PRIMARY KEY NOT NULL,
-	password CHAR(32) NOT NULL,
-	firstname CHAR(72) NOT NULL,
-	lastname CHAR(72) NOT NULL,
-	phone CHAR(16),
-	position CHAR(32)
-)
+-- DROP TABLE education;
 
-select * from "user"
+
+
+CREATE TABLE education
+(
+  ideducation bigserial NOT NULL,
+  title character varying(64) NOT NULL,
+  school character varying(32) NOT NULL,
+  enddate date,
+  description character varying(512) NOT NULL,
+  "user" integer,
+  "timestamp" timestamp without time zone DEFAULT now(),
+  createdtime timestamp without time zone DEFAULT now(),
+  createduser integer,
+  updateduser integer,
+  CONSTRAINT education_pkey PRIMARY KEY (ideducation)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE education
+  OWNER TO postgres;
+
+
+-- Table: "user"
+
+-- DROP TABLE "user";
+
+CREATE TABLE "user"
+(
+  iduser bigserial NOT NULL,
+  email character varying(128) NOT NULL,
+  password character varying(128) NOT NULL,
+  profile integer,
+  CONSTRAINT user_pkey PRIMARY KEY (iduser)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE "user"
+  OWNER TO postgres;
+
+-- Table: profile
+
+-- DROP TABLE profile;
+
+CREATE TABLE profile
+(
+  idprofile bigserial NOT NULL,
+  firstname character varying(72),
+  lastname character varying(72),
+  address character varying(128),
+  zipcode character varying(16),
+  city character varying(32),
+  country character varying(32),
+  phone character varying(16),
+  cellphone character varying(16),
+  birthdate date,
+  CONSTRAINT profile_pkey PRIMARY KEY (idprofile)
+)
+WITH (
+  OIDS=FALSE
+);
+ALTER TABLE profile
+  OWNER TO postgres;
+
