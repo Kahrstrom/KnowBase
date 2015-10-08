@@ -47,28 +47,22 @@ def profile():
 @require_login()
 def update_profile():
 	user = User.query.filter(User.email == session['email']);
-	if user.count() == 0:
-		return abort(404)
-	firstname = request.form.get('firstname')
-	lastname = request.form.get('lastname')
-	address = request.form.get('address')
+
 	idprofile = user.first().profile
-	
 	profile = Profile.query.filter(Profile.idprofile == idprofile)
 
 	if profile.count() == 0:
 		return abort(404)
-	profile.firstname = firstname
-	profile.lastname = lastname
-	profile.address = address
+	
+	profile.update(request.json)
 	db.session.commit()
+	return jsonify(response='success')
 		
 
 	# return render_template('profile.html')
 
 
 @app.route('/api/login', methods=['POST'])
-@require_login()
 def login():
 	json_data = request.json
 	email = json_data['email']
@@ -85,20 +79,18 @@ def login():
 	return jsonify(response=False)
 
 @app.route('/api/logout', methods=['GET'])
-@require_login()
 def logout():
 	session.pop('email',None)
 	return jsonify(response='success')
 
 
 @app.route('/api/signup', methods=['POST'])
-@require_login()
-def signup_post():
+def signup():
 	json_data = request.json
 	email = json_data['email']
 	password = json_data['password']
 
-	if User.query.filter(User.email == email.lower()).count():
+	if User.query.filter(User.email == email.lower()).count() > 0:
 		return jsonify(response='user already exists')
 
 	reg = User(email, password)
@@ -110,7 +102,11 @@ def signup_post():
 
 @app.route('/api/educations', methods=['GET'])
 @require_login()
-def get_educations():	
+def get_user_educations():
+	profile = Profile.query.join(user).filter(user.iduser == profile.user).filter(user.email == session['email'])
+
+	if profile.count() == 0:
+		return abort(401)
 	return jsonify(educations=[e.serialize for e in Education.query.all()])
 
 

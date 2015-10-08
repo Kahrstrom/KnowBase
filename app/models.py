@@ -41,7 +41,9 @@ class Profile(db.Model):
 	zipcode = db.Column(db.String(128))
 	city = db.Column(db.String(128))
 	country = db.Column(db.String(128))
-	birthdate = db.Column(db.DateTime)
+	phone = db.Column(db.String(16))
+	mobilephone = db.Column(db.String(16))
+	# birthdate = db.Column(db.DateTime)
 
 	def __init__(self, firstname = None, lastname = None, address = None, zipcode = None,
 		city = None, country = None, birthdate = None):
@@ -51,7 +53,17 @@ class Profile(db.Model):
 		self.zipcode = zipcode
 		self.city = city
 		self.country = country
-		self.birthdate = birthdate
+		# self.birthdate = birthdate
+
+	def update(self, json_data):
+		self.firstname = json_data['firstname']
+		self.lastname = json_data['lastname']
+		self.address = json_data['address']
+		self.mobilephone = json_data['mobilephone']
+		self.phone = json_data['phone']
+		self.city = json_data['city']
+		self.country = json_data['country']
+		self.zipcode = json_data['zipcode']
 
 	@property
 	def serialize(self):
@@ -62,7 +74,9 @@ class Profile(db.Model):
 			'address' : self.address,
 			'city' : self.city,
 			'zipcode' : self.zipcode,
-			'country' : self.country
+			'country' : self.country,
+			'mobilephone' : self.mobilephone,
+			'phone' : self.phone
 			# ,'birthdate' : self.birthdate.strftime('%Y-%m-%d')
 		}
 

@@ -1,11 +1,27 @@
-angular.module('knowBase').service('DataService', ['$http', function ($http) {
+angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', function ($q,$timeout,$http) {
+    var self = this;
+    self.urlBase = '/api/';
 
-    var urlBase = '/api/';
-
-    this.getProfile = function () {
-        return $http.get(urlBase + 'profile');
+    self.getProfile = function () {
+      return $http.get(self.urlBase + 'profile');
     };
 
+    self.updateProfile = function(profileForm){
+      var deferred = $q.defer();
+      $http.post(self.urlBase + 'profile', profileForm)
+        .success(function (data, status) {
+          if(status === 200 && data.response){
+            deferred.resolve();
+          } else {
+            deferred.reject();
+          }
+        })
+        // handle error
+        .error(function (data) {
+          deferred.reject();
+        });
+      return deferred.promise;
+    }
    
 }]);
 

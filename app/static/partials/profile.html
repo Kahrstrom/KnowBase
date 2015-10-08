@@ -4,7 +4,7 @@
 		<header class="profile col-lg-12">
 			<h1>{{ title }}</h1>
 		</header>
-		<form id="profile-form" role="form">
+		<form id="profile-form" role="form" ng-submit="updateProfile()">
 			<!-- REMOVE CHROME AUTOFILL SHIT -->
       		<input style="display:none">
       		<input type="password" style="display:none">
@@ -24,11 +24,11 @@
 				<div class="col-lg-7 col-md-7">
 			        <div class="form-group light-group col-lg-6 col-md-6">
 			          <span>Phone</span>
-			          <input type="text" class="form-control" name="firstname">
+			          <input type="text" class="form-control" name="phone" ng-model="profileForm.phone">
 			        </div>
 			        <div class="form-group col-lg-6 col-md-6">
 			          <span>Mobile phone</span>
-			          <input type="text" class="form-control" name="lastname">
+			          <input type="text" class="form-control" name="mobilephone" ng-model="profileForm.mobilephone">
 			        </div>
 		        </div>
 	        </div>
@@ -36,13 +36,13 @@
 				<div class="col-lg-7 col-md-7">
 			        <div class="form-group light-group col-lg-6 col-md-6">
 			          <span>Address</span>
-			          <textarea rows="3" type="text" class="form-control" name="lastname" ></textarea>
+			          <textarea rows="3" type="text" class="form-control" name="address" ng-model="profileForm.address" ></textarea>
 			        </div>
 			        <div class="form-group col-lg-6 col-md-6">
 			          <span>City</span>
-			          <input type="text" class="form-control" name="lastname">
+			          <input type="text" class="form-control" name="city" ng-model="profileForm.city">
 			          <span>Zipcode</span>
-			          <input type="text" class="form-control" name="lastname">
+			          <input type="text" class="form-control" name="zipcode" ng-model="profileForm.zipcode">
 			        </div>
 		        </div>
 

@@ -12,11 +12,8 @@ CREATE TABLE education
   school character varying(32) NOT NULL,
   enddate date,
   description character varying(512) NOT NULL,
-  "user" integer,
+  "profile" integer,
   "timestamp" timestamp without time zone DEFAULT now(),
-  createdtime timestamp without time zone DEFAULT now(),
-  createduser integer,
-  updateduser integer,
   CONSTRAINT education_pkey PRIMARY KEY (ideducation)
 )
 WITH (
@@ -58,7 +55,7 @@ CREATE TABLE profile
   city character varying(32),
   country character varying(32),
   phone character varying(16),
-  cellphone character varying(16),
+  mobilephone character varying(16),
   birthdate date,
   CONSTRAINT profile_pkey PRIMARY KEY (idprofile)
 )

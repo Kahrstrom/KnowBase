@@ -78,9 +78,10 @@ angular.module('knowBase').controller('signupController',
           // $state.path('/login');
           $scope.disabled = false;
           $scope.registerForm = {};
-        })
+          $state.go('login');
+        },
         // handle error
-        .catch(function () {
+        function () {
           $scope.error = true;
           $scope.errorMessage = "Something went wrong!";
           $scope.disabled = false;
@@ -186,14 +187,25 @@ angular.module('knowBase').controller('profileController',
 
 
     function getProfile() {
-        DataService.getProfile()
-            .success(function (response) {
-                $scope.profileForm = response.data;
-                console.log($scope.profileForm)
-            })
-            .error(function (error) {
-                $scope.status = 'Unable to load profile data: ' + error.message;
-                console.log(error.message)
-            });
+      DataService.getProfile()
+          .success(function (response) {
+              $scope.profileForm = response.data;
+              console.log($scope.profileForm)
+          })
+          .error(function (error) {
+              $scope.status = 'Unable to load profile data: ' + error.message;
+              console.log(error.message)
+          });
+    }
+
+    $scope.updateProfile = function(){
+      DataService.updateProfile($scope.profileForm)
+        .then(function () {
+          console.log('success... Vad göra här?')
+        },
+        // handle error
+        function () {
+          console.log('error')
+        });
     }
 }]);
