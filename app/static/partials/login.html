@@ -1,0 +1,32 @@
+<div ui-view="nav"></div>
+<div ui-view="top"></div>
+<div class="content login tree">
+  <div class="col-lg-3 col-centered wrapper">
+    <header class="login">
+    <h1>Login</h1>
+    </header>
+    <div ng-show="error" class="alert alert-orange">{{errorMessage}}</div>
+    <form class="form" ng-submit="login()">
+      <input style="display:none">
+      <input type="password" style="display:none">
+      <div class="form-group dark-group">
+        <label>Email</label>
+        <input type="text" class="form-control" name="email" ng-model="loginForm.email" required>
+      </div>
+      <div class="form-group dark-group">
+        <label>Password</label>
+        <input type="password" class="form-control" name="password" ng-model="loginForm.password" required>
+      </div>
+      <br><br>
+      <div>
+        <button type="submit" class="btn btn-default btn-transparent col-lg-12 col-md-12" ng-disabled="disabled">Login</button>
+      </div>
+    </form>
+  </div>
+    
+
+
+  <div class="footer">
+    <span>Not registered? <a ui-sref="signup">Sign up now!</a></span>
+  </div>
+</div>

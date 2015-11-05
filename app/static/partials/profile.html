@@ -1,0 +1,56 @@
+<div ui-view="nav"></div>
+<div ui-view="top"></div>
+<div class="content profiletree">
+	<div class="col-lg-11 col-md-11">
+		<header class="profile col-lg-12">
+			<h1>{{ title }}</h1>
+		</header>
+		<form id="profile-form" role="form" ng-submit="updateProfile()">
+			<!-- REMOVE CHROME AUTOFILL SHIT -->
+      		<input style="display:none">
+      		<input type="password" style="display:none">
+			<div class="form-group light-group row">
+				<div class="col-lg-7 col-md-7">
+			        <div class="form-group col-lg-6 col-md-6">
+			          <span>{{ firstnameLabel }}</span>
+			          <input type="text" class="form-control" name="firstname" ng-model="profileForm.firstname">
+			        </div>
+			        <div class="form-group col-lg-6 col-md-6">
+			          <span>{{ lastnameLabel }}</span>
+			          <input type="text" class="form-control" name="lastname" ng-model="profileForm.lastname">
+			        </div>
+		        </div>
+			</div>
+			<div class="form-group row">
+				<div class="col-lg-7 col-md-7">
+			        <div class="form-group light-group col-lg-6 col-md-6">
+			          <span>Phone</span>
+			          <input type="text" class="form-control" name="phone" ng-model="profileForm.phone">
+			        </div>
+			        <div class="form-group col-lg-6 col-md-6">
+			          <span>Mobile phone</span>
+			          <input type="text" class="form-control" name="mobilephone" ng-model="profileForm.mobilephone">
+			        </div>
+		        </div>
+	        </div>
+	        <div class="form-group row">
+				<div class="col-lg-7 col-md-7">
+			        <div class="form-group light-group col-lg-6 col-md-6">
+			          <span>Address</span>
+			          <textarea rows="3" type="text" class="form-control" name="address" ng-model="profileForm.address" ></textarea>
+			        </div>
+			        <div class="form-group col-lg-6 col-md-6">
+			          <span>City</span>
+			          <input type="text" class="form-control" name="city" ng-model="profileForm.city">
+			          <span>Zipcode</span>
+			          <input type="text" class="form-control" name="zipcode" ng-model="profileForm.zipcode">
+			        </div>
+		        </div>
+
+	        </div>
+	        <div class="col-lg-7 col-md-7">
+	        	<button type="submit" class="btn btn-default btn-light col-lg-12 col-md-12">Update profile</button>
+	        </div>
+		</form>
+	</div>
+</div>
