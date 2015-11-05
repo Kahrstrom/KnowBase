@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify, abort, session, redirect, url_for
 from models import db, User, Education, Profile
 from functools import update_wrapper
-
+import os
 
 app = Flask(__name__)
 app.secret_key = 'devkey'
