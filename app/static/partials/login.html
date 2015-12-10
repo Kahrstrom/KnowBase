@@ -1,32 +1,62 @@
-<div ui-view="nav"></div>
-<div ui-view="top"></div>
-<div class="content login tree">
-  <div class="col-lg-3 col-centered wrapper">
-    <header class="login">
-    <h1>Login</h1>
-    </header>
-    <div ng-show="error" class="alert alert-orange">{{errorMessage}}</div>
-    <form class="form" ng-submit="login()">
-      <input style="display:none">
-      <input type="password" style="display:none">
-      <div class="form-group dark-group">
-        <label>Email</label>
-        <input type="text" class="form-control" name="email" ng-model="loginForm.email" required>
-      </div>
-      <div class="form-group dark-group">
-        <label>Password</label>
-        <input type="password" class="form-control" name="password" ng-model="loginForm.password" required>
-      </div>
-      <br><br>
-      <div>
-        <button type="submit" class="btn btn-default btn-transparent col-lg-12 col-md-12" ng-disabled="disabled">Login</button>
-      </div>
-    </form>
-  </div>
-    
 
+<md-content class="md-primary full-height" layout="column">
 
-  <div class="footer">
-    <span>Not registered? <a ui-sref="signup">Sign up now!</a></span>
+  <md-toolbar scroll flex layout="row">
+    <div class="md-toolbar-tools white">
+      <md-button  aria-label="home" ui-sref="start">
+        <span class="white">Home</span>
+      </md-button>
+
+    </div>
+  </md-toolbar>
+  <div layout="row">
+    <div flex-gt-md="33" flex="0"></div>
+    <div flex-gt-md="33" flex>
+      <md-card class="vertical-align-top">
+        <md-card-title flex-gt-md>
+          <md-toolbar>
+            <md-card-title-text>
+              <h1 class="md-headline center">Login</h1>
+            </md-card-title-text>
+          </md-toolbar>
+        </md-card-title>
+        
+        <md-card-content layout="column">
+          <div layout="row">
+            <div flex-gt-md="10" flex="0"></div>
+            <form flex-gt-md="80" flex ng-submit="login()" name="loginForm">
+              <input style="display:none">
+              <input type="password" style="display:none">
+              <md-input-container class="md-block md-icon-float">
+                <label>Email</label>
+                <md-icon md-font-icon="fa-envelope-o" class="fa fa-lg"></md-icon>
+                <input md-maxlength="72" type="email" name="email" ng-model="loginController.email" required>
+                <div ng-messages="loginForm.email.$error" ng-if="loginController.email.$dirty">
+                  <div ng-message="email">The email address is invalid</div>
+                  <div ng-message="maxLength">The maximum length is 72 characters</div>
+                </div>
+              </md-input-container>
+              <md-input-container class="md-block md-icon-float">
+                <label>Password</label>
+                <md-icon md-font-icon="fa-key" class="fa fa-lg"></md-icon>
+                <input type="password" name="password" ng-model="loginController.password" required>
+                <div ng-messages="loginForm.password.$error" ng-if="loginController.password.$dirty">
+                  <div ng-message="required">This field is required</div>
+                </div>
+              </md-input-container>
+              <div layout="row" class="vertical-nudge-top">
+                <div flex-gt-md="33" flex="20"></div>
+                <md-button type="submit" class="md-raised md-primary" flex-gt-md="33" flex="60">Login</md-button>
+              </div>
+
+            </form>
+          </div>
+          <div class="center vertical-nudge" layout="row">
+              <div flex-gt-md="10" flex="0"></div>
+              <div flex-gt-md="80" flex>Forgot your <a class="primary" href="#">password?</a></div>
+          </div>
+        </md-card-content>
+      </md-card>
+    </div>
   </div>
-</div>
+</md-content>

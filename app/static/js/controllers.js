@@ -1,5 +1,5 @@
 angular.module('knowBase').controller('loginController',
-  ['$scope', '$state', 'AuthService',
+  ['$scope', '$state', 'AuthService', 
   function ($scope, $state, AuthService) {
 
     $scope.authed = AuthService.isLoggedIn();
@@ -28,6 +28,8 @@ angular.module('knowBase').controller('loginController',
     };
 
 }]);
+
+
 
 angular.module('knowBase').controller('logoutController',
   ['$scope', '$state', 'AuthService',
@@ -93,22 +95,21 @@ angular.module('knowBase').controller('signupController',
 }]);
 
 angular.module('knowBase').controller('startController',
-  ['$scope', '$state',
-  function ($scope, $state) {
+  ['$scope', '$state','$location','$anchorScroll',
+  function ($scope, $state, $location, $anchorScroll) {
     $scope.welcome = 'Welcome to KnowBase';
+
+    $scope.scrollTo = function(element){
+      $location.hash(element);
+      $anchorScroll();
+    }
 }]);
 
 angular.module('knowBase').controller('topbarController',
   ['$scope', '$state','$cookies',
   function ($scope, $state, $cookies) {
 
-    if($cookies.get('expanded') == 'true'){
-      $('.topbar').toggleClass('expanded');
-      $('.content').toggleClass('expanded');
-      $('.sidebar').toggleClass('expanded'); 
-      $('.sidebar-header').toggleClass('expanded');
-      $('.sidebar-collapsible').toggleClass('expanded');
-    }
+    
 
     $scope.toggleExpand = function(){
       $('.topbar').toggleClass('expanded');
@@ -204,13 +205,16 @@ angular.module('knowBase').controller('skillsController',
     }
 }]);
 
-angular.module('knowBase').controller('profileController',
-  ['$scope', '$state', 'DataService',
-  function ($scope, $state, DataService) {
-    $scope.title = 'Profile';
+angular.module('knowBase').controller('infoController',
+  ['$scope', '$state', '$timeout', 'DataService',
+  function ($scope, $state, $timeout, DataService) {
+
     $scope.firstnameLabel = 'First name';
     $scope.lastnameLabel = 'Last name';
     $scope.profileForm = {};
+    $scope.success = false;
+    $scope.error = false;
+    $scope.errorMessage = '';
 
     getProfile();
 
@@ -219,22 +223,30 @@ angular.module('knowBase').controller('profileController',
       DataService.getProfile()
           .success(function (response) {
               $scope.profileForm = response.data;
-              console.log($scope.profileForm)
+
           })
           .error(function (error) {
               $scope.status = 'Unable to load profile data: ' + error.message;
-              console.log(error.message)
           });
     }
 
     $scope.updateProfile = function(){
       DataService.updateProfile($scope.profileForm)
         .then(function () {
-          console.log('success... Vad göra här?')
+            $scope.success = true;
+            $timeout(function () { $scope.success = false; }, 4000);   
         },
         // handle error
-        function () {
-          console.log('error')
+        function (reason) {
+            $scope.errorMessage = reason; 
+            $scope.error = true;
+            $timeout(function () { $scope.error = false; }, 4000);   
         });
     }
+}]);
+angular.module('knowBase').controller('profileController',
+  ['$scope', '$state', '$timeout', 'DataService',
+  function ($scope, $state) {
+    $scope.title = 'Profile';
+    $scope.profileTab = 'info';
 }]);

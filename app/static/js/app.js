@@ -1,9 +1,18 @@
-var knowBase = angular.module('knowBase',  ['ui.router','ngCookies']);
+var knowBase = angular.module('knowBase',  ['ui.router','ngCookies', 'ngAnimate', 'ngMaterial', 'ngMessages']);
 
-knowBase.config(function($stateProvider, $urlRouterProvider) {
+knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider) {
     
     $urlRouterProvider.otherwise('/home');
     
+    $mdThemingProvider.theme('default')
+    .primaryPalette('amber', {
+      'default': '700', // primary
+      'hue-1': '200', // md-hue-1
+      'hue-2': '400', // md-hue-2
+      'hue-3': 'A200' // md-hue-3
+    })
+
+
     $stateProvider
         
         // start STATES AND NESTED VIEWS ========================================
@@ -13,14 +22,6 @@ knowBase.config(function($stateProvider, $urlRouterProvider) {
             	'' : {
             		templateUrl: 'static/partials/start.html',
             		controller: 'startController'
-            	},
-            	'top@start' : {
-            		controller: 'topbarController',
-            		templateUrl: 'static/partials/topbar.html'
-            	},
-            	'nav@start' : {
-            		controller: 'navController',
-            		templateUrl: 'static/partials/navbar-home.html'
             	},
             	'news@start' : {
             		templateUrl: 'static/partials/news.html',
@@ -44,10 +45,6 @@ knowBase.config(function($stateProvider, $urlRouterProvider) {
             	'' : {
             		templateUrl: 'static/partials/home.html',
             		controller: 'homeController'
-            	},
-            	'top@home' : {
-            		controller: 'topbarController',
-            		templateUrl: 'static/partials/topbar.html'
             	},
             	'nav@home' : {
             		controller: 'navController',
@@ -76,15 +73,7 @@ knowBase.config(function($stateProvider, $urlRouterProvider) {
         		'' : {
         			templateUrl: 'static/partials/login.html',
             		controller: 'loginController'
-        		},
-        		'top@login' : {
-            		controller: 'topbarController',
-            		templateUrl: 'static/partials/topbar.html'
-            	},
-            	'nav@login' : {
-            		controller: 'navController',
-            		templateUrl: 'static/partials/navbar-home.html'
-            	},
+        		}
             },
             access: 'open'
             
@@ -96,15 +85,7 @@ knowBase.config(function($stateProvider, $urlRouterProvider) {
         		'' : {
         			templateUrl: 'static/partials/signup.html',
             		controller: 'signupController'
-        		},
-        		'top@signup' : {
-            		controller: 'topbarController',
-            		templateUrl: 'static/partials/topbar.html'
-            	},
-            	'nav@signup' : {
-            		controller: 'navController',
-            		templateUrl: 'static/partials/navbar-home.html'
-            	},
+        		}
             },
             access: 'open'
         })
@@ -116,14 +97,10 @@ knowBase.config(function($stateProvider, $urlRouterProvider) {
         			templateUrl: 'static/partials/skills.html',
             		controller: 'skillsController'
         		},
-        		'top@skills' : {
-            		controller: 'topbarController',
-            		templateUrl: 'static/partials/topbar.html'
-            	},
             	'nav@skills' : {
             		controller: 'navController',
             		templateUrl: 'static/partials/navbar-home.html'
-            	},
+            	}
             },
             access: 'open'
         })
@@ -141,14 +118,19 @@ knowBase.config(function($stateProvider, $urlRouterProvider) {
         			templateUrl: 'static/partials/profile.html',
             		controller: 'profileController'
         		},
-        		'top@profile' : {
-            		controller: 'topbarController',
-            		templateUrl: 'static/partials/topbar.html'
-            	},
             	'nav@profile' : {
             		controller: 'navController',
             		templateUrl: 'static/partials/navbar-home.html'
             	},
+        		'info@profile' : {
+        			templateUrl: 'static/partials/info.html',
+            		controller: 'infoController'
+        		},
+        		'skills@profile' : {
+        			templateUrl: 'static/partials/skills.html',
+            		controller: 'skillsController'
+        		}
+
             },
             access: 'restricted'
         })
@@ -158,12 +140,16 @@ knowBase.config(function($stateProvider, $urlRouterProvider) {
 
 
 knowBase.run(function ($rootScope,$state, $cookies) {
+	
 
 	$rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
+
 		if (toState.access == 'restricted' && !$cookies.get('user')) {
+
 			event.preventDefault();
 		  	$state.go('start');
 		}
 	});
+
 });
 
