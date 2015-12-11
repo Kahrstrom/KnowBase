@@ -1,29 +1,28 @@
 <header md-page-header>
-  <div md-header flex class="center">
+  <div hide-sm hide-md md-header flex class="center">
     <div md-header-top flex>
       <div flex class="vertical-align-bottom">
-        <h1 flex class="huge white">KnowBase</h1>
+        <h1 flex hide-sm class="huge white">KnowBase</h1>
       </div>
     </div>
   </div>
   <md-toolbar scroll flex layout="row">
     <div class="md-toolbar-tools white">
-<!--       <md-button class="md-icon-button" aria-label="Settings">
-        <md-icon md-font-icon="fa-map-o" class="fa"></md-icon>
-      </md-button> -->
       <md-button  aria-label="home">
         <span class="white">Home</span>
       </md-button>
       <span flex></span>
-      <md-button  aria-label="about" ng-click="scrollTo('about')">
-        <span class="white" >About</span>
-      </md-button>
-      <md-button  aria-label="news" ng-click="scrollTo('news')">
-        <span class="white">News</span>
-      </md-button>
-      <md-button  aria-label="contact" ng-click="scrollTo('contact')">
-        <span class="white">Contact</span>
-      </md-button>
+      <div hide-md hide-sm>
+        <md-button  aria-label="news" ng-click="scrollTo('news')">
+          <span class="white">News</span>
+        </md-button>
+        <md-button aria-label="about" ng-click="scrollTo('about')">
+          <span class="white">About</span>
+        </md-button>
+        <md-button  aria-label="contact" ng-click="scrollTo('contact')">
+          <span class="white">Contact</span>
+        </md-button>
+      </div>
       <md-button  aria-label="login" ui-sref="login">
         <span class="white">Login</span>
       </md-button>
@@ -31,49 +30,51 @@
   </md-toolbar>
 </header>
 <md-content layout="column" flex>
-  <div layout-gt-md="row" class="vertical-nudge-top">
+  <div layout-padding layout-margin layout="column" flex>
+    <div layout-gt-md="row" class="vertical-nudge-top">
 
-    <div flex-gt-md="20" flex="0"></div>
-    <div layout="column" layout-margin flex-gt-md="20" flex>
-      <md-card layout-padding class="info-tile">
-        <md-card-title layout-padding layout-margin class="center">
-          <md-icon md-font-icon="fa-map-o" class="fa huge primary"></md-icon>
-          <h4>Keep track!</h4>
-        </md-card-title>
-        
-        <md-card-content>
-        Cray occupy twee, green juice humblebrag crucifix selvage irony gluten-free. Ramps shabby chic pop-up before they sold out photo booth fixie sriracha tousled viral. Small batch skateboard fixie franzen ennui gastropub godard. Cornhole poutine kale chips lomo. 
-        </md-card-content>
-      </md-card>
+      <div flex-gt-md="20" flex="0"></div>
+      <div layout="column" layout-margin flex-gt-md="20" flex>
+        <md-card layout-padding class="info-tile">
+          <md-card-title layout-padding layout-margin class="center">
+            <md-icon md-font-icon="fa-map-o" class="fa huge primary"></md-icon>
+            <h4>Keep track!</h4>
+          </md-card-title>
+          
+          <md-card-content>
+          Cray occupy twee, green juice humblebrag crucifix selvage irony gluten-free. Ramps shabby chic pop-up before they sold out photo booth fixie sriracha tousled viral. Small batch skateboard fixie franzen ennui gastropub godard. Cornhole poutine kale chips lomo. 
+          </md-card-content>
+        </md-card>
+      </div>
+      <div layout="column" layout-margin flex-gt-md="20" flex>
+        <md-card layout-padding class="info-tile">
+          <md-card-title layout-padding layout-margin class="center">
+            <md-icon md-font-icon="fa-user" class="fa huge primary"></md-icon>
+            <h4>Easy to use</h4>
+          </md-card-title>
+          
+          <md-card-content>
+          Tofu chartreuse keffiyeh lo-fi, ennui migas church-key ugh art party kogi godard whatever portland typewriter messenger bag. YOLO tote bag typewriter bitters, knausgaard butcher gastropub direct trade polaroid chillwave godard food truck plaid.
+          </md-card-content>
+        </md-card>
+      </div>
+      <div layout="column" layout-margin flex-gt-md="20" flex>
+        <md-card layout-padding class="info-tile">
+          <md-card-title layout-padding layout-margin class="center">
+            <md-icon md-font-icon="fa-desktop" class="fa huge primary"></md-icon>
+            <h4>On the go</h4>
+          </md-card-title>
+          
+          <md-card-content>
+          Pop-up stumptown bespoke franzen, before they sold out banh mi single-origin coffee occupy hella artisan irony freegan. 8-bit synth irony, thundercats squid chillwave hoodie taxidermy cardigan readymade ugh organic. 
+          </md-card-content>
+        </md-card>
+      </div>
     </div>
-    <div layout="column" layout-margin flex-gt-md="20" flex>
-      <md-card layout-padding class="info-tile">
-        <md-card-title layout-padding layout-margin class="center">
-          <md-icon md-font-icon="fa-user" class="fa huge primary"></md-icon>
-          <h4>Easy to use</h4>
-        </md-card-title>
-        
-        <md-card-content>
-        Tofu chartreuse keffiyeh lo-fi, ennui migas church-key ugh art party kogi godard whatever portland typewriter messenger bag. YOLO tote bag typewriter bitters, knausgaard butcher gastropub direct trade polaroid chillwave godard food truck plaid.
-        </md-card-content>
-      </md-card>
-    </div>
-    <div layout="column" layout-margin flex-gt-md="20" flex>
-      <md-card layout-padding class="info-tile">
-        <md-card-title layout-padding layout-margin class="center">
-          <md-icon md-font-icon="fa-desktop" class="fa huge primary"></md-icon>
-          <h4>On the go</h4>
-        </md-card-title>
-        
-        <md-card-content>
-        Pop-up stumptown bespoke franzen, before they sold out banh mi single-origin coffee occupy hella artisan irony freegan. 8-bit synth irony, thundercats squid chillwave hoodie taxidermy cardigan readymade ugh organic. 
-        </md-card-content>
-      </md-card>
-    </div>
+    <div ui-view="news"></div>
+    <div ui-view="about"></div>
+    <div ui-view="contact"></div>
   </div>
-  <div ui-view="news"></div>
-  <div ui-view="about"></div>
-  <div ui-view="contact"></div>
   <div>
     <md-toolbar>
       

@@ -9,7 +9,8 @@ angular.module('knowBase').controller('loginController',
       $scope.error = false;
       $scope.disabled = true;
       // call login from service
-      AuthService.login($scope.loginForm.email, $scope.loginForm.password)
+
+      AuthService.login($scope.loginForm.email.$modelValue, $scope.loginForm.password.$modelValue)
         // handle success
         .then(function () {
           $state.go('home');
@@ -105,26 +106,20 @@ angular.module('knowBase').controller('startController',
     }
 }]);
 
-angular.module('knowBase').controller('topbarController',
-  ['$scope', '$state','$cookies',
-  function ($scope, $state, $cookies) {
 
-    
+angular.module('knowBase').controller('toolbarController',
+  ['$scope', '$state', '$mdDialog',
+  function ($scope, $state, $mdDialog) {
+    $scope.showSearch = false;
 
-    $scope.toggleExpand = function(){
-      $('.topbar').toggleClass('expanded');
-      $('.content').toggleClass('expanded');
-      $('.sidebar').toggleClass('expanded'); 
-      $('.sidebar-header').toggleClass('expanded');
-      $('.sidebar-collapsible').toggleClass('expanded');
-      $cookies.put('expanded', $('.sidebar').hasClass('expanded'));
+    $scope.toggleSearch = function(){
+      $scope.showSearch = !$scope.showSearch;
     }
-}]);
 
-angular.module('knowBase').controller('navController',
-  ['$scope', '$state',
-  function ($scope, $state) {
-    
+    $scope.openMenu = function($mdOpenMenu, ev) {
+      originatorEv = ev;
+      $mdOpenMenu(ev);
+    };
 }]);
 
 

@@ -5,13 +5,22 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider) 
     $urlRouterProvider.otherwise('/home');
     
     $mdThemingProvider.theme('default')
-    .primaryPalette('amber', {
-      'default': '700', // primary
-      'hue-1': '200', // md-hue-1
-      'hue-2': '400', // md-hue-2
-      'hue-3': 'A200' // md-hue-3
-    })
+        .primaryPalette('deep-purple', {
+          'default': '700', // primary
+          'hue-1': '200', // md-hue-1
+          'hue-2': '400', // md-hue-2
+          'hue-3': 'A200' // md-hue-3
+        }).accentPalette('amber', {
+          'default': '700' // use shade 200 for default, and keep all other shades the same
+        });
 
+    $mdThemingProvider.theme('grey')
+        .primaryPalette('grey',{
+          'default': '700', // primary
+          'hue-1': '200', // md-hue-1
+          'hue-2': '400', // md-hue-2
+          'hue-3': 'A200' // md-hue-3
+      });
 
     $stateProvider
         
@@ -46,22 +55,9 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider) 
             		templateUrl: 'static/partials/home.html',
             		controller: 'homeController'
             	},
-            	'nav@home' : {
-            		controller: 'navController',
-            		templateUrl: 'static/partials/navbar-home.html'
-            	},
-            	
-            	'news@home' : {
-            		templateUrl: 'static/partials/news.html',
-            		controller: 'newsController'
-            	},
-            	'about@home' : {
-            		templateUrl: 'static/partials/about.html',
-            		controller: 'aboutController'
-            	},
-            	'contact@home' : {
-            		templateUrl: 'static/partials/contact.html',
-            		controller: 'contactController'
+            	'toolbar@home' : {
+            		controller: 'toolbarController',
+            		templateUrl: 'static/partials/toolbar.html'
             	}
         	},
         	access : 'restricted'

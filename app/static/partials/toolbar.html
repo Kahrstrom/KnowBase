@@ -1,0 +1,71 @@
+<md-toolbar ng-show="!showSearch">
+  <div class="md-toolbar-tools">
+    <div flex="10">
+      
+      <md-menu>
+        <md-button class="md-icon-button" aria-label="menu" ng-click="openMenu($mdOpenMenu, $event)">
+          <md-icon md-font-icon="fa-bars" class="fa fa-lg white"></md-icon>
+        </md-button>
+        <md-menu-content width="4">
+          <md-menu-item>
+            <md-button>
+              <md-icon md-font-icon="fa-flash" class="fa fa-lg"></md-icon>
+              Manage skills
+            </md-button>
+          </md-menu-item>
+          <md-menu-item>
+            <md-button>
+              <md-icon md-font-icon="fa-user" class="fa fa-lg"></md-icon>
+              Profile
+            </md-button>
+          </md-menu-item>
+          <md-menu-divider></md-menu-divider>
+          <md-menu-item>
+            <md-button>
+              <md-icon md-font-icon="fa-file-o" class="fa fa-lg"></md-icon>
+              Generate CV
+            </md-button>
+          </md-menu-item>
+        </md-menu-content>
+      </md-menu>
+    </div>
+    <div flex="10">
+      <h2>
+        <span>KnowBase</span>
+      </h2>
+    </div>
+    
+    <span flex></span>
+    <md-button class="md-icon-button" ng-click="toggleSearch()" aria-label="menu">
+        <md-icon md-font-icon="fa-search" class="fa fa-lg white"></md-icon>
+      </md-button>
+    <md-button aria-label="login" ui-sref="logout">
+      <span class="white">Logout</span>
+    </md-button>
+  </div>
+</md-toolbar>
+
+
+<md-toolbar md-theme="grey" class="md-hue-1" ng-show="showSearch">
+  <div class="md-toolbar-tools">
+    <div flex="10">
+    </div>
+    <div flex="10">
+      <h2>
+        <span>KnowBase</span>
+      </h2>
+    </div>
+    
+    <span flex></span>
+    <md-input-container class="search-input slide-right" ng-class="animation" flex>
+      <!-- <label>Name</label> -->
+      <input type="text"/>
+    </md-input-container>
+    <md-button class="md-icon-button" ng-click="toggleSearch()" aria-label="menu">
+      <md-icon md-font-icon="fa-search" class="fa fa-lg"></md-icon>
+    </md-button>
+    <md-button aria-label="login" ui-sref="logout">
+      <span>Logout</span>
+    </md-button>
+  </div>
+</md-toolbar>

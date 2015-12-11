@@ -54,6 +54,7 @@ angular.module('knowBase').factory('AuthService',
     var deferred = $q.defer();
     var today = new Date();
     var expired = new Date(today);
+    console.log( {email: email, password: password})
     // send a post request to the server
     $http.post('/api/login', {email: email, password: password})
       // handle success

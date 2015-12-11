@@ -31,7 +31,7 @@
                 <label>Email</label>
                 <md-icon md-font-icon="fa-envelope-o" class="fa fa-lg"></md-icon>
                 <input md-maxlength="72" type="email" name="email" ng-model="loginController.email" required>
-                <div ng-messages="loginForm.email.$error" ng-if="loginController.email.$dirty">
+                <div ng-messages="loginController.email.$error" ng-if="loginController.email.$dirty">
                   <div ng-message="email">The email address is invalid</div>
                   <div ng-message="maxLength">The maximum length is 72 characters</div>
                 </div>
@@ -40,7 +40,7 @@
                 <label>Password</label>
                 <md-icon md-font-icon="fa-key" class="fa fa-lg"></md-icon>
                 <input type="password" name="password" ng-model="loginController.password" required>
-                <div ng-messages="loginForm.password.$error" ng-if="loginController.password.$dirty">
+                <div ng-messages="loginController.password.$error" ng-if="loginController.password.$dirty">
                   <div ng-message="required">This field is required</div>
                 </div>
               </md-input-container>
