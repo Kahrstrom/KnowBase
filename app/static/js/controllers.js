@@ -9,8 +9,8 @@ angular.module('knowBase').controller('loginController',
       $scope.error = false;
       $scope.disabled = true;
       // call login from service
-
-      AuthService.login($scope.loginForm.email.$modelValue, $scope.loginForm.password.$modelValue)
+ 
+      AuthService.login($scope.loginController.email, $scope.loginController.password)
         // handle success
         .then(function () {
           $state.go('home');
@@ -133,6 +133,7 @@ angular.module('knowBase').controller('homeController',
         DataService.getProfile()
             .success(function (response) {
                 $scope.data = response.data;
+                console.log($scope.data)
             })
             .error(function (error) {
                 $scope.status = 'Unable to load profile data: ' + error.message;
