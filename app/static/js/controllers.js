@@ -120,6 +120,12 @@ angular.module('knowBase').controller('toolbarController',
       originatorEv = ev;
       $mdOpenMenu(ev);
     };
+
+    $('md-content').click(function(e){
+      $scope.showSearch = false;
+      $scope.$apply();
+      
+    });
 }]);
 
 
@@ -212,13 +218,54 @@ angular.module('knowBase').controller('infoController',
     $scope.error = false;
     $scope.errorMessage = '';
 
-    getProfile();
+    
 
+
+    
+}]);
+
+
+// angular.module('knowBase').controller('profilePictureController',
+//   ['$scope','$mdDialog', 
+//   function($scope, $mdDialog) {
+//     $scope.hide = function() {
+//       $mdDialog.hide();
+//     };
+//     $scope.cancel = function() {
+//       $mdDialog.cancel();
+//     };
+//     $scope.answer = function(answer) {
+//       $mdDialog.hide(answer);
+//     };
+
+// }]);
+
+function profilePictureController($scope, $mdDialog) {
+  $scope.hide = function() {
+    $mdDialog.hide();
+  };
+  $scope.cancel = function() {
+    $mdDialog.cancel();
+  };
+  $scope.answer = function(answer) {
+    $mdDialog.hide(answer);
+  };
+}
+
+
+angular.module('knowBase').controller('profileController',
+  ['$scope', '$state', '$timeout', 'DataService', '$mdDialog', '$mdMedia', 
+  function ($scope, $state, $timeout, DataService, $mdDialog, $mdMedia) {
+    $scope.title = 'Profile';
+    $scope.profileTab = 'info';
 
     function getProfile() {
       DataService.getProfile()
-          .success(function (response) {
+          .success(function (response) { 
+
               $scope.profileForm = response.data;
+
+              console.log($scope.profileForm)
 
           })
           .error(function (error) {
@@ -239,10 +286,29 @@ angular.module('knowBase').controller('infoController',
             $timeout(function () { $scope.error = false; }, 4000);   
         });
     }
+
+    $scope.uploadPicture = function(ev){
+      $mdDialog.show({
+        controller: profilePictureController,
+        templateUrl: '/static/partials/picture.tmpl.html',
+        parent: angular.element(document.body),
+        targetEvent: ev,
+        clickOutsideToClose:true,
+        fullscreen: $mdMedia('sm') && $scope.customFullscreen
+      })
+      .then(function(answer) {
+        $scope.status = 'Success';
+      }, function() {
+        $scope.status = 'Fail';
+      });
+      $scope.$watch(function() {
+        return $mdMedia('sm');
+      }, function(sm) {
+        $scope.customFullscreen = (sm === true);
+      });
+    };
+
+    getProfile();
 }]);
-angular.module('knowBase').controller('profileController',
-  ['$scope', '$state', '$timeout', 'DataService',
-  function ($scope, $state) {
-    $scope.title = 'Profile';
-    $scope.profileTab = 'info';
-}]);
+
+

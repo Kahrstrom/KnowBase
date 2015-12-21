@@ -12,15 +12,15 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider) 
           'hue-3': 'A200' // md-hue-3
         }).accentPalette('amber', {
           'default': '700' // use shade 200 for default, and keep all other shades the same
-        });
+    });
 
     $mdThemingProvider.theme('grey')
         .primaryPalette('grey',{
-          'default': '700', // primary
+          'default': '500', // primary
           'hue-1': '200', // md-hue-1
           'hue-2': '400', // md-hue-2
           'hue-3': 'A200' // md-hue-3
-      });
+    });
 
     $stateProvider
         
@@ -114,18 +114,10 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider) 
         			templateUrl: 'static/partials/profile.html',
             		controller: 'profileController'
         		},
-            	'nav@profile' : {
-            		controller: 'navController',
-            		templateUrl: 'static/partials/navbar-home.html'
-            	},
-        		'info@profile' : {
-        			templateUrl: 'static/partials/info.html',
-            		controller: 'infoController'
-        		},
-        		'skills@profile' : {
-        			templateUrl: 'static/partials/skills.html',
-            		controller: 'skillsController'
-        		}
+            	'toolbar@profile' : {
+            		controller: 'toolbarController',
+            		templateUrl: 'static/partials/toolbar.html'
+            	}
 
             },
             access: 'restricted'

@@ -4,6 +4,8 @@ from werkzeug import generate_password_hash, check_password_hash
 from functools import update_wrapper
 import os
 import pypyodbc
+import collections
+import json
 
 app = Flask(__name__)
 app.secret_key = 'devkey'
@@ -42,20 +44,8 @@ def profile():
 
     if user is None:
         return abort(404)
-
     profile = cursor.execute("SELECT * FROM [profile] WHERE [idprofile] = ?", [user[1]]).fetchone()
-
-    profile = {
-        'idprofile' : profile[0],
-        'firstname' : profile[1],
-        'lastname' : profile[2],
-        'address' : profile[3],
-        'zipcode' : profile[4],
-        'city' : profile[5],
-        'country' : profile[6],
-        'phone' : profile[7],
-        'mobilephone' : profile[8]
-    }
+    profile = serialize_table(profile.cursor_description, profile)
 
     return jsonify(data=profile)
 
@@ -63,6 +53,10 @@ def profile():
 @app.route('/api/profile', methods=['POST'])
 @require_login()
 def update_profile():
+
+    print(update_table_from_request("profile",request))
+
+    user = cursor.execute("SELECT ")
     #user = User.query.filter(User.email == session['email']);
 
     #idprofile = user.first().profile
@@ -71,6 +65,7 @@ def update_profile():
     #if profile.count() == 0:
     return abort(404)
 
+
     #profile.update(request.json)
     #db.session.commit()
     #return jsonify(response='success')
@@ -78,7 +73,6 @@ def update_profile():
 
 @app.route('/api/login', methods=['POST'])
 def login():
-    print("hej")
     json_data = request.json
     email = json_data['email']
     password = json_data['password']
@@ -157,6 +151,25 @@ def create_education():
     return jsonify(education=education)
 
 
+def serialize_table(columns, values):
+    d = collections.OrderedDict()
+    for c in columns:
+        t = c[0]
+        d[t] = values[t]
+    return d
+
+def update_table_from_request(table, request):
+    data = request.json
+    SQL = "UPDATE [{table}] SET ".format(table=table)
+    for field in data:
+        if field != "id" + table:
+            statement = "[{field}] = '{val}',".format(field=field,val=data[field])
+            SQL = SQL + statement
+
+    SQL = SQL[:len(SQL)-1] + " WHERE [{idfield}] = {idvalue}".format(idfield="id"+table,idvalue=data["id"+table])
+    return SQL
+
+
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+    port = int(os.environ.get('PORT', 8080))
+    app.run(host='192.168.0.101', port=port)

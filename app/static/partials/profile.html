@@ -1,8 +1,59 @@
-<div ui-view="nav"></div>
-<div ui-view="top"></div>
-<div class="content main">
-	<div class="col-lg-12 col-md-12">
-		<div ui-view="info" ng-show="profileTab == 'info'"></div>
-		<div ui-view="skills" ng-show="profileTab == 'skills'"></div>
+<header ui-view="toolbar"></header>
+<md-content layout="row" layout-margin layout-padding>
+	<div layout="column" flex-sm="100" flex-gt-lg="33" flex-md="100" flex-lg="50" >
+		<div layout="row">
+			<div flex="50"></div>
+			<div flex>
+				<md-button md-theme="grey" ng-click="uploadPicture($event)" class="md-primary md-fab btn-huge">
+					<md-icon md-font-icon="fa-picture-o" class="fa fa-3x white"></md-icon>
+				</md-button>
+			</div>
+			 
+		</div>
+
+		<form flex layout-margin layout-padding flex ng-submit="updateProfile()" name="profileForm">
+			<md-input-container class="md-block md-icon-float">
+				<label>First name</label>
+				<md-icon md-font-icon="fa-user" class="fa fa-lg"></md-icon>
+				<input md-maxlength="32" type="text" name="firstname" ng-model="profileForm.firstname" required>
+			</md-input-container>
+			<md-input-container class="md-block md-icon-float">
+				<label>Last name</label>
+				<md-icon md-font-icon="fa-user" class="fa fa-lg"></md-icon>
+				<input md-maxlength="32" type="text" name="lastname" ng-model="profileForm.lastname" required>
+			</md-input-container>
+
+			<!-- <md-datepicker name="birthdate" ng-model="profileForm.birthdate" md-placeholder="Birth date"></md-datepicker> -->
+		
+			<md-input-container class="md-block md-icon-float">
+				<label>Phone</label>
+				<md-icon md-font-icon="fa-phone" class="fa fa-lg"></md-icon>
+				<input md-maxlength="16" type="tel" name="phone" ng-model="profileForm.phone">
+			</md-input-container>
+			<md-input-container class="md-block md-icon-float">
+				<label>Mobile phone</label>
+				<md-icon md-font-icon="fa-mobile-phone" class="fa fa-lg"></md-icon>
+				<input md-maxlength="16" type="tel" name="mobilephone" ng-model="profileForm.mobilephone">
+			</md-input-container>
+			<md-input-container class="md-block md-icon-float">
+				<label>Address</label>
+				<md-icon md-font-icon="fa-map-signs" class="fa fa-lg"></md-icon>
+				<input md-maxlength="72" type="text" name="address" ng-model="profileForm.address">
+			</md-input-container>
+			<md-input-container class="md-block md-icon-float">
+				<label>City</label>
+				<md-icon md-font-icon="fa-building-o" class="fa fa-lg"></md-icon>
+				<input md-maxlength="32" type="text" name="city" ng-model="profileForm.city">
+			</md-input-container>
+			<md-input-container class="md-block md-icon-float">
+				<label>Country</label>
+				<md-icon md-font-icon="fa-globe" class="fa fa-lg"></md-icon>
+				<input md-maxlength="32" type="text" name="country" ng-model="profileForm.country">
+			</md-input-container>
+			<div layout="row" class="vertical-nudge-top">
+	        	<div flex-gt-md="33" flex="20"></div>
+	            <md-button type="submit" class="md-raised md-primary" flex-gt-md="33" flex="60">Update profile</md-button>
+	      	</div>
+	    </form>
 	</div>
-</div>
+</md-content>
