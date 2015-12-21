@@ -8,10 +8,25 @@ import collections
 import json
 
 app = Flask(__name__)
+
+db_name = os.environ['KNOWBASE_DB']
+db_uid = os.environ['KNOWBASE_UID']
+db_pw = os.environ['KNOWBASE_PW']
+server_type = '{SQL Server}'
+server_name = os.environ['KNOWBASE_SERVER']
+host_ip = os.environ['KNOWBASE_HOST']
+
 app.secret_key = 'devkey'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://test_user:pass@localhost:5432/knowledge_test'
 #db.init_app(app)
-conn = pypyodbc.connect("DRIVER={SQL Server};SERVER=localhost\SQLEXPRESS;UID=knowbase;PWD=Vinter2015!;DATABASE=knowbase")
+
+
+connection_string = "DRIVER={type};SERVER={server};UID={uid};PWD={pw};DATABASE={db}".format(
+	type=server_type, server=server_name, uid=db_uid, pw=db_pw, db=db_name)
+
+print(connection_string)
+
+conn = pypyodbc.connect(connection_string)
 cursor = conn.cursor()
 
 def require_login():
@@ -172,4 +187,4 @@ def update_table_from_request(table, request):
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
-    app.run(host='192.168.0.101', port=port)
+    app.run(host=host_ip, port=port)
