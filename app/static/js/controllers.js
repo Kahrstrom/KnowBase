@@ -1,5 +1,5 @@
 angular.module('knowBase').controller('loginController',
-  ['$scope', '$state', 'AuthService', 
+  ['$scope', '$state', 'AuthService',
   function ($scope, $state, AuthService) {
 
     $scope.authed = AuthService.isLoggedIn();
@@ -10,7 +10,7 @@ angular.module('knowBase').controller('loginController',
       $scope.disabled = true;
       // call login from service
  
-      AuthService.login($scope.loginController.email, $scope.loginController.password)
+      AuthService.login($scope.loginController)
         // handle success
         .then(function () {
           $state.go('home');
@@ -19,6 +19,7 @@ angular.module('knowBase').controller('loginController',
         },
         // handle error
         function () {
+          console.log("error")
           $scope.error = true;
           $scope.errorMessage = "Invalid username and/or password";
           $scope.disabled = false;
@@ -64,17 +65,8 @@ angular.module('knowBase').controller('signupController',
       $scope.error = false;
       $scope.disabled = true;
 
-      if($scope.signupForm.password !== $scope.signupForm.passwordConfirm){
-        $scope.error = true;
-        $scope.errorMessage = "The passwords don't correspond!";
-        $scope.disabled = false;
-        $scope.signupForm.password = "";
-        $scope.signupForm.passwordConfirm = "";
-        return false;
-         
-      }
       // call register from service
-      AuthService.signup($scope.signupForm.email, $scope.signupForm.password, $scope.signupForm.passwordConfirm)
+      AuthService.signup($scope.signupController)
         // handle success
         .then(function () {
 
@@ -92,18 +84,33 @@ angular.module('knowBase').controller('signupController',
         });
 
     };
-
 }]);
 
+
 angular.module('knowBase').controller('startController',
-  ['$scope', '$state','$location','$anchorScroll',
-  function ($scope, $state, $location, $anchorScroll) {
+  ['$scope', '$state','$location','$anchorScroll', 'LocaleService',
+  function ($scope, $state, $location, $anchorScroll, LocaleService) {
     $scope.welcome = 'Welcome to KnowBase';
+    LocaleService.setLocale()
+        .then(function () {
+          console.log("success!")
+        },
+        // handle error
+        function () {
+          console.log("error")
+        });
 
     $scope.scrollTo = function(element){
       $location.hash(element);
       $anchorScroll();
     }
+}]);
+
+
+angular.module('knowBase').controller('activityfeedController',
+  ['$scope', '$state',
+  function ($scope, $state) {
+    
 }]);
 
 
@@ -167,44 +174,74 @@ angular.module('knowBase').controller('contactController',
 }]);
 
 angular.module('knowBase').controller('skillsController',
-  ['$scope', '$state',
-  function ($scope, $state) {
-    $scope.title = 'Contact us';
-    $scope.skills = [
-      {
-        name : 'education',
-        title : 'Educations',
-        icon : 'fa fa-graduation-cap',
-        showText: false
-      },
-      {
-        name : 'workexperience',
-        title : 'Work',
-        icon : 'fa fa-briefcase',
-        showText: false
-      },
-      {
-        name : 'language',
-        title : 'Languages',
-        icon: 'fa fa-comment',
-        showText: false
-      },
-      {
-        name : 'projects',
-        title : 'Projects',
-        icon: 'fa fa-star',
-        showText: false
-      }
-    ]
+  ['$scope', '$state', 'SkillService',
+  function ($scope, $state, SkillService) {
+    function getProfile() {
+        SkillService.getSkillTypes()
+            .success(function (response) {
+                $scope.skillTypes = response.data;
+                $scope.tiles = buildGridModel({
+                  icon : "fa-",
+                  title: "",
+                  background: ""
+                });
+            })
+            .error(function (error) {
+                console.log(error.message)
+            });
+    }
+    getProfile();
 
-    $scope.icon = true;
+    function buildGridModel(tileTmpl){
+      var it, results = [ ];
+      console.log($scope.skillTypes)
+      $.each($scope.skillTypes,function(i,s){
+        it = angular.extend({},tileTmpl);
+        
+        it.title = s.locale;
+        it.span  = { row : 1, col : 1 };
+        
+        switch(s.name){
+          case "education":
+            it.background = "hue-1";
+            it.icon  = it.icon + "graduation-cap";
+            it.span.row = 2;
+            break;
+          case "workexperience": 
+            it.background = "hue-2";  
+            it.icon  = it.icon + "suitcase";   
+            it.span.row = 2;    
+            break;
+          case "experience": 
+            it.icon  = it.icon + "certificate";
+            it.background = "hue-3";      
+            break;
+          case "project":
+            it.icon  = it.icon + "tasks";
+            it.background = "hue-3";
+            it.span.col = it.span.row = 2;
+            break;
+          case "language":
+            it.background = "accent";
+            it.icon  = it.icon + "comment-o";
+            break;
+          case "publication": 
+            it.background = "hue-2";
+            it.icon  = it.icon + "book";         
+            break;
+          case "skill": 
+            it.background = "accent";      
+            it.icon  = it.icon + "star";
+            break;
+          }
+        results.push(it);
+      });
+      console.log(results)
+      return results;
+    }
     
-    $scope.hoverIn = function(i){
-      $scope.skills[i].showText = true;
-    }
-    $scope.hoverOut = function(i){
-      $scope.skills[i].showText = false;
-    }
+
+    console.log($scope.tiles)
 }]);
 
 angular.module('knowBase').controller('infoController',
@@ -240,7 +277,9 @@ angular.module('knowBase').controller('infoController',
 
 // }]);
 
-function profilePictureController($scope, $mdDialog) {
+function profilePictureController($scope, $mdDialog, DataService) {
+  $scope.myImage='';
+  $scope.myCroppedImage='';
   $scope.hide = function() {
     $mdDialog.hide();
   };
@@ -248,13 +287,29 @@ function profilePictureController($scope, $mdDialog) {
     $mdDialog.cancel();
   };
   $scope.answer = function(answer) {
+    console.log($scope.myCroppedImage)
+    DataService.uploadPicture($scope.myCroppedImage);
     $mdDialog.hide(answer);
   };
+
+  $scope.selectFile = function(file) {
+    if(file){
+      console.log("PLEASE")
+      var imgReader = new FileReader();
+      imgReader.onload = function (image) {
+        $scope.$apply(function($scope){
+          $scope.myImage=image.target.result;
+        });
+      };
+      imgReader.readAsDataURL(file);
+    }
+  };
+
 }
 
 
+
 angular.module('knowBase').controller('profileController',
-  ['$scope', '$state', '$timeout', 'DataService', '$mdDialog', '$mdMedia', 
   function ($scope, $state, $timeout, DataService, $mdDialog, $mdMedia) {
     $scope.title = 'Profile';
     $scope.profileTab = 'info';
@@ -262,7 +317,6 @@ angular.module('knowBase').controller('profileController',
     function getProfile() {
       DataService.getProfile()
           .success(function (response) { 
-
               $scope.profileForm = response.data;
 
               console.log($scope.profileForm)
@@ -308,7 +362,6 @@ angular.module('knowBase').controller('profileController',
       });
     };
 
+
     getProfile();
-}]);
-
-
+})

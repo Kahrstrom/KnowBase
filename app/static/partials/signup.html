@@ -1,38 +1,76 @@
-<div ui-view="nav"></div>
-<div ui-view="top"></div>
-<div class="content tree">
-  <div class="col-lg-3 col-centered wrapper">
-    <header class="signup row">
-      <h1>{{ title }}</h1>
-    </header>
-    <div ng-show="error" class="alert alert-orange">{{errorMessage}}</div>
-    <form id="submit-form" class="form" ng-submit="signup()">
-      <div class="form-group login-form row">
-            <!-- REMOVE CHROME AUTOFILL SHIT -->
-        <input style="display:none">
-        <input type="password" style="display:none">
-        <div class="form-group dark-group">
-          <span>Email</span>
-          <input type="text" class="form-control" name="email" placeholder="Enter your email" ng-model="signupForm.email" required>
-        </div>
-        <div class="form-group dark-group">
-          <span>Password</span>
-          <input type="password" class="form-control" name="password" placeholder="Enter your password" ng-model="signupForm.password" required>
-        </div> 
-        <div class="form-group dark-group">
-          <span>Confirm password</span>
-          <input type="password" class="form-control" name="confirm-password" placeholder="Enter your password again" ng-model="signupForm.passwordConfirm" required>
-        </div>
-        <br>
-        <br>
-        <button type="submit" class="btn btn-default btn-transparent col-lg-12 col-md-12" ng-disabled="disabled">Signup</button>
-      </div>
-      
-      
-    </form>
+<md-content class="md-primary full-height" layout="column">
 
+  <md-toolbar scroll flex layout="row">
+    <div class="md-toolbar-tools white">
+      <md-button  aria-label="home" ui-sref="start">
+        <span class="white">Home</span>
+      </md-button>
+
+    </div>
+  </md-toolbar>
+  <div layout="row">
+    <div flex-gt-md="33" flex="0"></div>
+    <div flex-gt-md="33" flex>
+      <md-card class="vertical-align-top">
+        <md-card-title flex-gt-md>
+          <md-toolbar>
+            <md-card-title-text>
+              <h1 class="md-headline center">Signup</h1>
+            </md-card-title-text>
+          </md-toolbar>
+        </md-card-title>
+        
+        <md-card-content layout="column" layout-margin layout-padding>
+          <div layout="row">
+            <div flex-gt-md="10" flex="0"></div>
+            <form flex-gt-md="80" flex ng-submit="signup()" name="signupForm">
+              <input style="display:none">
+              <input type="password" style="display:none">
+              <md-input-container class="md-block md-icon-float">
+                <label>Email</label>
+                <md-icon md-font-icon="fa-envelope-o" class="fa fa-lg"></md-icon>
+                <input md-maxlength="72" type="email" name="email" ng-model="signupController.email" required>
+                <div ng-messages="signupForm.email.$error" ng-if="signupForm.email.$dirty">
+                  <ng-message when="required">This field is required</ng-message>
+                  <ng-message when="email" class="error">The email address is invalid</ng-message>
+                  <ng-message when="maxLength" class="error">The maximum length is 72 characters</ng-message>
+                </div>
+              </md-input-container>
+              <md-input-container class="md-block md-icon-float">
+                <label>Firstname</label>
+                <md-icon md-font-icon="fa-user" class="fa fa-lg"></md-icon>
+                <input md-maxlength="72" type="text" name="firstname" ng-model="signupController.firstname" required>
+                <div ng-messages="signupForm.firstname.$error" ng-if="signupForm.firstname.$dirty">
+                  <ng-message when="required">This field is required</ng-message>
+                  <ng-message when="maxLength" class="error">The maximum length is 72 characters</ng-message>
+                </div>
+              </md-input-container>
+              <md-input-container class="md-block md-icon-float">
+                <label>Lastname</label>
+                <md-icon md-font-icon="fa-envelope-o" class="fa fa-lg"></md-icon>
+                <input md-maxlength="72" type="text" name="lastname" ng-model="signupController.lastname" required>
+                <div ng-messages="signupForm.lastname.$error" ng-if="signupForm.lastname.$dirty">
+                  <ng-message when="required">This field is required</ng-message>
+                  <ng-message when="maxLength" class="error">The maximum length is 72 characters</ng-message>
+                </div>
+              </md-input-container>
+              <md-input-container class="md-block md-icon-float">
+                <label>Password</label>
+                <md-icon md-font-icon="fa-key" class="fa fa-lg"></md-icon>
+                <input type="password" name="password" ng-model="signupController.password" required>
+                <div ng-messages="signupForm.password.$error" ng-if="signupForm.password.$dirty">
+                  <ng-message when="required">This field is required</ng-message>
+                </div>
+              </md-input-container>
+              <div layout="row" class="vertical-nudge-top">
+                <div flex-gt-md="33" flex="20"></div>
+                <md-button type="submit" class="md-raised md-primary" flex-gt-md="33" flex="60">Sign up</md-button>
+              </div>
+
+            </form>
+          </div>
+        </md-card-content>
+      </md-card>
+    </div>
   </div>
-  <div class="footer">
-    <span>Already registered? <a ui-sref="login" id="signup">Login here!</a></span>
-  </div>
-</div>
+</md-content>

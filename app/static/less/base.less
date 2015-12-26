@@ -1,8 +1,14 @@
-@color-primary: #512DA8;
-@color-hue-1: #B39DDB;
-@color-hue-2: #7E57C2;
-@color-hue-3: #7C4DFF;
-@color-hue-4: #311B92;
+@color-primary: #512DA8; /*700*/
+@color-hue-1: #B39DDB; /*200*/
+@color-hue-2: #7E57C2; /*400*/
+@color-hue-3: #673AB7; /*500*/
+@color-hue-4: #4527A0; /*800*/
+
+@color-accent-primary: #FFA000;
+@color-accent-hue-1: #FFE082;
+@color-accent-hue-2: #FFCA28;
+@color-accent-hue-3: #FFB300;
+@color-accent-hue-4: #FF8F00;
 
 @font-face {
     font-family: Gidole;
@@ -119,4 +125,38 @@ md-icon{
     width: 120px;
     height: 120px;
     margin-left: -60px;
+}
+
+md-grid-tile.hue-1 {
+    background-color: @color-hue-1;
+}
+
+md-grid-tile.hue-2 {
+    background-color: @color-hue-2;
+}
+
+md-grid-tile.hue-3 {
+    background-color: @color-hue-3;
+}
+
+md-grid-tile.hue-4 {
+    background-color: @color-hue-4;
+}
+
+md-grid-tile.accent{
+    background-color: @color-accent-primary;
+}
+
+md-grid-tile.link-tile{
+    cursor: pointer;
+    &:hover{
+        opacity: 0.7;
+    }
+}
+
+.cropArea {
+  background: #E4E4E4;
+  overflow: hidden;
+  width:500px;
+  height:350px;
 }

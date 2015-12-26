@@ -1,4 +1,4 @@
-var knowBase = angular.module('knowBase',  ['ui.router','ngCookies', 'ngAnimate', 'ngMaterial', 'ngMessages']);
+var knowBase = angular.module('knowBase',  ['ui.router','ngCookies', 'ngAnimate', 'ngMaterial', 'ngMessages', 'ngImgCrop']);
 
 knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider) {
     
@@ -93,10 +93,10 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider) 
         			templateUrl: 'static/partials/skills.html',
             		controller: 'skillsController'
         		},
-            	'nav@skills' : {
-            		controller: 'navController',
-            		templateUrl: 'static/partials/navbar-home.html'
-            	}
+                'toolbar@skills' : {
+                    controller: 'toolbarController',
+                    templateUrl: 'static/partials/toolbar.html'
+                }
             },
             access: 'open'
         })
@@ -118,6 +118,11 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider) 
             		controller: 'toolbarController',
             		templateUrl: 'static/partials/toolbar.html'
             	}
+                // ,
+                // 'activityfeed@profile' : {
+                //     controller: 'activityfeedController',
+                //     templateUrl: 'static/partials/activityfeed.html'
+                // }
 
             },
             access: 'restricted'
@@ -133,7 +138,6 @@ knowBase.run(function ($rootScope,$state, $cookies) {
 	$rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
 
 		if (toState.access == 'restricted' && !$cookies.get('user')) {
-
 			event.preventDefault();
 		  	$state.go('start');
 		}

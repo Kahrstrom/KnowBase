@@ -165,3 +165,133 @@ PRIMARY KEY CLUSTERED
 GO
 
 
+USE [knowbase]
+GO
+
+/****** Object:  Table [dbo].[activity]    Script Date: 2015-12-25 19:24:26 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[activity](
+	[idactivity] [int] IDENTITY(1,1) NOT NULL,
+	[subject] [nvarchar](128) NOT NULL,
+	[text] [nvarchar](512) NOT NULL,
+	[type] [int] NOT NULL,
+	[profile] [int] NULL,
+	[timestamp] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[idactivity] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[activity] ADD  DEFAULT (getdate()) FOR [timestamp]
+GO
+
+
+/****** Object:  Table [dbo].[localization]    Script Date: 2015-12-25 20:28:34 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[localization](
+	[idlocalization] [int] IDENTITY(1,1) NOT NULL,
+	[code] [nvarchar](16) NOT NULL,
+	[en-us] [nvarchar](512) NOT NULL,
+	[sv] [nvarchar](512) NOT NULL,
+	[timestamp] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[idlocalization] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[localization] ADD  DEFAULT (getdate()) FOR [timestamp]
+GO
+
+
+INSERT INTO [localization]
+(code, sv,[en-us])
+SELECT
+'educations','Utbildningar','Educations'
+UNION ALL
+SELECT
+'workexperience','Arbetslivserfarenhet','Work experience'
+UNION ALL
+SELECT
+'projects','Projekt','Projects'
+UNION ALL
+SELECT
+'publications','Publikationer','Publications'
+UNION ALL
+SELECT
+'experience','Erfarenhet','Experience'
+UNION ALL
+SELECT
+'languages','Språkkunskaper','Language skills'
+UNION ALL
+SELECT
+'skills','Övriga kompetenser','Other competences'
+
+GO
+
+/****** Object:  Table [dbo].[skilltype]    Script Date: 2015-12-25 19:24:26 ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[skilltype](
+	[idskilltype] [int] IDENTITY(1,1) NOT NULL,
+	[name] [nvarchar](64) NOT NULL,
+	[localization] [int] NOT NULL,
+	[order] [int] NOT NULL,
+	[timestamp] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[idskilltype] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[skilltype] ADD  DEFAULT (getdate()) FOR [timestamp]
+GO
+
+INSERT INTO [skilltype]
+(name, localization, [order])
+SELECT
+'education', 1, 1
+UNION ALL
+SELECT
+'workexperience', 2, 2
+UNION ALL
+SELECT
+'project', 3, 5
+UNION ALL
+SELECT
+'publication', 4, 7
+UNION ALL
+SELECT
+'experience', 5, 3
+UNION ALL
+SELECT
+'language', 6, 6
+UNION ALL
+SELECT
+'skill', 7, 4
+
+
+
+
+

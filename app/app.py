@@ -1,13 +1,13 @@
-from flask import Flask, render_template, request, jsonify, abort, session, redirect, url_for
+from flask import Flask, request, jsonify, abort, session
 
 from werkzeug import generate_password_hash, check_password_hash
 from functools import update_wrapper
 import os
 import pypyodbc
 import collections
-import json
 
 app = Flask(__name__)
+app.secret_key = 'qwertyasdfghzxcvb'
 
 db_name = os.environ['KNOWBASE_DB']
 db_uid = os.environ['KNOWBASE_UID']
@@ -16,8 +16,8 @@ server_type = '{SQL Server}'
 server_name = os.environ['KNOWBASE_SERVER']
 host_ip = os.environ['KNOWBASE_HOST']
 
-app.secret_key = 'devkey'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://test_user:pass@localhost:5432/knowledge_test'
+#app.secret_key = 'devkey'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://test_user:pass@localhost:5432/knowledge_test'
 #db.init_app(app)
 
 
@@ -60,30 +60,36 @@ def profile():
     if user is None:
         return abort(404)
     profile = cursor.execute("SELECT * FROM [profile] WHERE [idprofile] = ?", [user[1]]).fetchone()
-    profile = serialize_table(profile.cursor_description, profile)
+    print(profile)
+    print(profile.cursor_description)
+    profile = serialize_row(profile.cursor_description, profile)
 
     return jsonify(data=profile)
 
+@app.route('/api/skilltypes', methods=['GET'])
+@require_login()
+def skill_types():
+    skilltypes = cursor.execute("SELECT {localize} as 'locale', [name] FROM [skilltype] st INNER JOIN [localization] l ON l.[idlocalization] = st.[localization] ORDER BY [order]".format(localize=session['locale'])).fetchall()
+    retval = serialize_table([['locale'], ['name']], skilltypes)
+    #retval = serialize_row(profile.cursor_description, profile)
+
+    return jsonify(data=retval)
+
+@app.route('/api/profilepicture', methods=['GET'])
+@require_login()
+def upload_profile_picture():
+    img = request;
+    print(img)
+    return jsonify(response='success')
 
 @app.route('/api/profile', methods=['POST'])
 @require_login()
 def update_profile():
 
-    print(update_table_from_request("profile",request))
-
-    user = cursor.execute("SELECT ")
-    #user = User.query.filter(User.email == session['email']);
-
-    #idprofile = user.first().profile
-    #profile = Profile.query.filter(Profile.idprofile == idprofile)
-
-    #if profile.count() == 0:
-    return abort(404)
-
-
-    #profile.update(request.json)
-    #db.session.commit()
-    #return jsonify(response='success')
+    update_stmt = update_table_from_request("profile", request)
+    cursor.execute(update_stmt)
+    cursor.commit()
+    return jsonify(response='success')
 
 
 @app.route('/api/login', methods=['POST'])
@@ -91,12 +97,13 @@ def login():
     json_data = request.json
     email = json_data['email']
     password = json_data['password']
+
     user = cursor.execute('SELECT [iduser],[password] FROM [user] WHERE [email] = ?', [email]).fetchone()
 
     if user is None:
         return jsonify(response=False)
 
-    if check_password_hash(user[1],password):
+    if check_password_hash(user[1], password):
         session['email'] = email
         return jsonify(response=True)
 
@@ -108,6 +115,10 @@ def logout():
     session.pop('email', None)
     return jsonify(response='success')
 
+@app.route('/api/setLocale', methods=['POST'])
+def set_locale():
+    session['locale'] = request.json['locale']
+    return jsonify(response='success')
 
 @app.route('/api/signup', methods=['POST'])
 def signup():
@@ -120,14 +131,15 @@ def signup():
     res = cursor.execute('SELECT [iduser],[email] FROM [user] WHERE [email] = ?', [email])
 
     if res.fetchone() is not None:
+
         return jsonify(response='user already exists')
 
-    cursor.execute('INSERT INTO [profile] ([firstname], [lastname]) VALUES (?,?)' [firstname, lastname])
+    cursor.execute('INSERT INTO [profile] ([firstname], [lastname]) VALUES (?,?)', [firstname, lastname])
     cursor.commit()
     idprofile = cursor.execute("SELECT SCOPE_IDENTITY()").fetchone()
 
     cursor.execute('INSERT INTO [user] ([email],[password],[profile]) VALUES (?, ?, ?)',
-                   [email, generate_password_hash(password), idprofile[0]])
+                   [email, generate_password_hash(password), idprofile])
     cursor.commit()
 
     return jsonify(response='success')
@@ -165,8 +177,13 @@ def create_education():
     }
     return jsonify(education=education)
 
-
 def serialize_table(columns, values):
+    t = []
+    for r in values:
+        t.append(serialize_row(columns, r))
+    return t
+
+def serialize_row(columns, values):
     d = collections.OrderedDict()
     for c in columns:
         t = c[0]
@@ -178,7 +195,10 @@ def update_table_from_request(table, request):
     SQL = "UPDATE [{table}] SET ".format(table=table)
     for field in data:
         if field != "id" + table:
-            statement = "[{field}] = '{val}',".format(field=field,val=data[field])
+            if data[field] is not None:
+                statement = "[{field}] = '{val}',".format(field=field,val=data[field])
+            else:
+                statement = "[{field}] = {val},".format(field=field,val="NULL")
             SQL = SQL + statement
 
     SQL = SQL[:len(SQL)-1] + " WHERE [{idfield}] = {idvalue}".format(idfield="id"+table,idvalue=data["id"+table])

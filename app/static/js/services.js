@@ -22,8 +22,60 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
         });
       return deferred.promise;
     }
+
+    self.uploadPicture = function(img){
+      var deferred = $q.defer();
+      $http.post(self.urlBase + 'profilepicture', img)
+        .success(function(data,status){
+          if(status === 200 && data.response){
+            deferred.resolve();
+          }else{
+            deferred.reject();
+          }
+        })
+        .error(function(data){
+          deferred.reject();
+        });
+      return deferred.promise;
+    }
    
 }]);
+
+
+angular.module('knowBase').service('LocaleService', ['$q', '$timeout','$http', '$window', function ($q,$timeout,$http, $window) {
+    var self = this;
+
+    self.setLocale = function(){
+      var lang = $window.navigator.language || $window.navigator.userLanguage; 
+      var deferred = $q.defer();
+      $http.post('/api/setLocale', {locale: lang})
+        .success(function (data, status) {
+          if(status === 200 && data.response){
+            deferred.resolve();
+          } else {
+            deferred.reject();
+          }
+        })
+        // handle error
+        .error(function (data) {
+          deferred.reject();
+        });
+      return deferred.promise;
+    }
+   
+}]);
+
+
+angular.module('knowBase').service('SkillService', ['$q', '$timeout','$http', 
+  function ($q,$timeout,$http) {
+    var self = this;
+
+    self.getSkillTypes = function(){
+      return $http.get('/api/skilltypes')
+    }
+   
+}]);
+
 
 angular.module('knowBase').factory('AuthService',
   ['$q', '$timeout', '$http', '$cookies',
@@ -48,15 +100,15 @@ angular.module('knowBase').factory('AuthService',
     }
   }
 
-  function login(email, password) {
+  function login(request) {
 
     // create a new instance of deferred
     var deferred = $q.defer();
     var today = new Date();
     var expired = new Date(today);
-    console.log( {email: email, password: password})
+    console.log( {email: request.email, password: request.password})
     // send a post request to the server
-    $http.post('/api/login', {email: email, password: password})
+    $http.post('/api/login', {email: request.email, password: request.password})
       // handle success
       .success(function (data, status) {
         
@@ -106,13 +158,13 @@ angular.module('knowBase').factory('AuthService',
 
   }
 
-  function signup(email, password, passwordConfirm) {
+  function signup(request) {
 
     // create a new instance of deferred
     var deferred = $q.defer();
-
+    console.log({email: request.email, firstname: request.firstname, lastname: request.lastname, password: request.password})
     // send a post request to the server
-    $http.post('/api/signup', {email: email, password: password, passwordConfirm: passwordConfirm})
+    $http.post('/api/signup', {email: request.email, firstname: request.firstname, lastname: request.lastname, password: request.password})
       // handle success
       .success(function (data, status) {
         if(status === 200 && data.response){
