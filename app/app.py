@@ -83,6 +83,13 @@ def upload_profile_picture():
 
     return jsonify(response='success')
 
+@app.route('/api/profilepicture', methods=['GET'])
+@require_login()
+def get_profile_picture():
+    img = cursor.execute("EXECUTE sp_get_profile_picture @@email='{email}'".format(email=session['email'])).fetchone()
+
+    return jsonify({'data': img[0], 'extension': img[1]})
+
 @app.route('/api/profile', methods=['POST'])
 @require_login()
 def update_profile():

@@ -287,6 +287,7 @@ function profilePictureController($scope, $mdDialog, DataService) {
   $scope.answer = function(answer) {
     var uploadImg = $scope.beforeUpload($scope.myCroppedImage)
     DataService.uploadPicture(uploadImg);
+    $('#profilepicture').attr('src',$scope.myCroppedImage);
     $mdDialog.hide(answer);
   };
 
@@ -314,16 +315,15 @@ function profilePictureController($scope, $mdDialog, DataService) {
   $scope.selectFile = function(){
     $('#fileInput').click();
   }
-
 }
 
 
 
 angular.module('knowBase').controller('profileController',
-  function ($scope, $state, $timeout, DataService, $mdDialog, $mdMedia) {
+  function ($scope, $state, $timeout, DataService, $mdDialog, $mdMedia, $http, $templateCache) {
     $scope.title = 'Profile';
     $scope.profileTab = 'info';
-
+    $scope.imgsrc = '';
     function getProfile() {
       DataService.getProfile()
           .success(function (response) { 
@@ -336,6 +336,22 @@ angular.module('knowBase').controller('profileController',
               $scope.status = 'Unable to load profile data: ' + error.message;
           });
     }
+
+    $http({method: 'GET', url: '/api/profilepicture', cache: $templateCache})
+    .then(function(response) {
+
+        $scope.status = response.status;
+        var response = response.data;
+        var data = response.data;
+        var extension = response.extension;
+        $scope.imgsrc = 'data:image/' + extension + ';base64,' + data;
+        $('#profilepicture').attr('src',$scope.imgsrc);
+      }, function(response) {
+        $scope.img = response.data || "Request failed";
+        $scope.status = response.status;
+
+    });
+  
 
     $scope.updateProfile = function(){
       DataService.updateProfile($scope.profileForm)

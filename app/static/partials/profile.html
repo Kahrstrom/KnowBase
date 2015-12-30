@@ -5,10 +5,13 @@
 			<div flex="50"></div>
 			<div flex>
 				<md-button md-theme="grey" ng-click="uploadPicture($event)" class="md-primary md-fab btn-huge">
-					<md-icon md-font-icon="fa-picture-o" class="fa fa-3x white"></md-icon>
+					<img id="profilepicture"></img>
+					<md-icon ng-if="!imgsrc" md-font-icon="fa-picture-o" class="fa fa-3x white"></md-icon>
+					
+					
 				</md-button>
 			</div>
-			 
+			
 		</div>
 
 		<form flex layout-margin layout-padding flex ng-submit="updateProfile()" name="profileForm">

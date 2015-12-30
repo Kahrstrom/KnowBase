@@ -267,22 +267,23 @@ GO
 -- GET PROFILE PICTURE
 CREATE PROCEDURE sp_get_profile_picture
 	-- Add the parameters for the stored procedure here
-	@@email NVARCHAR(128),
-	@@data NVARCHAR(MAX) OUT,
-	@@extension NVARCHAR(32) OUT
+	@@email NVARCHAR(128)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	DECLARE @bin VARBINARY(MAX)
+	DECLARE @extension NVARCHAR(32)
+	DECLARE @data NVARCHAR(MAX)
 	SELECT 
 		@bin = f.[data],
-		@@extension = f.[extension]
+		@extension = f.[extension]
 	FROM [file] f
 	INNER JOIN [profile] p ON p.[profilepicture] = f.[idfile]
 	INNER JOIN [user] u ON u.[profile] = p.[idprofile]
 	WHERE u.[email] = @@email
 
-	SELECT @@data = CAST(N'' AS XML).value('xs:base64Binary(xs:hexBinary(sql:variable("@bin")))', 'varchar(max)');
+	SELECT @data = CAST(N'' AS XML).value('xs:base64Binary(xs:hexBinary(sql:variable("@bin")))', 'varchar(max)');
+	SELECT @data, @extension
 END
 GO
