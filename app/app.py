@@ -126,7 +126,6 @@ def logout():
 @app.route('/api/setLocale', methods=['POST'])
 def set_locale():
     session['locale'] = request.json['locale']
-    print(session['locale'])
     return jsonify(response='success')
 
 @app.route('/api/signup', methods=['POST'])
@@ -144,7 +143,6 @@ def signup():
 
     cursor.execute('INSERT INTO [profile] ([firstname], [lastname]) VALUES (?,?)', [firstname, lastname])
     idprofile = cursor.execute("SELECT @@IDENTITY").fetchone()
-    print([email, generate_password_hash(password), idprofile[0]])
     cursor.commit()
 
     

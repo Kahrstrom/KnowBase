@@ -19,7 +19,6 @@ angular.module('knowBase').controller('loginController',
         },
         // handle error
         function () {
-          console.log("error")
           $scope.error = true;
           $scope.errorMessage = "Invalid username and/or password";
           $scope.disabled = false;
@@ -36,10 +35,6 @@ angular.module('knowBase').controller('loginController',
 angular.module('knowBase').controller('logoutController',
   ['$scope', '$state', 'AuthService',
   function ($scope, $state, AuthService) {
-
-    // $scope.logout = function () {
-
-      console.log(AuthService.isLoggedIn());
 
       // call logout from service
       AuthService.logout()
@@ -118,11 +113,11 @@ angular.module('knowBase').controller('toolbarController',
     }
     LocaleService.setLocale()
     .then(function () {
-      console.log("success!")
+      
     },
     // handle error
     function () {
-      console.log("error")
+      
     });
 
     $scope.openMenu = function($mdOpenMenu, ev) {
@@ -146,14 +141,12 @@ angular.module('knowBase').controller('homeController',
 
     function getProfile() {
         DataService.getProfile()
-            .success(function (response) {
-                $scope.data = response.data;
-                console.log($scope.data)
-            })
-            .error(function (error) {
-                $scope.status = 'Unable to load profile data: ' + error.message;
-                console.log(error.message)
-            });
+          .success(function (response) {
+              $scope.data = response.data;
+          })
+          .error(function (error) {
+              $scope.status = 'Unable to load profile data: ' + error.message;
+          });
     }
 }]);
 
@@ -176,14 +169,17 @@ angular.module('knowBase').controller('contactController',
 }]);
 
 angular.module('knowBase').controller('educationController',
+
+
   function ($scope, $state, $http, $templateCache) {
+    $scope.submitText = 'Update education';
     function getEducations() {
      $http({method: 'GET', url: '/api/educations', cache: $templateCache}).
         then(function(response) {
           $scope.status = response.status;
           $scope.educations = response.data.data;
           formatEducationData($scope.educations);
-          $scope.title = 'List of your educations';
+          $scope.title = 'Add all your educations';
         }, function(response) {
           $scope.data = response.data || "Request failed";
           $scope.status = response.status;
@@ -219,7 +215,7 @@ angular.module('knowBase').controller('skillsController',
                 });
             })
             .error(function (error) {
-                console.log(error.message)
+                
             });
     }
     
@@ -320,7 +316,7 @@ function profilePictureController($scope, $mdDialog, DataService) {
 
 
 angular.module('knowBase').controller('profileController',
-  function ($scope, $state, $timeout, DataService, $mdDialog, $mdMedia, $http, $templateCache) {
+  function ($scope, $state, $timeout, DataService, $mdDialog, $mdMedia, $http, $templateCache, $mdToast) {
     $scope.title = 'Profile';
     $scope.profileTab = 'info';
     $scope.imgsrc = '';
@@ -328,8 +324,6 @@ angular.module('knowBase').controller('profileController',
       DataService.getProfile()
           .success(function (response) { 
               $scope.profileForm = response.data;
-
-              console.log($scope.profileForm)
 
           })
           .error(function (error) {
@@ -357,13 +351,21 @@ angular.module('knowBase').controller('profileController',
       DataService.updateProfile($scope.profileForm)
         .then(function () {
             $scope.success = true;
-            $timeout(function () { $scope.success = false; }, 4000);   
+            $mdToast.show({
+                template: '<md-toast class="md-toast-success">Successfully updated profile!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            });
         },
         // handle error
         function (reason) {
             $scope.errorMessage = reason; 
             $scope.error = true;
-            $timeout(function () { $scope.error = false; }, 4000);   
+            $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to update profile!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
         });
     }
 
@@ -388,6 +390,7 @@ angular.module('knowBase').controller('profileController',
       });
     };
 
+    
 
     getProfile();
 })

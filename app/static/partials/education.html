@@ -1,6 +1,14 @@
 <header ui-view="toolbar"></header>
 <md-content layout="row" layout-margin layout-padding>
-	<div layout="column" flex-sm="100" flex-gt-lg="50" flex-md="100" flex-lg="50" >
+	<div layout="column" flex-sm="100" flex-gt-lg="50" flex-md="100" flex-lg="50" class="border-right" >
+		<div flex layout="row">
+
+			<h2>Educations</h2>
+			<span flex></span>
+			<md-button class="md-fab md-accent" aria-label="Use Android">
+	          <md-icon md-font-icon="fa-plus" class="fa fa-lg white" ></md-icon>
+	        </md-button>
+		</div>
 		<md-list ng-cloak>
 		  	<md-subheader class="md-no-sticky">{{title}}</md-subheader>
 
@@ -20,5 +28,24 @@
 		</md-list>
 	</div>
 	<div flex-gt-md="50">
+		<form flex layout-margin layout-padding flex ng-submit="saveEducation()" name="educationForm">
+			<md-input-container class="md-block md-icon-float">
+				<label>Title</label>
+				<md-icon md-font-icon="fa-user" class="fa fa-lg"></md-icon>
+				<input md-maxlength="32" type="text" name="title" ng-model="educationForm.title" required>
+			</md-input-container>
+			<md-input-container class="md-block md-icon-float">
+				<label>School</label>
+				<md-icon md-font-icon="fa-user" class="fa fa-lg"></md-icon>
+				<input md-maxlength="32" type="text" name="school" ng-model="educationForm.school" required>
+			</md-input-container>
+
+			<!-- <md-datepicker name="startdate" ng-model="educationForm.startdate" md-placeholder="Start date"></md-datepicker> -->
+	
+			<div layout="row" class="vertical-nudge-top">
+	        	<div flex-gt-md="33" flex="20"></div>
+	            <md-button type="submit" class="md-raised md-primary" flex-gt-md="33" flex="60">Save education</md-button>
+	      	</div>
+		</form>
 	</div>
 </md-content>
