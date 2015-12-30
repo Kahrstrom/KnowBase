@@ -1,0 +1,24 @@
+<header ui-view="toolbar"></header>
+<md-content layout="row" layout-margin layout-padding>
+	<div layout="column" flex-sm="100" flex-gt-lg="50" flex-md="100" flex-lg="50" >
+		<md-list ng-cloak>
+		  	<md-subheader class="md-no-sticky">{{title}}</md-subheader>
+
+		  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="education in educations" ng-click="console.log('woop')">
+		    	<md-icon md-font-icon="fa-graduation-cap" class="fa fa-lg avatar md-avatar-icon"></md-icon>
+	    		<div class="md-list-item-text" >
+          			<h3> {{ education.title }} </h3>
+          			<p> {{ education.school }}</p>
+          			<p> {{education.startdate | date : 'yyyy-MM'}} - {{education.enddate | date : 'yyyy-MM'}} </p>
+        		</div>
+        		<md-button>
+        			<md-icon md-font-icon="fa-pencil" class="fa"></md-icon>
+        		</md-button>
+
+		  	</md-list-item>
+
+		</md-list>
+	</div>
+	<div flex-gt-md="50">
+	</div>
+</md-content>

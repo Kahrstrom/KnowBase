@@ -89,22 +89,16 @@ angular.module('knowBase').controller('signupController',
 
 angular.module('knowBase').controller('startController',
   ['$scope', '$state','$location','$anchorScroll', 'LocaleService',
-  function ($scope, $state, $location, $anchorScroll, LocaleService) {
-    $scope.welcome = 'Welcome to KnowBase';
-    LocaleService.setLocale()
-        .then(function () {
-          console.log("success!")
-        },
-        // handle error
-        function () {
-          console.log("error")
-        });
+    function ($scope, $state, $location, $anchorScroll) {
+        $scope.welcome = 'Welcome to KnowBase';
+        
 
-    $scope.scrollTo = function(element){
-      $location.hash(element);
-      $anchorScroll();
+        $scope.scrollTo = function(element){
+          $location.hash(element);
+          $anchorScroll();
+        }
     }
-}]);
+  ]);
 
 
 angular.module('knowBase').controller('activityfeedController',
@@ -115,13 +109,21 @@ angular.module('knowBase').controller('activityfeedController',
 
 
 angular.module('knowBase').controller('toolbarController',
-  ['$scope', '$state', '$mdDialog',
-  function ($scope, $state, $mdDialog) {
+
+  function ($scope, $state, $mdDialog, LocaleService) {
     $scope.showSearch = false;
 
     $scope.toggleSearch = function(){
       $scope.showSearch = !$scope.showSearch;
     }
+    LocaleService.setLocale()
+    .then(function () {
+      console.log("success!")
+    },
+    // handle error
+    function () {
+      console.log("error")
+    });
 
     $scope.openMenu = function($mdOpenMenu, ev) {
       originatorEv = ev;
@@ -133,7 +135,7 @@ angular.module('knowBase').controller('toolbarController',
       $scope.$apply();
       
     });
-}]);
+});
 
 
 angular.module('knowBase').controller('homeController',
@@ -173,10 +175,40 @@ angular.module('knowBase').controller('contactController',
     $scope.title = 'Contact us';
 }]);
 
+angular.module('knowBase').controller('educationController',
+  function ($scope, $state, $http, $templateCache) {
+    function getEducations() {
+     $http({method: 'GET', url: '/api/educations', cache: $templateCache}).
+        then(function(response) {
+          $scope.status = response.status;
+          $scope.educations = response.data.data;
+          formatEducationData($scope.educations);
+          $scope.title = 'List of your educations';
+        }, function(response) {
+          $scope.data = response.data || "Request failed";
+          $scope.status = response.status;
+          if($scope.status == 404){
+            $scope.title = 'No educations found. Try adding some to improve your CV!';
+          }else{
+            $scope.title = 'An unexpected error occurred.';
+          }
+      });
+    }
+
+    function formatEducationData(educations){
+
+      $.each(educations,function(i,e){
+        e.startdate = new Date(e.startdate);
+        e.enddate = new Date(e.enddate);
+      });
+    }
+    getEducations();
+});
+
 angular.module('knowBase').controller('skillsController',
   ['$scope', '$state', 'SkillService',
   function ($scope, $state, SkillService) {
-    function getProfile() {
+    function getSkillTypes() {
         SkillService.getSkillTypes()
             .success(function (response) {
                 $scope.skillTypes = response.data;
@@ -190,20 +222,19 @@ angular.module('knowBase').controller('skillsController',
                 console.log(error.message)
             });
     }
-    getProfile();
-
+    
     function buildGridModel(tileTmpl){
       var it, results = [ ];
-      console.log($scope.skillTypes)
+
       $.each($scope.skillTypes,function(i,s){
         it = angular.extend({},tileTmpl);
         
         it.title = s.locale;
         it.span  = { row : 1, col : 1 };
-        
+        it.name = s.name;
         switch(s.name){
           case "education":
-            it.background = "hue-1";
+            it.background = "hue-3";
             it.icon  = it.icon + "graduation-cap";
             it.span.row = 2;
             break;
@@ -214,7 +245,7 @@ angular.module('knowBase').controller('skillsController',
             break;
           case "experience": 
             it.icon  = it.icon + "certificate";
-            it.background = "hue-3";      
+            it.background = "hue-1";      
             break;
           case "project":
             it.icon  = it.icon + "tasks";
@@ -234,48 +265,15 @@ angular.module('knowBase').controller('skillsController',
             it.icon  = it.icon + "star";
             break;
           }
-        results.push(it);
+        results.push(it); 
       });
-      console.log(results)
       return results;
     }
-    
+    getSkillTypes();
 
-    console.log($scope.tiles)
+
 }]);
 
-angular.module('knowBase').controller('infoController',
-  ['$scope', '$state', '$timeout', 'DataService',
-  function ($scope, $state, $timeout, DataService) {
-
-    $scope.firstnameLabel = 'First name';
-    $scope.lastnameLabel = 'Last name';
-    $scope.profileForm = {};
-    $scope.success = false;
-    $scope.error = false;
-    $scope.errorMessage = '';
-
-    
-
-
-    
-}]);
-
-
-// angular.module('knowBase').controller('profilePictureController',
-//   ['$scope','$mdDialog', 
-//   function($scope, $mdDialog) {
-//     $scope.hide = function() {
-//       $mdDialog.hide();
-//     };
-//     $scope.cancel = function() {
-//       $mdDialog.cancel();
-//     };
-//     $scope.answer = function(answer) {
-//       $mdDialog.hide(answer);
-//     };
-
-// }]);
 
 function profilePictureController($scope, $mdDialog, DataService) {
   $scope.myImage='';
@@ -287,14 +285,13 @@ function profilePictureController($scope, $mdDialog, DataService) {
     $mdDialog.cancel();
   };
   $scope.answer = function(answer) {
-    console.log($scope.myCroppedImage)
-    DataService.uploadPicture($scope.myCroppedImage);
+    var uploadImg = $scope.beforeUpload($scope.myCroppedImage)
+    DataService.uploadPicture(uploadImg);
     $mdDialog.hide(answer);
   };
 
-  $scope.selectFile = function(file) {
+  $scope.fileSelected = function(file) {
     if(file){
-      console.log("PLEASE")
       var imgReader = new FileReader();
       imgReader.onload = function (image) {
         $scope.$apply(function($scope){
@@ -302,8 +299,21 @@ function profilePictureController($scope, $mdDialog, DataService) {
         });
       };
       imgReader.readAsDataURL(file);
+
+      $scope.fileName = file.name;
     }
   };
+
+  $scope.beforeUpload = function(img){
+    var fileType = img.split('/')[1].split(';')[0];
+    var data = img.split(',')[1];
+    return {extension: fileType, data: data};
+  }
+
+
+  $scope.selectFile = function(){
+    $('#fileInput').click();
+  }
 
 }
 
@@ -344,7 +354,7 @@ angular.module('knowBase').controller('profileController',
     $scope.uploadPicture = function(ev){
       $mdDialog.show({
         controller: profilePictureController,
-        templateUrl: '/static/partials/picture.tmpl.html',
+        templateUrl: '/static/partials/profilepicture.templ.html',
         parent: angular.element(document.body),
         targetEvent: ev,
         clickOutsideToClose:true,

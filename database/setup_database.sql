@@ -1,17 +1,16 @@
-USE [knowbase]
+--DROP TABLE [education]
+--DROP TABLE [profile]
+--DROP TABLE [tag]
+--DROP TABLE [user]
+--DROP TABLE [workexperience]
 GO
 
-/****** Object:  Table [dbo].[education]    Script Date: 2015-12-21 9:34:34 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
+-- EDUCATION
 CREATE TABLE [dbo].[education](
 	[ideducation] [int] IDENTITY(1,1) NOT NULL,
 	[title] [nvarchar](64) NOT NULL,
 	[school] [nvarchar](64) NOT NULL,
+	[startdate] [datetime] NULL,
 	[enddate] [datetime] NULL,
 	[description] [nvarchar](512) NOT NULL,
 	[profile] [int] NULL,
@@ -23,31 +22,16 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 
 GO
-
 ALTER TABLE [dbo].[education] ADD  DEFAULT ('') FOR [title]
 GO
-
 ALTER TABLE [dbo].[education] ADD  DEFAULT ('') FOR [school]
 GO
-
 ALTER TABLE [dbo].[education] ADD  DEFAULT ('') FOR [description]
 GO
-
 ALTER TABLE [dbo].[education] ADD  DEFAULT (getdate()) FOR [timestamp]
 GO
 
-
-
-USE [knowbase]
-GO
-
-/****** Object:  Table [dbo].[workexperience]    Script Date: 2015-12-21 9:34:16 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
+-- WORKEXPERIENCE
 CREATE TABLE [dbo].[workexperience](
 	[idworkexperience] [int] IDENTITY(1,1) NOT NULL,
 	[title] [nvarchar](64) NOT NULL,
@@ -61,32 +45,17 @@ PRIMARY KEY CLUSTERED
 	[idworkexperience] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
-
 GO
-
 ALTER TABLE [dbo].[workexperience] ADD  DEFAULT ('') FOR [title]
 GO
-
 ALTER TABLE [dbo].[workexperience] ADD  DEFAULT ('') FOR [employer]
 GO
-
 ALTER TABLE [dbo].[workexperience] ADD  DEFAULT ('') FOR [description]
 GO
-
 ALTER TABLE [dbo].[workexperience] ADD  DEFAULT (getdate()) FOR [timestamp]
 GO
 
-
-USE [knowbase]
-GO
-
-/****** Object:  Table [dbo].[profile]    Script Date: 2015-12-21 9:34:30 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
+-- PROFILE
 CREATE TABLE [dbo].[profile](
 	[idprofile] [int] IDENTITY(1,1) NOT NULL,
 	[firstname] [nvarchar](72) NOT NULL DEFAULT (''),
@@ -97,6 +66,7 @@ CREATE TABLE [dbo].[profile](
 	[country] [nvarchar](32) NULL DEFAULT (''),
 	[phone] [nvarchar](16) NULL DEFAULT (''),
 	[mobilephone] [nvarchar](16) NULL DEFAULT (''),
+	[profilepicture] [int] NULL,
 	[birthdate] [datetime] NULL,
 PRIMARY KEY CLUSTERED 
 (
@@ -106,17 +76,7 @@ PRIMARY KEY CLUSTERED
 
 GO
 
-
-USE [knowbase]
-GO
-
-/****** Object:  Table [dbo].[tag]    Script Date: 2015-12-21 9:34:27 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
+-- TAG
 CREATE TABLE [dbo].[tag](
 	[idtag] [int] IDENTITY(1,1) NOT NULL,
 	[text] [nvarchar](16) NOT NULL,
@@ -130,27 +90,30 @@ PRIMARY KEY CLUSTERED
 ) ON [PRIMARY]
 
 GO
-
 ALTER TABLE [dbo].[tag] ADD  DEFAULT ('') FOR [text]
 GO
-
 ALTER TABLE [dbo].[tag] ADD  DEFAULT ('') FOR [category]
 GO
-
 ALTER TABLE [dbo].[tag] ADD  DEFAULT (getdate()) FOR [timestamp]
 GO
 
-
-USE [knowbase]
+-- FILE
+CREATE TABLE [dbo].[file](
+	[idfile] [int] IDENTITY(1,1) NOT NULL,
+	[filename] [nvarchar](72) NOT NULL DEFAULT (''),
+	[extension] [nvarchar](72) NULL DEFAULT (''),
+	[data] [varbinary](MAX) NULL,
+	[timestamp] [datetime] NULL
+PRIMARY KEY CLUSTERED 
+(
+	[idfile] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[file] ADD  DEFAULT (getdate()) FOR [timestamp]
 GO
 
-/****** Object:  Table [dbo].[user]    Script Date: 2015-12-21 9:34:23 PM ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
+-- USER 
 CREATE TABLE [dbo].[user](
 	[iduser] [int] IDENTITY(1,1) NOT NULL,
 	[email] [nvarchar](128) NOT NULL,
@@ -164,17 +127,7 @@ PRIMARY KEY CLUSTERED
 
 GO
 
-
-USE [knowbase]
-GO
-
-/****** Object:  Table [dbo].[activity]    Script Date: 2015-12-25 19:24:26 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
+-- ACTIVITY
 CREATE TABLE [dbo].[activity](
 	[idactivity] [int] IDENTITY(1,1) NOT NULL,
 	[subject] [nvarchar](128) NOT NULL,
@@ -187,20 +140,11 @@ PRIMARY KEY CLUSTERED
 	[idactivity] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
-
 GO
-
 ALTER TABLE [dbo].[activity] ADD  DEFAULT (getdate()) FOR [timestamp]
 GO
 
-
-/****** Object:  Table [dbo].[localization]    Script Date: 2015-12-25 20:28:34 ******/
-SET ANSI_NULLS ON
-GO
-
-SET QUOTED_IDENTIFIER ON
-GO
-
+-- LOCALIZATION
 CREATE TABLE [dbo].[localization](
 	[idlocalization] [int] IDENTITY(1,1) NOT NULL,
 	[code] [nvarchar](16) NOT NULL,
@@ -212,13 +156,29 @@ PRIMARY KEY CLUSTERED
 	[idlocalization] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 ) ON [PRIMARY]
-
 GO
-
 ALTER TABLE [dbo].[localization] ADD  DEFAULT (getdate()) FOR [timestamp]
 GO
 
+-- SKILLTYPE
+CREATE TABLE [dbo].[skilltype](
+	[idskilltype] [int] IDENTITY(1,1) NOT NULL,
+	[name] [nvarchar](64) NOT NULL,
+	[localization] [int] NOT NULL,
+	[order] [int] NOT NULL,
+	[timestamp] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[idskilltype] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+ALTER TABLE [dbo].[skilltype] ADD  DEFAULT (getdate()) FOR [timestamp]
+GO
 
+
+
+-- INSERT DEFAULT LOCALIZATIONS
 INSERT INTO [localization]
 (code, sv,[en-us])
 SELECT
@@ -242,32 +202,9 @@ UNION ALL
 SELECT
 'skills','Övriga kompetenser','Other competences'
 
-GO
 
-/****** Object:  Table [dbo].[skilltype]    Script Date: 2015-12-25 19:24:26 ******/
-SET ANSI_NULLS ON
-GO
 
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE TABLE [dbo].[skilltype](
-	[idskilltype] [int] IDENTITY(1,1) NOT NULL,
-	[name] [nvarchar](64) NOT NULL,
-	[localization] [int] NOT NULL,
-	[order] [int] NOT NULL,
-	[timestamp] [datetime] NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[idskilltype] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY]
-
-GO
-
-ALTER TABLE [dbo].[skilltype] ADD  DEFAULT (getdate()) FOR [timestamp]
-GO
-
+-- INSERT DEFAULT SKILLTYPES
 INSERT INTO [skilltype]
 (name, localization, [order])
 SELECT
@@ -292,6 +229,60 @@ SELECT
 'skill', 7, 4
 
 
+-- CREATE PROFILE PICTURE
+CREATE PROCEDURE sp_add_profile_picture
+	-- Add the parameters for the stored procedure here
+	@@data NVARCHAR(MAX),
+	@@filename NVARCHAR(32),
+	@@extension NVARCHAR(8),
+	@@email NVARCHAR(128)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	DECLARE @idprofile INT
+	DECLARE @img VARBINARY(MAX)
+	DECLARE @idfile INT
+	DECLARE @data NVARCHAR(MAX) = @@data
 
+	SELECT @img = CAST(N'' AS XML).value('xs:base64Binary(sql:variable("@data"))', 'varbinary(MAX)');
+	
+	SELECT @idprofile = [profile] FROM [user] WHERE [email] = @@email
+	
+	INSERT INTO [file]
+	([data],[filename],[extension])
+	VALUES
+	(@img,@@filename,@@extension)
 
+	SELECT @idfile = SCOPE_IDENTITY()
+	
+	UPDATE [profile] 
+	SET [profilepicture] = @idfile
+	WHERE [idprofile] = @idprofile
 
+END
+GO
+
+-- GET PROFILE PICTURE
+CREATE PROCEDURE sp_get_profile_picture
+	-- Add the parameters for the stored procedure here
+	@@email NVARCHAR(128),
+	@@data NVARCHAR(MAX) OUT,
+	@@extension NVARCHAR(32) OUT
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	DECLARE @bin VARBINARY(MAX)
+	SELECT 
+		@bin = f.[data],
+		@@extension = f.[extension]
+	FROM [file] f
+	INNER JOIN [profile] p ON p.[profilepicture] = f.[idfile]
+	INNER JOIN [user] u ON u.[profile] = p.[idprofile]
+	WHERE u.[email] = @@email
+
+	SELECT @@data = CAST(N'' AS XML).value('xs:base64Binary(xs:hexBinary(sql:variable("@bin")))', 'varchar(max)');
+END
+GO

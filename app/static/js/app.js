@@ -22,6 +22,8 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider) 
           'hue-3': 'A200' // md-hue-3
     });
 
+
+
     $stateProvider
         
         // start STATES AND NESTED VIEWS ========================================
@@ -101,6 +103,21 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider) 
             access: 'open'
         })
 
+        .state('education', {
+            url: '/education',
+            views: {
+                '' : {
+                    templateUrl: 'static/partials/education.html',
+                    controller: 'educationController'
+                },
+                'toolbar@education' : {
+                    controller: 'toolbarController',
+                    templateUrl: 'static/partials/toolbar.html'
+                }
+            },
+            access: 'open'
+        })
+
         .state('logout', {
             url: '/logout',
             controller: 'logoutController',
@@ -133,10 +150,11 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider) 
 
 
 knowBase.run(function ($rootScope,$state, $cookies) {
+
 	
 
 	$rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-
+        
 		if (toState.access == 'restricted' && !$cookies.get('user')) {
 			event.preventDefault();
 		  	$state.go('start');

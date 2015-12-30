@@ -6,6 +6,20 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
       return $http.get(self.urlBase + 'profile');
     };
 
+    self.getEducations = function () {
+      $http({
+        method: 'GET',
+        url: '/someUrl'
+      }).then(function successCallback(response) {
+          // this callback will be called asynchronously
+          // when the response is available
+        }, function errorCallback(response) {
+          // called asynchronously if an error occurs
+          // or server returns response with an error status.
+        });
+      return $http.get(self.urlBase + 'educations');
+    };
+
     self.updateProfile = function(profileForm){
       var deferred = $q.defer();
       $http.post(self.urlBase + 'profile', profileForm)
@@ -25,6 +39,7 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
 
     self.uploadPicture = function(img){
       var deferred = $q.defer();
+      console.log(img)
       $http.post(self.urlBase + 'profilepicture', img)
         .success(function(data,status){
           if(status === 200 && data.response){
@@ -57,7 +72,8 @@ angular.module('knowBase').service('LocaleService', ['$q', '$timeout','$http', '
           }
         })
         // handle error
-        .error(function (data) {
+        .error(function (data,status) {
+
           deferred.reject();
         });
       return deferred.promise;

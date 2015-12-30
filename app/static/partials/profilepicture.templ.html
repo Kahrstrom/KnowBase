@@ -13,7 +13,13 @@
     <md-dialog-content layout-padding layout-margin>
       <div class="md-dialog-content">
         <h2>Crop to desired size</h2>
-        <div>Select an image file: <input type="file" id="fileInput" onchange="angular.element(this).scope().selectFile(this.files[0])"/></div>
+        <div>
+          <input type="file" id="fileInput" onchange="angular.element(this).scope().fileSelected(this.files[0])" class="ng-hide"/>
+          <md-button id="uploadButton" class="md-raised md-primary" aria-label="attach_file" ng-click="selectFile()">Choose file </md-button>
+          <md-input-container  md-no-float>    
+            <input id="textInput" ng-model="fileName" type="text" placeholder="No file chosen" ng-readonly="true">
+          </md-input-container>
+        </div>
         <div class="cropArea">
           <img-crop image="myImage" result-image="myCroppedImage"></img-crop>
         </div>
@@ -32,4 +38,3 @@
     </md-dialog-actions>
   </form>
 </md-dialog>
-
