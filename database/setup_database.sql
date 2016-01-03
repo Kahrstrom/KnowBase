@@ -3,6 +3,10 @@
 --DROP TABLE [tag]
 --DROP TABLE [user]
 --DROP TABLE [workexperience]
+--DROP TABLE [skilltype]
+--DROP TABLE [localization]
+--DROP TABLE [activity]
+--DROP TABLE [file]
 GO
 
 -- EDUCATION
@@ -39,6 +43,7 @@ CREATE TABLE [dbo].[workexperience](
 	[startdate] [datetime] NULL,
 	[enddate] [datetime] NULL,
 	[description] [nvarchar](4000) NOT NULL,
+	[profile] [int] NULL,
 	[timestamp] [datetime] NULL,
 PRIMARY KEY CLUSTERED 
 (
@@ -54,6 +59,94 @@ ALTER TABLE [dbo].[workexperience] ADD  DEFAULT ('') FOR [description]
 GO
 ALTER TABLE [dbo].[workexperience] ADD  DEFAULT (getdate()) FOR [timestamp]
 GO
+
+CREATE TABLE [dbo].[project](
+	[idproject] [int] IDENTITY(1,1) NOT NULL,
+	[name] [nvarchar](64) NOT NULL DEFAULT (''),
+	[customer] [nvarchar](64) NOT NULL DEFAULT (''),
+	[startdate] [datetime] NULL,
+	[enddate] [datetime] NULL,
+	[description] [nvarchar](512) NOT NULL DEFAULT (''),
+	[profile] [int] NULL,
+	[timestamp] [datetime] NULL DEFAULT (getdate()),
+PRIMARY KEY CLUSTERED 
+(
+	[idproject] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
+
+CREATE TABLE [dbo].[experience](
+	[idexperience] [int] IDENTITY(1,1) NOT NULL,
+	[experience] [nvarchar](128) NOT NULL DEFAULT (''),
+	[startdate] [datetime] NULL,
+	[enddate] [datetime] NULL,
+	[description] [nvarchar](512) NOT NULL DEFAULT (''),
+	[profile] [int] NULL,
+	[timestamp] [datetime] NULL DEFAULT (getdate()),
+PRIMARY KEY CLUSTERED 
+(
+	[idexperience] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+CREATE TABLE [dbo].[language](
+	[idlanguage] [int] IDENTITY(1,1) NOT NULL,
+	[language] [nvarchar](128) NOT NULL DEFAULT (''),
+	[listening] [nvarchar](32) NOT NULL DEFAULT (''),
+	[writing] [nvarchar](32) NOT NULL DEFAULT (''),
+	[speaking] [nvarchar](32) NOT NULL DEFAULT (''),
+	[profile] [int] NULL,
+	[timestamp] [datetime] NULL DEFAULT (getdate()),
+PRIMARY KEY CLUSTERED 
+(
+	[idlanguage] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
+CREATE TABLE [dbo].[publication](
+	[idpublication] [int] IDENTITY(1,1) NOT NULL,
+	[title] [nvarchar](128) NOT NULL DEFAULT (''),
+	[authors] [nvarchar](4000) NOT NULL DEFAULT (''),
+	[publicationdate] [datetime] NULL,
+	[publication] [nvarchar] (128) NULL,
+	[description] [nvarchar](512) NOT NULL DEFAULT (''),
+	[profile] [int] NULL,
+	[timestamp] [datetime] NULL DEFAULT (getdate()),
+PRIMARY KEY CLUSTERED 
+(
+	[idpublication] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+GO
+
+CREATE TABLE [dbo].[skill](
+	[idskill] [int] IDENTITY(1,1) NOT NULL,
+	[skill] [nvarchar](128) NOT NULL DEFAULT (''),
+	[level] [int] NULL,
+	[description] [nvarchar](512) NOT NULL DEFAULT (''),
+	[profile] [int] NULL,
+	[timestamp] [datetime] NULL DEFAULT (getdate()),
+PRIMARY KEY CLUSTERED 
+(
+	[idskill] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+
 
 -- PROFILE
 CREATE TABLE [dbo].[profile](
@@ -176,6 +269,28 @@ GO
 ALTER TABLE [dbo].[skilltype] ADD  DEFAULT (getdate()) FOR [timestamp]
 GO
 
+CREATE TABLE [dbo].[merit](
+	[idmerit] [int] IDENTITY(1,1) NOT NULL,
+	[name] [nvarchar](128) NOT NULL,
+	[description] [nvarchar](512) NOT NULL,
+	[profile] [int] NULL,
+	[timestamp] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[idmerit] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+
+GO
+
+ALTER TABLE [dbo].[merit] ADD  DEFAULT ('') FOR [merit]
+GO
+
+ALTER TABLE [dbo].[merit] ADD  DEFAULT ('') FOR [description]
+GO
+
+ALTER TABLE [dbo].[merit] ADD  DEFAULT (getdate()) FOR [timestamp]
+GO
 
 
 -- INSERT DEFAULT LOCALIZATIONS
@@ -200,7 +315,10 @@ SELECT
 'languages','Språkkunskaper','Language skills'
 UNION ALL
 SELECT
-'skills','Övriga kompetenser','Other competences'
+'skills','Nyckelkompetenser','Key competences'
+UNION ALL
+SELECT
+'merit', 'Övriga meriter', 'Other merits'
 
 
 
@@ -217,7 +335,7 @@ SELECT
 'project', 3, 5
 UNION ALL
 SELECT
-'publication', 4, 7
+'publication', 4, 4
 UNION ALL
 SELECT
 'experience', 5, 3
@@ -226,9 +344,12 @@ SELECT
 'language', 6, 6
 UNION ALL
 SELECT
-'skill', 7, 4
+'skill', 7, 8
+UNION ALL
+SELECT 
+'merit', 8, 7
 
-
+GO
 -- CREATE PROFILE PICTURE
 CREATE PROCEDURE sp_add_profile_picture
 	-- Add the parameters for the stored procedure here
@@ -261,6 +382,66 @@ BEGIN
 	SET [profilepicture] = @idfile
 	WHERE [idprofile] = @idprofile
 
+END
+GO
+
+CREATE PROCEDURE sp_get_skilltypes 
+	@@locale NVARCHAR(32),
+	@@email NVARCHAR(128)
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+	DECLARE @sql NVARCHAR(4000)
+	DECLARE @params NVARCHAR(256)
+	DECLARE @name NVARCHAR(32)
+	DECLARE @count INT
+	DECLARE @idprofile INT
+
+	SELECT @idprofile = [idprofile]
+	FROM [profile] 
+	INNER JOIN [user] ON [profile] = [idprofile]
+	WHERE [email] = @@email
+
+	CREATE TABLE #tmp
+	(
+		[locale] NVARCHAR(64),
+		[name] NVARCHAR(64),
+		[order] INT,
+		[count] INT
+	)
+
+	SET @sql = N'INSERT INTO #tmp ([locale],[name],[order]) 
+	SELECT l.[' + @@locale + '], s.[name], s.[order]
+	FROM [localization] l 
+	INNER JOIN [skilltype] s ON s.[localization] = l.[idlocalization]'
+
+	EXECUTE sp_executesql @sql
+
+	DECLARE cur CURSOR LOCAL STATIC FORWARD_ONLY FOR
+	SELECT [name] FROM #tmp
+
+	OPEN cur
+	FETCH NEXT FROM cur INTO @name
+	WHILE @@FETCH_STATUS = 0
+	BEGIN
+		SET @sql = 'SELECT @count = COUNT(*) 
+		FROM [' + @name + '] WHERE [profile] = @idprofile'
+
+		SET @params = '@count AS INT OUT, @idprofile AS INT'
+		EXECUTE sp_executesql @sql, @params, @count = @count OUT, @idprofile = @idprofile
+		UPDATE #tmp
+		SET [count] = @count
+		WHERE [name] = @name
+		FETCH NEXT FROM cur INTO @name
+	END
+
+	CLOSE cur
+	DEALLOCATE cur
+	
+	SELECT * FROM #tmp
+	DROP TABLE #tmp
 END
 GO
 

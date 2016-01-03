@@ -12,16 +12,17 @@
   <div layout="row">
     <div flex-gt-md="33" flex="0"></div>
     <div flex-gt-md="33" flex>
-      <md-card class="vertical-align-top">
-        <md-card-title flex-gt-md>
-          <md-toolbar>
+      <md-whiteframe layout="column" layout-padding layout-margin flex class="md-whiteframe-2dp vertical-align-top">
+      <!-- <md-card class="vertical-align-top"> -->
+        <div flex>
+          <md-toolbar flex>
             <md-card-title-text>
               <h1 class="md-headline center">Login</h1>
             </md-card-title-text>
           </md-toolbar>
-        </md-card-title>
+        </div>
         
-        <md-card-content layout="column" layout-margin layout-padding>
+        <div layout="column" layout-margin layout-padding>
           <div layout="row">
             <div flex-gt-md="10" flex="0"></div>
             <form flex-gt-md="80" flex ng-submit="login()" name="loginForm">
@@ -55,8 +56,8 @@
               <div flex-gt-md="10" flex="0"></div>
               <div flex-gt-md="80" flex>Forgot your <a class="primary" href="#">password?</a></div>
           </div>
-        </md-card-content>
-      </md-card>
+        </div>
+      </md-whiteframe>
     </div>
   </div>
 </md-content>

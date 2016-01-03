@@ -1,0 +1,87 @@
+
+<md-whiteframe class="md-whiteframe-2dp full-height" layout="column" flex>
+	
+	
+	<md-list ng-cloak>
+		<div layout="row">
+		  	<md-subheader  flex class="md-no-sticky">{{title}}</md-subheader>
+		  	<md-button ng-if="!workExperience" class="md-fab md-accent" ng-click="newWorkExperience()" aria-label="New WorkExperience">
+		        <md-icon md-font-icon="fa-plus" class="fa fa-lg white" ></md-icon>
+		    </md-button>
+		</div>
+	  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="workExperience in workExperiences" ng-click="editWorkExperience(workExperience)">
+	    	<md-icon md-font-icon="fa-suitcase" class="fa fa-lg avatar md-avatar-icon"></md-icon>
+    		<div class="md-list-item-text" >
+      			<h3> {{ workExperience.title }} </h3>
+      			<p> {{ workExperience.employer }}</p>
+      			<p> {{workExperience.startdate | date : 'yyyy-MM'}} - {{workExperience.enddate | date : 'yyyy-MM'}} </p>
+    		</div>
+	  	</md-list-item>
+
+	</md-list>
+</md-whiteframe>
+<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex-gt-lg="40" ng-if="workExperience" >
+	<div flex layout="row">
+	<span flex="33">
+		<md-button class="md-button-small" ng-click="cancelWorkExperience()">
+			<md-icon md-font-icon="fa-arrow-right" class="fa"></md-icon>
+		</md-button>
+		<span flex/>
+	</span>
+	<md-icon flex="33" md-font-icon="fa-suitcase center" class="fa fa-3x"></md-icon>
+	<span flex/>
+	</div>
+	<form flex layout-margin layout-padding flex ng-submit="saveWorkExperience()" name="workExperienceForm">
+		
+		<md-autocomplete flex required
+            md-input-name="titleAutoComplete"
+            md-min-length="0"
+            md-input-maxlength="64"
+            md-input-minlength="0"
+            md-no-cache="false"
+            md-selected-item="selectedTitle"
+            md-search-text="titleSearchText"
+            md-items="item in titleQueryFilter(titleSearchText)"
+            md-item-text="item.display"
+            md-floating-label="{{titleLabel}}"
+            md-selected-item-change="titleSelectChanged(item)"
+            md-search-text-change="titleSearchTextChanged(titleSearchText)"
+            md-select-on-match="true">
+          <md-item-template>
+            <span md-highlight-text="titleSearchText" md-highlight-flags="^i">{{item.display}}</span>
+          </md-item-template>
+        </md-autocomplete>	
+        <md-autocomplete flex required
+            md-input-name="employerAutoComplete"
+            md-min-length="0"
+            md-input-maxlength="64"
+            md-input-minlength="0"
+            md-no-cache="false"
+            md-selected-item="selectedEmployer"
+            md-search-text="employerSearchText"
+            md-items="item in employerQueryFilter(employerSearchText)"
+            md-item-text="item.display"
+            md-floating-label="{{employerLabel}}"
+            md-selected-item-change="employerSelectChanged(item)"
+            md-search-text-change="employerSearchTextChanged(employerSearchText)"
+            md-select-on-match="true">
+          <md-item-template>
+            <span md-highlight-text="employerSearchText" md-highlight-flags="^i">{{item.display}}</span>
+          </md-item-template>
+        </md-autocomplete>
+		
+		<md-input-container class="md-block md-icon-float">
+			<label>{{descriptionLabel}}</label>
+			<textarea rows="6" md-maxlength="512" type="text" name="description" ng-model="workExperience.description"></textarea>
+		</md-input-container>
+		
+		<md-datepicker name="startdate" ng-model="workExperience.startdate" md-placeholder="{{startdateLabel}}"></md-datepicker>
+		<div class="horizontal-spacer"></div>
+		<md-datepicker name="enddate" ng-model="workExperience.enddate" md-placeholder="{{enddateLabel}}"></md-datepicker>
+
+		<div layout="row" class="vertical-nudge-top">
+        	<!-- <div flex-gt-md="33" flex="20"></div> -->
+            <md-button type="submit" class="md-raised md-primary" flex>Save work experience</md-button>
+      	</div>
+	</form>
+</div>

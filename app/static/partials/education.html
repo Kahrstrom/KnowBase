@@ -1,51 +1,87 @@
-<header ui-view="toolbar"></header>
-<md-content layout="row" layout-margin layout-padding>
-	<div layout="column" flex-sm="100" flex-gt-lg="50" flex-md="100" flex-lg="50" class="border-right" >
-		<div flex layout="row">
 
-			<h2>Educations</h2>
-			<span flex></span>
-			<md-button class="md-fab md-accent" aria-label="Use Android">
-	          <md-icon md-font-icon="fa-plus" class="fa fa-lg white" ></md-icon>
-	        </md-button>
-		</div>
-		<md-list ng-cloak>
-		  	<md-subheader class="md-no-sticky">{{title}}</md-subheader>
-
-		  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="education in educations" ng-click="console.log('woop')">
-		    	<md-icon md-font-icon="fa-graduation-cap" class="fa fa-lg avatar md-avatar-icon"></md-icon>
-	    		<div class="md-list-item-text" >
-          			<h3> {{ education.title }} </h3>
-          			<p> {{ education.school }}</p>
-          			<p> {{education.startdate | date : 'yyyy-MM'}} - {{education.enddate | date : 'yyyy-MM'}} </p>
-        		</div>
-        		<md-button>
-        			<md-icon md-font-icon="fa-pencil" class="fa"></md-icon>
-        		</md-button>
-
-		  	</md-list-item>
-
-		</md-list>
-	</div>
-	<div flex-gt-md="50">
-		<form flex layout-margin layout-padding flex ng-submit="saveEducation()" name="educationForm">
-			<md-input-container class="md-block md-icon-float">
-				<label>Title</label>
-				<md-icon md-font-icon="fa-user" class="fa fa-lg"></md-icon>
-				<input md-maxlength="32" type="text" name="title" ng-model="educationForm.title" required>
-			</md-input-container>
-			<md-input-container class="md-block md-icon-float">
-				<label>School</label>
-				<md-icon md-font-icon="fa-user" class="fa fa-lg"></md-icon>
-				<input md-maxlength="32" type="text" name="school" ng-model="educationForm.school" required>
-			</md-input-container>
-
-			<!-- <md-datepicker name="startdate" ng-model="educationForm.startdate" md-placeholder="Start date"></md-datepicker> -->
+<md-whiteframe class="md-whiteframe-2dp full-height" layout="column" flex>
 	
-			<div layout="row" class="vertical-nudge-top">
-	        	<div flex-gt-md="33" flex="20"></div>
-	            <md-button type="submit" class="md-raised md-primary" flex-gt-md="33" flex="60">Save education</md-button>
-	      	</div>
-		</form>
+	
+	<md-list ng-cloak>
+		<div layout="row">
+		  	<md-subheader  flex class="md-no-sticky">{{title}}</md-subheader>
+		  	<md-button ng-if="!education" class="md-fab md-accent" ng-click="newEducation()" aria-label="New Education">
+		        <md-icon md-font-icon="fa-plus" class="fa fa-lg white" ></md-icon>
+		    </md-button>
+		</div>
+	  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="education in educations" ng-click="editEducation(education)">
+	    	<md-icon md-font-icon="fa-graduation-cap" class="fa fa-lg avatar md-avatar-icon"></md-icon>
+    		<div class="md-list-item-text" >
+      			<h3> {{ education.title }} </h3>
+      			<p> {{ education.school }}</p>
+      			<p> {{education.startdate | date : 'yyyy-MM'}} - {{education.enddate | date : 'yyyy-MM'}} </p>
+    		</div>
+	  	</md-list-item>
+
+	</md-list>
+</md-whiteframe>
+<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex-gt-lg="50" ng-if="education" >
+	<div flex layout="row" class="skill-header">
+		<span flex="33">
+			<md-button class="md-button-small" ng-click="cancelEducation()">
+				<md-icon md-font-icon="fa-arrow-right" class="fa"></md-icon>
+			</md-button>
+			<span flex/>
+		</span>
+		<md-icon flex="33" md-font-icon="fa-graduation-cap center" class="fa fa-3x"></md-icon>
+		<span flex/>
 	</div>
-</md-content>
+	<form flex layout-margin layout-padding flex ng-submit="saveEducation()" name="educationForm">
+		
+		<md-autocomplete flex required
+            md-input-name="titleAutoComplete"
+            md-min-length="0"
+            md-input-maxlength="64"
+            md-input-minlength="0"
+            md-no-cache="false"
+            md-selected-item="selectedTitle"
+            md-search-text="titleSearchText"
+            md-items="item in titleQueryFilter(titleSearchText)"
+            md-item-text="item.display"
+            md-floating-label="{{titleLabel}}"
+            md-selected-item-change="titleSelectChanged(item)"
+            md-search-text-change="titleSearchTextChanged(titleSearchText)"
+            md-select-on-match="true">
+          <md-item-template>
+            <span md-highlight-text="titleSearchText" md-highlight-flags="^i">{{item.display}}</span>
+          </md-item-template>
+        </md-autocomplete>	
+        <md-autocomplete flex required
+            md-input-name="schoolAutoComplete"
+            md-min-length="0"
+            md-input-maxlength="64"
+            md-input-minlength="0"
+            md-no-cache="false"
+            md-selected-item="selectedSchool"
+            md-search-text="schoolSearchText"
+            md-items="item in schoolQueryFilter(schoolSearchText)"
+            md-item-text="item.display"
+            md-floating-label="{{schoolLabel}}"
+            md-selected-item-change="schoolSelectChanged(item)"
+            md-search-text-change="schoolSearchTextChanged(schoolSearchText)"
+            md-select-on-match="true">
+          <md-item-template>
+            <span md-highlight-text="schoolSearchText" md-highlight-flags="^i">{{item.display}}</span>
+          </md-item-template>
+        </md-autocomplete>
+		
+		<md-input-container class="md-block md-icon-float">
+			<label>{{descriptionLabel}}</label>
+			<textarea rows="6" md-maxlength="512" type="text" name="description" ng-model="education.description"></textarea>
+		</md-input-container>
+		
+		<md-datepicker name="startdate" ng-model="education.startdate" md-placeholder="{{startdateLabel}}"></md-datepicker>
+		<div class="horizontal-spacer"></div>
+		<md-datepicker name="enddate" ng-model="education.enddate" md-placeholder="{{enddateLabel}}"></md-datepicker>
+
+		<div layout="row" class="vertical-nudge-top">
+            <md-button type="submit" class="md-raised md-primary" flex>Save education</md-button>
+      	</div>
+	</form>
+	<div flex/>
+</div>

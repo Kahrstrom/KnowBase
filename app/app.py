@@ -61,8 +61,13 @@ def home():
 @app.route('/api/skilltypes', methods=['GET'])
 @require_login()
 def skill_types():
-    skilltypes = cursor.execute("SELECT [{localize}] as 'locale', [name] FROM [skilltype] st INNER JOIN [localization] l ON l.[idlocalization] = st.[localization] ORDER BY [order]".format(localize=session['locale'])).fetchall()
-    retval = serialize_table([['locale'], ['name']], skilltypes)
+    stmt = "EXECUTE sp_get_skilltypes @@email = '{email}', @@locale = '{localize}'".format(
+        localize=session['locale'], email=session['email'])
+
+    print(stmt)
+    skilltypes = cursor.execute(stmt).fetchall()
+
+    retval = serialize_table(skilltypes[0].cursor_description, skilltypes)
 
     return jsonify(data=retval)
 
@@ -87,14 +92,14 @@ def upload_profile_picture():
 @require_login()
 def get_profile_picture():
     img = cursor.execute("EXECUTE sp_get_profile_picture @@email='{email}'".format(email=session['email'])).fetchone()
-
     return jsonify({'data': img[0], 'extension': img[1]})
 
 @app.route('/api/profile', methods=['POST'])
 @require_login()
 def update_profile():
-
+    print(request.json['birthdate'])
     update_stmt = update_table_from_request("profile", request)
+    print(update_stmt)
     cursor.execute(update_stmt)
     cursor.commit()
     return jsonify(response='success')
@@ -125,6 +130,7 @@ def logout():
 
 @app.route('/api/setLocale', methods=['POST'])
 def set_locale():
+    print(request.json['locale'])
     session['locale'] = request.json['locale']
     return jsonify(response='success')
 
@@ -166,6 +172,67 @@ def profile():
     return jsonify(data=profile)
 
 
+@app.route('/api/options', methods=['GET'])
+@require_login()
+def get_options():
+    table = request.args['table']
+    field = request.args['field']
+    stmt = "SELECT DISTINCT [{field}] AS 'option' FROM [{table}] ORDER BY [{field}] ASC".format(table=table,field=field)
+    options = cursor.execute(stmt).fetchall()
+    if len(options) == 0:
+        return abort(404)
+    return jsonify(data=serialize_table(options[0].cursor_description, options))
+
+@app.route('/api/workexperience', methods=['GET'])
+@require_login()
+def get_user_workexperience():
+    workexperience = cursor.execute("SELECT w.* FROM [workexperience] w INNER JOIN [profile] p ON p.[idprofile] = w.[profile] "
+                                "INNER JOIN [user] u ON u.[profile] = p.[idprofile] WHERE u.[email] = ? "
+                                "ORDER BY w.[enddate] DESC", [session['email']]).fetchall()
+
+
+    if len(workexperience) == 0:
+        return abort(404)
+
+    return jsonify(data=serialize_table(workexperience[0].cursor_description, workexperience))
+
+@app.route('/api/workexperience', methods=['POST'])
+@require_login()
+def create_workexperience():
+
+    idworkexperience = request.json['idworkexperience']
+    title = request.json['title']
+    employer = request.json['employer']
+    description = request.json['description']
+    startdate = request.json['startdate']
+    enddate = request.json['enddate']
+    print("hej")
+    idprofile = cursor.execute("SELECT [profile] FROM [user] WHERE [email] = '{email}'".format(
+        email=session['email'])).fetchone()
+
+    if idworkexperience is None:
+        stmt = "INSERT INTO [workexperience] ([title],[employer],[description],[startdate],[enddate],[profile])" \
+               "VALUES ('{title}','{employer}','{description}','{startdate}','{enddate}',{profile})".format(
+            title=title, employer=employer, description=description,
+            startdate=startdate, enddate=enddate, profile=idprofile)
+    else:
+        stmt = "UPDATE [workexperience] " \
+               "SET [title] = '{title}'," \
+               "[employer] = '{employer}'," \
+               "[description] = '{description}'," \
+               "[startdate] = '{startdate}'," \
+               "[enddate] = '{enddate}'," \
+               "[profile] = {idprofile}" \
+               "WHERE [idworkexperience] = {idworkexperience}".format(
+            title=title, employer=employer, description=description,
+            startdate=startdate, enddate=enddate, idworkexperience=idworkexperience,
+            idprofile=idprofile[0])
+
+    cursor.execute(stmt)
+    cursor.commit()
+
+    return jsonify(response='success')
+
 @app.route('/api/educations', methods=['GET'])
 @require_login()
 def get_user_educations():
@@ -178,30 +245,42 @@ def get_user_educations():
         return abort(404)
 
     return jsonify(data=serialize_table(educations[0].cursor_description, educations))
-   
 
 
-@app.route('/api/educations/<int:ideducation>', methods=['GET'])
-@require_login()
-def get_education(ideducation):
-    #education = Education.query.filter(Education.ideducation == ideducation)
-    #if education.count() == 0:
-    return abort(404)
-    #return jsonify(education=education.first().serialize)
-
-
-@app.route('/api/educations', methods=['POST'])
+@app.route('/api/education', methods=['POST'])
 @require_login()
 def create_education():
-    if not request.json or not 'title' in request.json:
-        abort(400)
-    education = {
-        'title': request.json['title'],
-        'school': request.json['school'],
-        'enddate': request.json['enddate'],
-        'description': request.json['description']
-    }
-    return jsonify(education=education)
+
+    ideducation = request.json['ideducation']
+    title = request.json['title']
+    school = request.json['school']
+    description = request.json['description']
+    startdate = request.json['startdate']
+    enddate = request.json['enddate']
+
+    idprofile = cursor.execute("SELECT [profile] FROM [user] WHERE [email] = '{email}'".format(
+        email=session['email'])).fetchone()
+
+    if ideducation is None:
+        stmt = "INSERT INTO [education] ([title],[school],[description],[startdate],[enddate])" \
+               "VALUES ('{title}','{school}','{description}','{startdate}','{enddate}')".format(
+            title=title, school=school, description=description, startdate=startdate, enddate=enddate)
+    else:
+        stmt = "UPDATE [education] " \
+               "SET [title] = '{title}'," \
+               "[school] = '{school}'," \
+               "[description] = '{description}'," \
+               "[startdate] = '{startdate}'," \
+               "[enddate] = '{enddate}'," \
+               "[profile] = {idprofile}" \
+               "WHERE [ideducation] = {ideducation}".format(
+            title=title, school=school, description=description,
+            startdate=startdate, enddate=enddate, ideducation=ideducation,
+            idprofile=idprofile)
+
+    cursor.execute(stmt)
+    cursor.commit()
+    return jsonify(response='success')
 
 def serialize_table(columns, values):
     t = []
@@ -221,13 +300,16 @@ def update_table_from_request(table, request):
     SQL = "UPDATE [{table}] SET ".format(table=table)
     for field in data:
         if field != "id" + table:
+            print(data[field])
+            print(field)
             if data[field] is not None:
                 statement = "[{field}] = '{val}',".format(field=field,val=data[field])
             else:
                 statement = "[{field}] = {val},".format(field=field,val="NULL")
             SQL = SQL + statement
 
-    SQL = SQL[:len(SQL)-1] + " WHERE [{idfield}] = {idvalue}".format(idfield="id"+table,idvalue=data["id"+table])
+    SQL = SQL[:len(SQL)-1] + " WHERE [{idfield}] = {idvalue}".format(idfield=("id"+table),idvalue=data["id"+table])
+
     return SQL
 
 

@@ -7,22 +7,78 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
     };
 
     self.getEducations = function () {
-      $http({
-        method: 'GET',
-        url: '/someUrl'
-      }).then(function successCallback(response) {
-          // this callback will be called asynchronously
-          // when the response is available
-        }, function errorCallback(response) {
-          // called asynchronously if an error occurs
-          // or server returns response with an error status.
-        });
+  
       return $http.get(self.urlBase + 'educations');
     };
 
-    self.updateProfile = function(profileForm){
+    self.updateProfile = function(profile){
+      var jsonProfile = {
+        idprofile : profile.idprofile,
+        firstname : profile.firstname,
+        lastname : profile.lastname,
+        birthdate : profile.birthdate,
+        phone : profile.phone,
+        mobilephone : profile.mobilephone,
+        address : profile.address,
+        city : profile.city,
+        country : profile.country
+      };
       var deferred = $q.defer();
-      $http.post(self.urlBase + 'profile', profileForm)
+      $http.post(self.urlBase + 'profile', jsonProfile)
+        .success(function (data, status) {
+          if(status === 200 && data.response){
+            deferred.resolve();
+          } else {
+            deferred.reject();
+          }
+        })
+        // handle error
+        .error(function (data) {
+          deferred.reject();
+        });
+      return deferred.promise;
+    }
+
+    self.saveEducation = function(education){
+      var deferred = $q.defer();
+
+      var jsonEducation = {
+        'ideducation' : education.ideducation,
+        'title' : education.title,
+        'school' : education.school,
+        'description' : education.description,
+        'startdate' : education.startdate,
+        'enddate' : education.enddate
+      };
+
+      $http.post(self.urlBase + 'education', jsonEducation)
+        .success(function (data, status) {
+          if(status === 200 && data.response){
+            deferred.resolve();
+          } else {
+            deferred.reject();
+          }
+        })
+        // handle error
+        .error(function (data) {
+          deferred.reject();
+        });
+      return deferred.promise;
+    }
+
+    self.saveWorkExperience = function(workexperience){
+      var deferred = $q.defer();
+
+      var jsonWorkExperience = {
+        'idworkexperience' : workexperience.idworkexperience,
+        'title' : workexperience.title,
+        'employer' : workexperience.employer,
+        'description' : workexperience.description,
+        'startdate' : workexperience.startdate,
+        'enddate' : workexperience.enddate
+      };
+
+      $http.post(self.urlBase + 'workexperience', jsonWorkExperience)
         .success(function (data, status) {
           if(status === 200 && data.response){
             deferred.resolve();
@@ -60,8 +116,8 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
 angular.module('knowBase').service('LocaleService', ['$q', '$timeout','$http', '$window', function ($q,$timeout,$http, $window) {
     var self = this;
 
-    self.setLocale = function(){
-      var lang = $window.navigator.language || $window.navigator.userLanguage; 
+    self.setLocale = function(lang){
+      console.log(lang)
       var deferred = $q.defer();
       $http.post('/api/setLocale', {locale: lang})
         .success(function (data, status) {

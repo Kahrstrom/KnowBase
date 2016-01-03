@@ -20,8 +20,16 @@
 
 body {
     font-family: Gidole;
+    background-color: #F5F5F5;
 }
 
+md-content{
+    background-color: #F5F5F5;
+}
+
+md-whiteframe{
+    background-color: #FFF;
+}
 [scroll]{
     position: fixed;
     top: 0;
@@ -55,7 +63,7 @@ body {
 }
 
 .full-height{
-    height: 100vh;
+    min-height: calc(~'100vh - 145px');
 }
 
 .vertical-align-top{
@@ -171,10 +179,97 @@ md-grid-tile.link-tile{
   height:350px;
 }
 
+.md-button-small{
+    width: 36px;
+    height: 36px;
+    min-width: 36px;
+    min-height: 36px;
+}
+
 .md-toast-success{
     background-color: @color-success;
+    >div.md-toast-content{
+        background-color: @color-success;
+    }
 }
 
 .md-toast-error{
     background-color: @color-error;
+    >div.md-toast-content{
+        background-color: @color-error;
+        box-shadow: none !important;
+    }
+}
+
+.md-toast-content{
+        box-shadow: none !important;
+}
+
+.overlap-bottom-right{
+    bottom: -30px;
+    // right: -26px;
+}
+
+md-datepicker {
+    padding-top: 3px;
+    margin-left: 0px !important;
+    padding-left: 2px !important;
+    > button.md-datepicker-button.md-icon-button.md-button {
+        margin-left: 0px;
+        margin-right: 0px;
+        top:-10px;
+        padding: 0px;
+        width: 30px;
+        height: 30px;
+        line-height: 30px;
+        min-height: 30px;
+    }
+    > div.md-datepicker-input-container {
+        margin-left: 12px;
+        padding-bottom: 4px;
+        margin-bottom: 16px;
+        width: calc(~'100% - 56px');
+    }
+    &.md-datepicker-open > div.md-datepicker-input-container > input.md-datepicker-input { // Stop the jumping on open
+        height: inherit;
+        margin-left: 20px;
+        // tabindex needs to be -1: https://github.com/angular/material/issues/4755
+    }
+}
+
+.md-calendar-day-header{
+    background-color: @color-primary;
+    color: white;
+}
+
+md-autocomplete[md-floating-label]{
+    > md-autocomplete-wrap{
+        > md-input-container {
+            margin: 0px;
+            padding-bottom: 2px;
+            >label{
+                padding-bottom: 6px;
+                left:-8px;
+            }
+        }
+    }
+}
+
+md-badge{
+  margin: 0 0 0 8px;
+  background-color: rgba(0,0,0,0.35);
+  color: white;
+  padding: 2px 4px;
+  border-radius: 4px;
+  &.md-primary{
+    background-color: @color-primary;
+  }
+}
+
+figcaption{
+    width: 95%;
+
+    >md-badge{
+        margin-top:-4px;
+    }
 }

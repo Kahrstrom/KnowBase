@@ -31,45 +31,40 @@
 </header>
 <md-content layout="column" flex>
   <div layout-padding layout-margin layout="column" flex>
-    <div layout-gt-md="row" layout-margin layout-column class="vertical-nudge-top">
 
-      <div flex="20"></div>
-      <div layout="column" layout-margin flex-gt-md="20" flex>
-        <md-card layout-padding class="info-tile">
-          <md-card-title layout-padding layout-margin class="center">
-            <md-icon md-font-icon="fa-map-o" class="fa huge primary"></md-icon>
-            <h4>Keep track!</h4>
-          </md-card-title>
-          
-          <md-card-content>
-          Cray occupy twee, green juice humblebrag crucifix selvage irony gluten-free. Ramps shabby chic pop-up before they sold out photo booth fixie sriracha tousled viral. Small batch skateboard fixie franzen ennui gastropub godard. Cornhole poutine kale chips lomo. 
-          </md-card-content>
-        </md-card>
-      </div>
-      <div layout="column" layout-margin flex-gt-md="20" flex>
-        <md-card layout-padding class="info-tile">
-          <md-card-title layout-padding layout-margin class="center">
-            <md-icon md-font-icon="fa-user" class="fa huge primary"></md-icon>
-            <h4>Easy to use</h4>
-          </md-card-title>
-          
-          <md-card-content>
-          Tofu chartreuse keffiyeh lo-fi, ennui migas church-key ugh art party kogi godard whatever portland typewriter messenger bag. YOLO tote bag typewriter bitters, knausgaard butcher gastropub direct trade polaroid chillwave godard food truck plaid.
-          </md-card-content>
-        </md-card>
-      </div>
-      <div layout="column" layout-margin flex-gt-md="20" flex>
-        <md-card layout-padding class="info-tile">
-          <md-card-title layout-padding layout-margin class="center">
-            <md-icon md-font-icon="fa-desktop" class="fa huge primary"></md-icon>
-            <h4>On the go</h4>
-          </md-card-title>
-          
-          <md-card-content>
-          Pop-up stumptown bespoke franzen, before they sold out banh mi single-origin coffee occupy hella artisan irony freegan. 8-bit synth irony, thundercats squid chillwave hoodie taxidermy cardigan readymade ugh organic. 
-          </md-card-content>
-        </md-card>
-      </div>
+    <div layout-gt-md="row" layout-margin layout-column class="vertical-nudge-top">
+      <div flex="20"/>
+      <md-whiteframe layout="column" layout-padding layout-margin flex-gt-md="20" flex class="md-whiteframe-2dp">
+        <div layout="row" layout-padding layout-margin class="center">
+          <md-icon md-font-icon="fa-map-o" class="fa huge primary"></md-icon>
+          <h4>Keep track!</h4>
+        </div>
+        
+        <div>
+        Cray occupy twee, green juice humblebrag crucifix selvage irony gluten-free. Ramps shabby chic pop-up before they sold out photo booth fixie sriracha tousled viral. Small batch skateboard fixie franzen ennui gastropub godard. Cornhole poutine kale chips lomo. 
+        </div>
+      </md-whiteframe>
+      <md-whiteframe layout="column" layout-padding layout-margin flex-gt-md="20" flex class="md-whiteframe-2dp">
+        <div layout="row" layout-padding layout-margin class="center">
+          <md-icon md-font-icon="fa-user" class="fa huge primary"></md-icon>
+          <h4>Easy to use</h4>
+        </div>
+        
+        <div>
+        Tofu chartreuse keffiyeh lo-fi, ennui migas church-key ugh art party kogi godard whatever portland typewriter messenger bag. YOLO tote bag typewriter bitters, knausgaard butcher gastropub direct trade polaroid chillwave godard food truck plaid.
+        </div>
+      </md-whiteframe>
+      <md-whiteframe layout="column" layout-padding layout-margin flex-gt-md="20" flex class="md-whiteframe-2dp">
+        <div layout="row" layout-padding layout-margin class="center">
+          <md-icon md-font-icon="fa-desktop" class="fa huge primary"></md-icon>
+          <h4>On the go</h4>
+        </div>
+        
+        <div>
+        Pop-up stumptown bespoke franzen, before they sold out banh mi single-origin coffee occupy hella artisan irony freegan. 8-bit synth irony, thundercats squid chillwave hoodie taxidermy cardigan readymade ugh organic. 
+        </div>
+      </md-whiteframe>
+      <!-- </md-whiteframe> -->
     </div>
     <div ui-view="news"></div>
     <div ui-view="about"></div>

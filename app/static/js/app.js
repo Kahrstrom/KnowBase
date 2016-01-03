@@ -16,9 +16,9 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider) 
 
     $mdThemingProvider.theme('grey')
         .primaryPalette('grey',{
-          'default': '500', // primary
-          'hue-1': '200', // md-hue-1
-          'hue-2': '400', // md-hue-2
+          'default': '200', // primary
+          'hue-1': '400', // md-hue-1
+          'hue-2': '500', // md-hue-2
           'hue-3': 'A200' // md-hue-3
     });
 
@@ -98,9 +98,17 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider) 
                 'toolbar@skills' : {
                     controller: 'toolbarController',
                     templateUrl: 'static/partials/toolbar.html'
+                },
+                'education@skills':{
+                    controller: 'educationController',
+                    templateUrl: 'static/partials/education.html'
+                },
+                'workexperience@skills':{
+                    controller: 'workExperienceController',
+                    templateUrl: 'static/partials/workexperience.html'
                 }
             },
-            access: 'open'
+            access: 'restricted'
         })
 
         .state('education', {
@@ -115,7 +123,7 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider) 
                     templateUrl: 'static/partials/toolbar.html'
                 }
             },
-            access: 'open'
+            access: 'restricted'
         })
 
         .state('logout', {

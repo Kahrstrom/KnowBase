@@ -1,3 +1,4 @@
+
 <md-toolbar ng-show="!showSearch">
   <div class="md-toolbar-tools">
     <div flex-md-gt="10">
@@ -44,15 +45,30 @@
     <span flex></span>
     <md-button class="md-icon-button" ng-click="toggleSearch(); focusInput=true" aria-label="menu">
         <md-icon md-font-icon="fa-search" class="fa fa-lg white"></md-icon>
-      </md-button>
+    </md-button>
+    <!-- <div layout="row"> -->
+    <md-fab-speed-dial ng-cloak md-open="languageMenuOpen" md-direction="left"
+                         ng-class="'md-scale'">
+      <md-fab-trigger>
+        <md-button aria-label="menu" class="md-fab md-primary">
+          <h2>{{locale}}</h2>
+        </md-button>
+      </md-fab-trigger>
+      <md-fab-actions>
+        <md-button ng-repeat="item in locales" aria-label="{{item.display}}" ng-click="setLocale(item)" class="md-fab md-raised md-mini">
+          {{item.display}}
+        </md-button>
+      </md-fab-actions>
+    </md-fab-speed-dial>
+    <!-- </div> -->
+    
     <md-button aria-label="login" ui-sref="logout">
       <span class="white">Logout</span>
     </md-button>
   </div>
 </md-toolbar>
 
-
-<md-toolbar md-theme="grey" class="md-hue-1" ng-show="showSearch">
+<md-toolbar ng-show="showSearch" md-theme="grey" class="md-hue-1">
   <div class="md-toolbar-tools">
 
     
