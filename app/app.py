@@ -64,7 +64,6 @@ def skill_types():
     stmt = "EXECUTE sp_get_skilltypes @@email = '{email}', @@locale = '{localize}'".format(
         localize=session['locale'], email=session['email'])
 
-    print(stmt)
     skilltypes = cursor.execute(stmt).fetchall()
 
     retval = serialize_table(skilltypes[0].cursor_description, skilltypes)
@@ -97,9 +96,7 @@ def get_profile_picture():
 @app.route('/api/profile', methods=['POST'])
 @require_login()
 def update_profile():
-    print(request.json['birthdate'])
-    update_stmt = update_table_from_request("profile", request)
-    print(update_stmt)
+    update_stmt = update_from_request("profile", request)
     cursor.execute(update_stmt)
     cursor.commit()
     return jsonify(response='success')
@@ -130,7 +127,6 @@ def logout():
 
 @app.route('/api/setLocale', methods=['POST'])
 def set_locale():
-    print(request.json['locale'])
     session['locale'] = request.json['locale']
     return jsonify(response='success')
 
@@ -201,32 +197,10 @@ def get_user_workexperience():
 def create_workexperience():
 
     idworkexperience = request.json['idworkexperience']
-    title = request.json['title']
-    employer = request.json['employer']
-    description = request.json['description']
-    startdate = request.json['startdate']
-    enddate = request.json['enddate']
-    print("hej")
-    idprofile = cursor.execute("SELECT [profile] FROM [user] WHERE [email] = '{email}'".format(
-        email=session['email'])).fetchone()
-
     if idworkexperience is None:
-        stmt = "INSERT INTO [workexperience] ([title],[employer],[description],[startdate],[enddate],[profile])" \
-               "VALUES ('{title}','{employer}','{description}','{startdate}','{enddate}',{profile})".format(
-            title=title, employer=employer, description=description,
-            startdate=startdate, enddate=enddate, profile=idprofile)
+        stmt = insert_from_request("workexperience", request)
     else:
-        stmt = "UPDATE [workexperience] " \
-               "SET [title] = '{title}'," \
-               "[employer] = '{employer}'," \
-               "[description] = '{description}'," \
-               "[startdate] = '{startdate}'," \
-               "[enddate] = '{enddate}'," \
-               "[profile] = {idprofile}" \
-               "WHERE [idworkexperience] = {idworkexperience}".format(
-            title=title, employer=employer, description=description,
-            startdate=startdate, enddate=enddate, idworkexperience=idworkexperience,
-            idprofile=idprofile[0])
+        stmt = update_from_request("workexperience", request)
 
     cursor.execute(stmt)
     cursor.commit()
@@ -252,31 +226,11 @@ def get_user_educations():
 def create_education():
 
     ideducation = request.json['ideducation']
-    title = request.json['title']
-    school = request.json['school']
-    description = request.json['description']
-    startdate = request.json['startdate']
-    enddate = request.json['enddate']
-
-    idprofile = cursor.execute("SELECT [profile] FROM [user] WHERE [email] = '{email}'".format(
-        email=session['email'])).fetchone()
 
     if ideducation is None:
-        stmt = "INSERT INTO [education] ([title],[school],[description],[startdate],[enddate])" \
-               "VALUES ('{title}','{school}','{description}','{startdate}','{enddate}')".format(
-            title=title, school=school, description=description, startdate=startdate, enddate=enddate)
+        stmt = insert_from_request("education",request)
     else:
-        stmt = "UPDATE [education] " \
-               "SET [title] = '{title}'," \
-               "[school] = '{school}'," \
-               "[description] = '{description}'," \
-               "[startdate] = '{startdate}'," \
-               "[enddate] = '{enddate}'," \
-               "[profile] = {idprofile}" \
-               "WHERE [ideducation] = {ideducation}".format(
-            title=title, school=school, description=description,
-            startdate=startdate, enddate=enddate, ideducation=ideducation,
-            idprofile=idprofile)
+        stmt = update_from_request("education", request)
 
     cursor.execute(stmt)
     cursor.commit()
@@ -295,13 +249,11 @@ def serialize_row(columns, values):
         d[t] = values[t]
     return d
 
-def update_table_from_request(table, request):
+def update_from_request(table, request):
     data = request.json
     SQL = "UPDATE [{table}] SET ".format(table=table)
     for field in data:
         if field != "id" + table:
-            print(data[field])
-            print(field)
             if data[field] is not None:
                 statement = "[{field}] = '{val}',".format(field=field,val=data[field])
             else:
@@ -312,6 +264,29 @@ def update_table_from_request(table, request):
 
     return SQL
 
+
+def insert_from_request(table, request):
+    data = request.json
+    idprofile = cursor.execute("SELECT [profile] FROM [user] WHERE [email] = '{email}'".format(
+        email=session['email'])).fetchone()[0]
+    SQL = "INSERT INTO [{table}] (".format(table=table)
+    statements = ""
+    for field in data:
+        if field != "id" + table:
+            statements = statements + ", [{field}]".format(field=field)
+
+    SQL = SQL + statements[1:len(statements)] + ", [profile]) VALUES ("
+
+    statements = ""
+    for field in data:
+        if field != "id" + table:
+            if data[field] is not None:
+                statements = statements + ", '{val}'".format(val=data[field])
+            else:
+                statements = statements + ", {val}".format(val="NULL")
+
+    SQL = SQL + statements[1:len(statements)] + ", {profile})".format(profile=idprofile)
+    return SQL
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))

@@ -662,9 +662,7 @@ angular.module('knowBase').controller('profileController',
     function getProfile() {
       DataService.getProfile()
           .success(function (response) { 
-              console.log(response.data)
               $scope.profile = new Profile(response.data);
-
           })
           .error(function (error) {
               $scope.status = 'Unable to load profile data: ' + error.message;
@@ -704,6 +702,7 @@ angular.module('knowBase').controller('profileController',
         $scope.status = response.status;
 
     });
+
   
 
     $scope.updateProfile = function(){

@@ -12,19 +12,8 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
     };
 
     self.updateProfile = function(profile){
-      var jsonProfile = {
-        idprofile : profile.idprofile,
-        firstname : profile.firstname,
-        lastname : profile.lastname,
-        birthdate : profile.birthdate,
-        phone : profile.phone,
-        mobilephone : profile.mobilephone,
-        address : profile.address,
-        city : profile.city,
-        country : profile.country
-      };
       var deferred = $q.defer();
-      $http.post(self.urlBase + 'profile', jsonProfile)
+      $http.post(self.urlBase + 'profile', profile)
         .success(function (data, status) {
           if(status === 200 && data.response){
             deferred.resolve();
@@ -41,17 +30,8 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
 
     self.saveEducation = function(education){
       var deferred = $q.defer();
-
-      var jsonEducation = {
-        'ideducation' : education.ideducation,
-        'title' : education.title,
-        'school' : education.school,
-        'description' : education.description,
-        'startdate' : education.startdate,
-        'enddate' : education.enddate
-      };
-
-      $http.post(self.urlBase + 'education', jsonEducation)
+      console.log(education)
+      $http.post(self.urlBase + 'education', education)
         .success(function (data, status) {
           if(status === 200 && data.response){
             deferred.resolve();
@@ -69,16 +49,7 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
     self.saveWorkExperience = function(workexperience){
       var deferred = $q.defer();
 
-      var jsonWorkExperience = {
-        'idworkexperience' : workexperience.idworkexperience,
-        'title' : workexperience.title,
-        'employer' : workexperience.employer,
-        'description' : workexperience.description,
-        'startdate' : workexperience.startdate,
-        'enddate' : workexperience.enddate
-      };
-
-      $http.post(self.urlBase + 'workexperience', jsonWorkExperience)
+      $http.post(self.urlBase + 'workexperience', workexperience)
         .success(function (data, status) {
           if(status === 200 && data.response){
             deferred.resolve();
