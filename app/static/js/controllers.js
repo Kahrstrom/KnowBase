@@ -227,8 +227,8 @@ angular.module('knowBase').controller('educationController',
       self.ideducation = e ? e.ideducation : null;
       self.title = e ? e.title : '';
       self.school = e ? e.school : '';
-      self.startdate = e ? new Date(e.startdate) : null;
-      self.enddate = e ? new Date(e.enddate) : null;
+      self.startdate = e ? (e.startdate ? new Date(e.startdate) : null) : null;
+      self.enddate = e ? (e.enddate ? new Date(e.enddate) : null) : null;
       self.description = e ? e.description : '';
     }
 
@@ -254,7 +254,7 @@ angular.module('knowBase').controller('educationController',
       });
     }
     $scope.saveEducation = function(){
-      DataService.saveEducation($scope.education)
+      DataService.saveSkill($scope.education,'education')
         .then(function () {
             $scope.success = true;
             $mdToast.show({
@@ -262,8 +262,6 @@ angular.module('knowBase').controller('educationController',
                 hideDelay: 3000,
                 position: 'bottom left'
             });
-            getEducations();
-            getOptions();
             $scope.education = null;
             $scope.titleSearchText = null;
             $scope.schoolSearchText = null;
@@ -278,6 +276,10 @@ angular.module('knowBase').controller('educationController',
                 position: 'bottom left'
             }); 
         });
+        $timeout(function () {
+            getEducations();
+            getOptions();
+        }, 3000);
     }
     $scope.cancelEducation = function(){
       $scope.education = null;
@@ -302,6 +304,28 @@ angular.module('knowBase').controller('educationController',
       return function filterFn(option) {
         return (option.value.indexOf(lowercaseQuery) > -1);
       };
+    }
+
+    $scope.deleteRecord = function(){
+      $http({method: 'DELETE', url: '/api/deleterecord?table=education&idrecord=' + $scope.education.ideducation})
+        .then(function() {
+          $scope.educations = $scope.educations
+           .filter(function (o) {
+                    return o.ideducation !== $scope.education.ideducation;
+                   });
+           $mdToast.show({
+                template: '<md-toast class="md-toast-success">Education successfully removed!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+        }, 
+        function(response) {
+          $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to remove education!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+      });
     }
 
     function titleQueryFilter (query) {
@@ -360,6 +384,653 @@ angular.module('knowBase').controller('educationController',
     getEducations();
 });
 
+angular.module('knowBase').controller('projectController',
+
+
+  function ($scope, $state, $http, $templateCache, DataService, $mdToast) {
+    $scope.submitText = 'Update work experience';
+    $scope.projects = [];
+    $scope.nameLabel = 'Name';
+    $scope.customerLabel = 'Customer';
+    $scope.startdateLabel = 'Start date';
+    $scope.enddateLabel = 'End date';
+    $scope.hoursLabel = 'Hours';
+    $scope.descriptionLabel = 'Description';
+
+    //Name autocomplete stuff
+    $scope.names = [];
+    $scope.selectedName = null;
+    $scope.nameSearchText = null;
+    $scope.nameSearchTextChanged = nameSearchTextChanged;
+    $scope.nameSelectChanged = nameSelectChanged;
+    $scope.nameQueryFilter = nameQueryFilter;
+
+    //Customer autocomplete stuff
+    $scope.customers = [];
+    $scope.selectedCustomer = null;
+    $scope.customerSearchText = null;
+    $scope.customerSearchTextChanged = customerSearchTextChanged;
+    $scope.customerSelectChanged = customerSelectChanged;
+    $scope.customerQueryFilter = customerQueryFilter;
+
+    var Project = function(o){
+      var self = this;
+      self.idproject = o ? o.idproject : null;
+      self.name = o ? o.name : '';
+      self.customer = o ? o.customer : null;
+      self.customername = o ? o.customername : '';
+      self.startdate = o ? (o.startdate ? new Date(o.startdate) : null) : null;
+      self.enddate = o ? (o.enddate ? new Date(o.enddate) : null) : null;
+      self.hours = o ? o.hours : 0;
+      self.description = o ? o.description : '';
+    }
+
+    function getProjects() {
+      $scope.projects = [];
+      $http({method: 'GET', url: '/api/projects', cache: $templateCache}).
+        then(function(response) {
+          $scope.status = response.status;
+          $.each(response.data.data, function(i,o){
+            $scope.projects.push(new Project(o));
+          });
+          $scope.title = 'Add all your projects';
+        }, function(response) {
+          $scope.data = response.data || "Request failed";
+          $scope.status = response.status;
+          if($scope.status == 404){
+            $scope.title = 'No projects found. Try adding some to improve your CV!';
+          }else{
+            $scope.title = 'An unexpected error occurred.';
+          }
+      });
+    }
+    $scope.saveProject = function(){
+
+      DataService.saveSkill($scope.project, 'project')
+        .then(function () {
+            $scope.success = true;
+            $mdToast.show({
+                template: '<md-toast class="md-toast-success">Successfully saved project!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            });
+            $scope.project = null;
+            $scope.nameSearchText = null;
+            $scope.customerSearchText = null;
+        },
+        // handle error
+        function (reason) {
+            $scope.errorMessage = reason; 
+            $scope.error = true;
+            $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to save project!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+        });
+        $timeout(function () {
+            getProjects();
+            getOptions();
+        }, 3000);
+    }
+    $scope.cancelProject = function(){
+      $scope.project = null;
+      $scope.nameSearchText = null;
+      $scope.customerSearchText = null;
+    }
+
+    $scope.editProject = function(o){
+      $scope.project = o;
+      $scope.nameSearchText = o.name;
+      $scope.customerSearchText = o.customername;
+    }
+
+    $scope.newProject = function(){
+      $scope.project = new Project(null);
+      $scope.nameSearchText = null;
+      $scope.customerSearchText = null; 
+    }
+
+    $scope.createFilterFor = function(query) {
+      var lowercaseQuery = angular.lowercase(query);
+      return function filterFn(option) {
+        return (option.value.indexOf(lowercaseQuery) > -1);
+      };
+    }
+
+    $scope.deleteRecord = function(){
+      $http({method: 'DELETE', url: '/api/deleterecord?table=project&idrecord=' + $scope.project.idproject})
+        .then(function() {
+          $scope.projects = $scope.projects
+           .filter(function (o) {
+                    return o.idproject !== $scope.project.idproject;
+                   });
+           $mdToast.show({
+                template: '<md-toast class="md-toast-success">Project successfully removed!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+        }, 
+        function(response) {
+          $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to remove project!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+      });
+    }
+
+    function nameQueryFilter (query) {
+      return query ? $scope.names.filter( $scope.createFilterFor(query) ) : $scope.names;
+    }
+
+    function nameSearchTextChanged(text){
+      $scope.project.name = text;
+    }
+
+    function nameSelectChanged(item){
+      if(item){
+        $scope.selectedName = item;
+        $scope.project.name = item.display;
+      }
+    }
+
+    function customerQueryFilter (query) {
+      return query ? $scope.customers.filter( $scope.createFilterFor(query) ) : $scope.customers;
+    }
+
+    function customerSearchTextChanged(text){
+      $scope.project.customername = text;
+    }
+
+    function customerSelectChanged(item){
+      if(item){
+        $scope.selectedCustomer = item;
+        $scope.project.customer = item.id;
+        $scope.project.customername = item.display;
+      }
+    }
+
+    function getOptions(){
+      // Names
+      $http({method: 'GET', url: '/api/options?table=project&field=name', cache: $templateCache}).
+        then(function(response) {
+          $scope.names = response.data.data.map(function(t){
+            return {display: t.option, value: t.option.toLowerCase()}
+          });
+          console.log($scope.names)
+        }, function(response) {
+          console.log("error")    
+      });
+      // Customers
+      $http({method: 'GET', url: '/api/customeroptions', cache: $templateCache}).
+        then(function(response) {
+          $scope.customers = response.data.data.map(function(t){
+            return {display: t.name, value: t.name.toLowerCase(), id : t.idcustomer}
+          });
+        }, function(response) {
+          console.log("error")    
+      });
+    }
+
+    getOptions();
+    getProjects();
+});
+
+angular.module('knowBase').controller('meritController',
+  function ($scope, $state, $http, $templateCache, DataService, $mdToast) {
+    $scope.submitText = 'Update merit';
+    $scope.merits = [];
+    $scope.nameLabel = 'Name';
+    $scope.dateLabel = 'Start date';
+    $scope.descriptionLabel = 'Description';
+
+    //Name autocomplete stuff
+    $scope.names = [];
+    $scope.selectedName = null;
+    $scope.nameSearchText = null;
+    $scope.nameSearchTextChanged = nameSearchTextChanged;
+    $scope.nameSelectChanged = nameSelectChanged;
+    $scope.nameQueryFilter = nameQueryFilter;
+
+    var Merit = function(m){
+      var self = this;
+      self.idmerit = m ? m.idmerit : null;
+      self.name = m ? m.name : '';
+      self.date = m ? (m.date ? new Date(m.date) : null) : null;
+      self.description = m ? m.description : '';
+    }
+
+    function getMerits() {
+      $scope.merits = [];
+      $http({method: 'GET', url: '/api/merits', cache: $templateCache}).
+        then(function(response) {
+          $scope.status = response.status;
+          $.each(response.data.data, function(i,m){
+            $scope.merits.push(new Merit(m));
+          });
+
+          $scope.title = 'Add all your merits';
+        }, function(response) {
+          $scope.data = response.data || "Request failed";
+          $scope.status = response.status;
+          if($scope.status == 404){
+            $scope.title = 'No merits found. Try adding some to improve your CV!';
+          }else{
+            $scope.title = 'An unexpected error occurred.';
+          }
+      });
+    }
+    $scope.saveMerit = function(){
+      DataService.saveSkill($scope.merit, 'merit')
+        .then(function () {
+            $scope.success = true;
+            $mdToast.show({
+                template: '<md-toast class="md-toast-success">Successfully saved merit!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            });
+            $scope.merit = null;
+            $scope.nameSearchText = null;
+        },
+        // handle error
+        function (reason) {
+            $scope.errorMessage = reason; 
+            $scope.error = true;
+            $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to save merit!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+        });
+        $timeout(function () {
+            getMerits();
+            getOptions();
+        }, 3000);
+    }
+    $scope.cancelMerit = function(){
+      $scope.merit = null;
+      $scope.nameSearchText = null;
+    }
+
+    $scope.editMerit = function(m){
+      $scope.merit = m;
+      $scope.nameSearchText = m.name;
+    }
+
+    $scope.newMerit = function(){
+      $scope.merit = new Merit(null);
+      $scope.nameSearchText = null;
+    }
+
+    $scope.createFilterFor = function(query) {
+      var lowercaseQuery = angular.lowercase(query);
+      return function filterFn(option) {
+        return (option.value.indexOf(lowercaseQuery) > -1);
+      };
+    }
+
+    $scope.deleteRecord = function(){
+      $http({method: 'DELETE', url: '/api/deleterecord?table=merit&idrecord=' + $scope.merit.idmerit})
+        .then(function() {
+          $scope.merits = $scope.merits
+           .filter(function (o) {
+                    return o.idmerit !== $scope.merit.idmerit;
+                   });
+           $mdToast.show({
+                template: '<md-toast class="md-toast-success">Merit successfully removed!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+        }, 
+        function(response) {
+          $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to remove merit!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+      });
+    }
+
+
+    function nameQueryFilter (query) {
+      return query ? $scope.names.filter( $scope.createFilterFor(query) ) : $scope.names;
+    }
+
+    function nameSearchTextChanged(text){
+      $scope.merit.name = text;
+    }
+
+    function nameSelectChanged(item){
+      if(item){
+        $scope.selectedName = item;
+        $scope.merit.name = item.display;
+      }
+    }
+
+    function getOptions(){
+      // Names
+      $http({method: 'GET', url: '/api/options?table=merit&field=name', cache: $templateCache}).
+        then(function(response) {
+          $scope.names = response.data.data.map(function(t){
+            return {display: t.option, value: t.option.toLowerCase()}
+          });
+          console.log($scope.names)
+        }, function(response) {
+          console.log("error")    
+      });
+    }
+
+    getOptions();
+    getMerits();
+});
+
+angular.module('knowBase').controller('experienceController',
+  function ($scope, $state, $http, $templateCache, DataService, $mdToast) {
+    $scope.submitText = 'Upstartdate experience';
+    $scope.experiences = [];
+    $scope.nameLabel = 'Name';
+    $scope.startdateLabel = 'Start date';
+    $scope.enddateLabel = 'End date';
+    $scope.descriptionLabel = 'Description';
+
+    //Name autocomplete stuff
+    $scope.names = [];
+    $scope.selectedName = null;
+    $scope.nameSearchText = null;
+    $scope.nameSearchTextChanged = nameSearchTextChanged;
+    $scope.nameSelectChanged = nameSelectChanged;
+    $scope.nameQueryFilter = nameQueryFilter;
+
+    var Experience = function(o){
+      var self = this;
+      self.idexperience = o ? o.idexperience : null;
+      self.name = o ? o.name : '';
+      self.startdate = o ? (o.startdate ? new Date(o.startdate) : null) : null;
+      self.enddate = o ? (o.enddate ? new Date(o.enddate) : null) : null;
+      self.description = o ? o.description : '';
+    }
+
+    function getExperiences() {
+      $scope.experiences = [];
+      $http({method: 'GET', url: '/api/experiences', cache: $templateCache}).
+        then(function(response) {
+          $scope.status = response.status;
+          $.each(response.data.data, function(i,o){
+            $scope.experiences.push(new Experience(o));
+          });
+          console.log($scope.experiences)
+          // $scope.experiences = response.data.data;
+          // formatExperienceData($scope.experiences);
+          $scope.title = 'Add all your experiences';
+        }, function(response) {
+          $scope.data = response.data || "Request failed";
+          $scope.status = response.status;
+          if($scope.status == 404){
+            $scope.title = 'No experiences found. Try adding some to improve your CV!';
+          }else{
+            $scope.title = 'An unexpected error occurred.';
+          }
+      });
+    }
+    $scope.saveExperience = function(){
+      DataService.saveSkill($scope.experience,'experience')
+        .then(function () {
+            $scope.success = true;
+            $mdToast.show({
+                template: '<md-toast class="md-toast-success">Successfully saved experience!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            });
+            $scope.experience = null;
+            $scope.nameSearchText = null;
+        },
+        // handle error
+        function (reason) {
+            $scope.errorMessage = reason; 
+            $scope.error = true;
+            $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to save experience!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+        });
+        $timeout(function () {
+            getExperiences();
+            getOptions();
+        }, 3000);
+    }
+    $scope.cancelExperience = function(){
+      $scope.experience = null;
+      $scope.nameSearchText = null;
+    }
+
+    $scope.editExperience = function(m){
+      $scope.experience = m;
+      $scope.nameSearchText = m.name;
+    }
+
+    $scope.newExperience = function(){
+      $scope.experience = new Experience(null);
+      $scope.nameSearchText = null;
+    }
+
+    $scope.deleteRecord = function(){
+      console.log("HEJ")
+      $http({method: 'DELETE', url: '/api/deleterecord?table=experience&idrecord=' + $scope.experience.idexperience})
+        .then(function() {
+          $scope.experiences = $scope.experiences
+           .filter(function (o) {
+                    return o.idexperience !== $scope.experience.idexperience;
+                   });
+           $mdToast.show({
+                template: '<md-toast class="md-toast-success">Experience successfully removed!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+        }, 
+        function(response) {
+          $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to remove experience!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+      });
+    }
+
+    $scope.createFilterFor = function(query) {
+      var lowercaseQuery = angular.lowercase(query);
+      return function filterFn(option) {
+        return (option.value.indexOf(lowercaseQuery) > -1);
+      };
+    }
+
+    function nameQueryFilter (query) {
+      return query ? $scope.names.filter( $scope.createFilterFor(query) ) : $scope.names;
+    }
+
+    function nameSearchTextChanged(text){
+      $scope.experience.name = text;
+    }
+
+    function nameSelectChanged(item){
+      if(item){
+        $scope.selectedName = item;
+        $scope.experience.name = item.display;
+      }
+    }
+
+    function getOptions(){
+      // Names
+      $http({method: 'GET', url: '/api/options?table=experience&field=name', cache: $templateCache}).
+        then(function(response) {
+          $scope.names = response.data.data.map(function(t){
+            return {display: t.option, value: t.option.toLowerCase()}
+          });
+          console.log($scope.names)
+        }, function(response) {
+          console.log("error")    
+      });
+    }
+
+    getOptions();
+    getExperiences();
+});
+
+angular.module('knowBase').controller('skillController',
+  function ($scope, $state, $http, $templateCache, DataService, $mdToast, $timeout) {
+    $scope.submitText = 'Update skill';
+    $scope.skills = [];
+    $scope.nameLabel = 'Name';
+    $scope.levelLabel = 'Skill level';
+    $scope.descriptionLabel = 'Description';
+    $scope.skill = null;
+
+    //Name autocomplete stuff
+    $scope.names = [];
+    $scope.selectedName = null;
+    $scope.nameSearchText = null;
+    $scope.nameSearchTextChanged = nameSearchTextChanged;
+    $scope.nameSelectChanged = nameSelectChanged;
+    $scope.nameQueryFilter = nameQueryFilter;
+
+    var Skill = function(o){
+      var self = this;
+      self.idskill = o ? o.idskill : null;
+      self.name = o ? o.name : '';
+      self.level = o ? o.level : null;
+      self.description = o ? o.description : '';
+    }
+
+    function getSkills() {
+      $scope.skills = [];
+      
+      $http({method: 'GET', url: '/api/skills', cache: $templateCache}).
+        then(function(response) {
+          $scope.status = response.status;
+          $.each(response.data.data, function(i,o){
+            $scope.skills.push(new Skill(o));
+          });
+        
+          $scope.title = 'Add all your skills';
+
+        }, function(response) {
+          $scope.data = response.data || "Request failed";
+          $scope.status = response.status;
+          if($scope.status == 404){
+            $scope.title = 'No skills found. Try adding some to improve your CV!';
+          }else{
+            $scope.title = 'An unexpected error occurred.';
+          }
+      });
+    }
+    
+    $scope.saveSkill = function(){
+      DataService.saveSkill($scope.skill,'skill')
+        .then(function () {
+            $scope.success = true;
+            $mdToast.show({
+                template: '<md-toast class="md-toast-success">Successfully saved skill!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            });
+
+            $scope.skill = null;
+            $scope.nameSearchText = null;
+            // $state.transitionTo($state.current, params, { reload: true, inherit: true, notify: true })
+
+        },
+        // handle error
+        function (reason) {
+            $scope.errorMessage = reason; 
+            $scope.error = true;
+            $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to save skill!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+        });
+        $timeout(function () {
+            getSkills();
+            getOptions();
+        }, 3000);
+    }
+    $scope.cancelSkill = function(){
+      $scope.skill = null;
+      $scope.nameSearchText = null;
+    }
+
+    $scope.editSkill = function(o){
+      $scope.skill = o;
+      $scope.nameSearchText = o.name;
+    }
+
+    $scope.newSkill = function(){
+      $scope.skill = new Skill(null);
+      $scope.nameSearchText = null;
+    }
+
+    $scope.createFilterFor = function(query) {
+      var lowercaseQuery = angular.lowercase(query);
+      return function filterFn(option) {
+        return (option.value.indexOf(lowercaseQuery) > -1);
+      };
+    }
+
+    $scope.deleteRecord = function(){
+      $http({method: 'DELETE', url: '/api/deleterecord?table=skill&idrecord=' + $scope.skill.idskill})
+        .then(function() {
+          $scope.skills = $scope.skills
+           .filter(function (o) {
+                    return o.idskill !== $scope.skill.idskill;
+                   });
+           $mdToast.show({
+                template: '<md-toast class="md-toast-success">Skill successfully removed!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+        }, 
+        function(response) {
+          $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to remove skill!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+      });
+    }
+
+    function nameQueryFilter (query) {
+      return query ? $scope.names.filter( $scope.createFilterFor(query) ) : $scope.names;
+    }
+
+    function nameSearchTextChanged(text){
+      $scope.skill.name = text;
+    }
+
+    function nameSelectChanged(item){
+      if(item){
+        $scope.selectedName = item;
+        $scope.skill.name = item.display;
+      }
+    }
+
+    function getOptions(){
+      // Names
+      $http({method: 'GET', url: '/api/options?table=skill&field=name', cache: $templateCache}).
+        then(function(response) {
+          $scope.names = response.data.data.map(function(t){
+            return {display: t.option, value: t.option.toLowerCase()}
+          });
+          console.log($scope.names)
+        }, function(response) {
+          console.log("error")    
+      });
+    }
+
+    getOptions();
+    getSkills();
+});
+
 angular.module('knowBase').controller('workExperienceController',
 
 
@@ -393,8 +1064,8 @@ angular.module('knowBase').controller('workExperienceController',
       self.idworkexperience = w ? w.idworkexperience : null;
       self.title = w ? w.title : '';
       self.employer = w ? w.employer : '';
-      self.startdate = w ? new Date(w.startdate) : null;
-      self.enddate = w ? new Date(w.enddate) : null;
+      self.startdate = w ? (w.startdate ? new Date(w.startdate) : null) : null;
+      self.enddate = w ? (w.enddate ? new Date(w.enddate) : null) : null;
       self.description = w ? w.description : '';
     }
 
@@ -420,7 +1091,7 @@ angular.module('knowBase').controller('workExperienceController',
       });
     }
     $scope.saveWorkExperience = function(){
-      DataService.saveWorkExperience($scope.workExperience)
+      DataService.saveSkill($scope.workExperience,'workexperience')
         .then(function () {
             $scope.success = true;
             $mdToast.show({
@@ -428,8 +1099,6 @@ angular.module('knowBase').controller('workExperienceController',
                 hideDelay: 3000,
                 position: 'bottom left'
             });
-            getWorkExperiences();
-            getOptions();
             $scope.workExperience = null;
             $scope.titleSearchText = null;
             $scope.employerSearchText = null;
@@ -444,6 +1113,10 @@ angular.module('knowBase').controller('workExperienceController',
                 position: 'bottom left'
             }); 
         });
+        $timeout(function () {
+            getWorkExperiences();
+            getOptions();
+        }, 3000);
     }
     $scope.cancelWorkExperience = function(){
       $scope.workExperience = null;
@@ -463,11 +1136,35 @@ angular.module('knowBase').controller('workExperienceController',
       $scope.employerSearchText = null; 
     }
 
+
+
     $scope.createFilterFor = function(query) {
       var lowercaseQuery = angular.lowercase(query);
       return function filterFn(option) {
         return (option.value.indexOf(lowercaseQuery) > -1);
       };
+    }
+
+    $scope.deleteRecord = function(){
+      $http({method: 'DELETE', url: '/api/deleterecord?table=workexperience&idrecord=' + $scope.workExperience.idworkexperience})
+        .then(function() {
+          $scope.workExperiences = $scope.workExperiences
+           .filter(function (o) {
+                    return o.idworkexperience !== $scope.workExperience.idworkexperience;
+                   });
+           $mdToast.show({
+                template: '<md-toast class="md-toast-success">Work experience successfully removed!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+        }, 
+        function(response) {
+          $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to remove work experience!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+      });
     }
 
     function titleQueryFilter (query) {

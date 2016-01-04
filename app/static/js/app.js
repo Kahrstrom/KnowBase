@@ -106,6 +106,30 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider) 
                 'workexperience@skills':{
                     controller: 'workExperienceController',
                     templateUrl: 'static/partials/workexperience.html'
+                },
+                'project@skills':{
+                    controller: 'projectController',
+                    templateUrl: 'static/partials/project.html'
+                },
+                'language@skills':{
+                    controller: 'languageController',
+                    templateUrl: 'static/partials/language.html'
+                },
+                'experience@skills':{
+                    controller: 'experienceController',
+                    templateUrl: 'static/partials/experience.html'
+                },
+                'skill@skills':{
+                    controller: 'skillController',
+                    templateUrl: 'static/partials/skill.html'
+                },
+                'merit@skills':{
+                    controller: 'meritController',
+                    templateUrl: 'static/partials/merit.html'
+                },
+                'publication@skills':{
+                    controller: 'publicationController',
+                    templateUrl: 'static/partials/publication.html'
                 }
             },
             access: 'restricted'

@@ -28,10 +28,9 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
       return deferred.promise;
     }
 
-    self.saveEducation = function(education){
+    self.saveSkill = function(json,type){
       var deferred = $q.defer();
-      console.log(education)
-      $http.post(self.urlBase + 'education', education)
+      $http.post(self.urlBase + type, json)
         .success(function (data, status) {
           if(status === 200 && data.response){
             deferred.resolve();
@@ -46,23 +45,6 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
       return deferred.promise;
     }
 
-    self.saveWorkExperience = function(workexperience){
-      var deferred = $q.defer();
-
-      $http.post(self.urlBase + 'workexperience', workexperience)
-        .success(function (data, status) {
-          if(status === 200 && data.response){
-            deferred.resolve();
-          } else {
-            deferred.reject();
-          }
-        })
-        // handle error
-        .error(function (data) {
-          deferred.reject();
-        });
-      return deferred.promise;
-    }
 
     self.uploadPicture = function(img){
       var deferred = $q.defer();

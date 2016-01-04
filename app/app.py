@@ -207,14 +207,34 @@ def create_workexperience():
 
     return jsonify(response='success')
 
+@app.route('/api/merits', methods=['GET'])
+@require_login()
+def get_user_merits():
+    merits = select_from_table("merit")
+    if len(merits) == 0:
+        return abort(404)
+
+    return jsonify(data=serialize_table(merits[0].cursor_description, merits))
+
+@app.route('/api/merit', methods=['POST'])
+@require_login()
+def create_merit():
+
+    idmerit = request.json['idmerit']
+
+    if idmerit is None:
+        stmt = insert_from_request("merit", request)
+    else:
+        stmt = update_from_request("merit", request)
+
+    cursor.execute(stmt)
+    cursor.commit()
+    return jsonify(response='success')
+
 @app.route('/api/educations', methods=['GET'])
 @require_login()
 def get_user_educations():
-    educations = cursor.execute("SELECT e.* FROM [education] e INNER JOIN [profile] p ON p.[idprofile] = e.[profile] "
-                                "INNER JOIN [user] u ON u.[profile] = p.[idprofile] WHERE u.[email] = ? "
-                                "ORDER BY e.[enddate] DESC", [session['email']]).fetchall()
-
-
+    educations = select_from_table("education")
     if len(educations) == 0:
         return abort(404)
 
@@ -236,6 +256,121 @@ def create_education():
     cursor.commit()
     return jsonify(response='success')
 
+@app.route('/api/skills', methods=['GET'])
+@require_login()
+def get_user_skills():
+    skills = select_from_table("skill")
+    if len(skills) == 0:
+        return abort(404)
+
+    return jsonify(data=serialize_table(skills[0].cursor_description, skills))
+
+
+@app.route('/api/skill', methods=['POST'])
+@require_login()
+def create_skill():
+
+    idskill = request.json['idskill']
+
+    if idskill is None:
+        stmt = insert_from_request("skill", request)
+    else:
+        stmt = update_from_request("skill", request)
+
+    cursor.execute(stmt)
+    cursor.commit()
+    return jsonify(response='success')
+
+@app.route('/api/experiences', methods=['GET'])
+@require_login()
+def get_user_experiences():
+    experiences = select_from_table("experience")
+    if len(experiences) == 0:
+        return abort(404)
+
+    return jsonify(data=serialize_table(experiences[0].cursor_description, experiences))
+
+
+@app.route('/api/experience', methods=['POST'])
+@require_login()
+def create_experience():
+
+    idexperience = request.json['idexperience']
+
+    if idexperience is None:
+        stmt = insert_from_request("experience",request)
+    else:
+        stmt = update_from_request("experience", request)
+
+    cursor.execute(stmt)
+    cursor.commit()
+    return jsonify(response='success')
+
+@app.route('/api/projects', methods=['GET'])
+@require_login()
+def get_user_projects():
+    SQL = "SELECT t.*, c.[name] as 'customername' FROM [project] t " \
+          "LEFT JOIN [customer] c ON c.[idcustomer] = t.[customer]" \
+          "INNER JOIN [profile] p ON p.[idprofile] = t.[profile] " \
+          "INNER JOIN [user] u ON u.[profile] = p.[idprofile] " \
+          "WHERE u.[email] = '{email}' ".format(email=session['email'])
+
+    projects = cursor.execute(SQL).fetchall()
+    if len(projects) == 0:
+        return abort(404)
+
+    return jsonify(data=serialize_table(projects[0].cursor_description, projects))
+
+@app.route('/api/customeroptions',methods=['GET'])
+@require_login()
+def get_customeroptions():
+    customers = cursor.execute("SELECT [idcustomer],[name] FROM [customer]").fetchall()
+    return jsonify(data=serialize_table(customers[0].cursor_description, customers))
+
+@app.route('/api/project', methods=['POST'])
+@require_login()
+def create_project():
+
+    idproject = request.json['idproject']
+    idcustomer = request.json['customer']
+
+    if request.json['customername'] != '' and idcustomer is None:
+        idcustomer = cursor.execute("SELECT [idcustomer] FROM [customer] WHERE [name] = '{name}'".format(
+            name=request.json['customername'])).fetchone()[0]
+
+        if idcustomer is None:
+            stmt = "INSERT INTO [customer] ([name]) VALUES ('{name}')".format(name=request.json['customername'])
+            cursor.execute(stmt)
+            cursor.commit()
+            idcustomer = cursor.execute("SELECT @@IDENTITY").fetchone()[0]
+
+
+    request.json['customer'] = idcustomer
+
+    del request.json['customername']
+    if idproject is None:
+        stmt = insert_from_request("project", request)
+    else:
+        stmt = update_from_request("project", request)
+
+    cursor.execute(stmt)
+    cursor.commit()
+    return jsonify(response='success')
+
+@app.route('/api/deleterecord', methods=['DELETE'])
+@require_login()
+def delete_object():
+    table = request.args['table']
+    idrecord = request.args['idrecord']
+    print("hej")
+    if table not in ['experience','workexperience','education','skill','merit','language','publication','project']:
+        return abort(401)
+    SQL = "DELETE FROM [{table}] WHERE [id{table}] = {idrecord}".format(table=table,idrecord=idrecord)
+
+    cursor.execute(SQL)
+    cursor.commit()
+    return jsonify(reponse='success')
+
 def serialize_table(columns, values):
     t = []
     for r in values:
@@ -248,6 +383,12 @@ def serialize_row(columns, values):
         t = c[0]
         d[t] = values[t]
     return d
+
+def select_from_table(table):
+    SQL = "SELECT t.* FROM [{table}] t INNER JOIN [profile] p ON p.[idprofile] = t.[profile] " \
+          "INNER JOIN [user] u ON u.[profile] = p.[idprofile] WHERE u.[email] = '{email}' ".format(
+            table=table, email=session['email'])
+    return cursor.execute(SQL).fetchall()
 
 def update_from_request(table, request):
     data = request.json

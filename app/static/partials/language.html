@@ -5,25 +5,25 @@
 	<md-list ng-cloak>
 		<div layout="row">
 		  	<md-subheader  flex class="md-no-sticky">{{title}}</md-subheader>
-		  	<md-button ng-if="!education" class="md-fab md-accent" ng-click="newEducation()" aria-label="New Education">
+		  	<md-button ng-if="!Language" class="md-fab md-accent" ng-click="newLanguage()" aria-label="New Language">
 		        <md-icon md-font-icon="fa-plus" class="fa fa-lg white" ></md-icon>
 		    </md-button>
 		</div>
-	  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="education in educations" ng-click="editEducation(education)">
+	  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="Language in Languages" ng-click="editLanguage(Language)">
 	    	<md-icon md-font-icon="fa-graduation-cap" class="fa fa-lg avatar md-avatar-icon"></md-icon>
     		<div class="md-list-item-text" >
-      			<h3> {{ education.title }} </h3>
-      			<p> {{ education.school }}</p>
-      			<p ng-if="education.startdate && education.enddate"> {{education.startdate | date : 'yyyy-MM'}} - {{education.enddate | date : 'yyyy-MM'}} </p>
+      			<h3> {{ Language.title }} </h3>
+      			<p> {{ Language.school }}</p>
+      			<p> {{Language.startdate | date : 'yyyy-MM'}} - {{Language.enddate | date : 'yyyy-MM'}} </p>
     		</div>
 	  	</md-list-item>
 
 	</md-list>
 </md-whiteframe>
-<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex-gt-lg="50" ng-if="education" >
+<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex-gt-lg="50" ng-if="Language" >
 	<div flex layout="row" class="skill-header">
 		<span flex="33">
-			<md-button class="md-button-small" ng-click="cancelEducation()">
+			<md-button class="md-button-small" ng-click="cancelLanguage()">
 				<md-icon md-font-icon="fa-arrow-right" class="fa"></md-icon>
 			</md-button>
 			<span flex/>
@@ -34,7 +34,7 @@
             <md-icon md-font-icon="fa-trash-o" class="fa fa-lg"></md-icon>
         </md-button>
 	</div>
-	<form flex layout-margin layout-padding flex ng-submit="saveEducation()" name="educationForm">
+	<form flex layout-margin layout-padding flex ng-submit="saveLanguage()" name="LanguageForm">
 		
 		<md-autocomplete flex required
             md-input-name="titleAutoComplete"
@@ -75,15 +75,15 @@
 		
 		<md-input-container class="md-block md-icon-float">
 			<label>{{descriptionLabel}}</label>
-			<textarea rows="6" md-maxlength="512" type="text" name="description" ng-model="education.description"></textarea>
+			<textarea rows="6" md-maxlength="512" type="text" name="description" ng-model="Language.description"></textarea>
 		</md-input-container>
 		
-		<md-datepicker name="startdate" ng-model="education.startdate" md-placeholder="{{startdateLabel}}"></md-datepicker>
+		<md-datepicker name="startdate" ng-model="Language.startdate" md-placeholder="{{startdateLabel}}"></md-datepicker>
 		<div class="horizontal-spacer"></div>
-		<md-datepicker name="enddate" ng-model="education.enddate" md-placeholder="{{enddateLabel}}"></md-datepicker>
+		<md-datepicker name="enddate" ng-model="Language.enddate" md-placeholder="{{enddateLabel}}"></md-datepicker>
 
 		<div layout="row" class="vertical-nudge-top">
-            <md-button type="submit" class="md-raised md-primary" flex>Save education</md-button>
+            <md-button type="submit" class="md-raised md-primary" flex>Save Language</md-button>
       	</div>
 	</form>
 	<div flex/>

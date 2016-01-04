@@ -14,7 +14,7 @@
     		<div class="md-list-item-text" >
       			<h3> {{ workExperience.title }} </h3>
       			<p> {{ workExperience.employer }}</p>
-      			<p> {{workExperience.startdate | date : 'yyyy-MM'}} - {{workExperience.enddate | date : 'yyyy-MM'}} </p>
+      			<p ng-if="workExperience.startdate && workExperience.enddate"> {{workExperience.startdate | date : 'yyyy-MM'}} - {{workExperience.enddate | date : 'yyyy-MM'}} </p>
     		</div>
 	  	</md-list-item>
 
@@ -22,14 +22,17 @@
 </md-whiteframe>
 <md-whiteframe class="md-whiteframe-2dp" layout="column"  flex-gt-lg="40" ng-if="workExperience" >
 	<div flex layout="row">
-	<span flex="33">
-		<md-button class="md-button-small" ng-click="cancelWorkExperience()">
-			<md-icon md-font-icon="fa-arrow-right" class="fa"></md-icon>
-		</md-button>
-		<span flex/>
-	</span>
-	<md-icon flex="33" md-font-icon="fa-suitcase center" class="fa fa-3x"></md-icon>
-	<span flex/>
+    	<span flex="33">
+    		<md-button class="md-button-small" ng-click="cancelWorkExperience()">
+    			<md-icon md-font-icon="fa-arrow-right" class="fa"></md-icon>
+    		</md-button>
+    		<span flex/>
+    	</span>
+    	<md-icon flex="33" md-font-icon="fa-suitcase center" class="fa fa-3x"></md-icon>
+    	<span flex/>
+        <md-button class="md-button-small" ng-click="deleteRecord()">
+            <md-icon md-font-icon="fa-trash-o" class="fa fa-lg"></md-icon>
+        </md-button>
 	</div>
 	<form flex layout-margin layout-padding flex ng-submit="saveWorkExperience()" name="workExperienceForm">
 		

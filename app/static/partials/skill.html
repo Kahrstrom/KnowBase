@@ -1,0 +1,73 @@
+
+<md-whiteframe class="md-whiteframe-2dp full-height" layout="column" flex>
+	
+	
+	<md-list ng-cloak>
+		<div layout="row">
+		  	<md-subheader  flex class="md-no-sticky">{{title}}</md-subheader>
+		  	<md-button ng-if="!Skill" class="md-fab md-accent" ng-click="newSkill()" aria-label="New Skill">
+		        <md-icon md-font-icon="fa-plus" class="fa fa-lg white" ></md-icon>
+		    </md-button>
+		</div>
+	  	<md-list-item class="md-2-line secondary-button-padding" ng-repeat="skill in skills" ng-click="editSkill(skill)">
+	    	<md-icon md-font-icon="fa-key" class="fa fa-lg avatar md-avatar-icon"></md-icon>
+    		<div class="md-list-item-text" >
+      			<h3> {{ skill.name }} </h3>
+      			<p> {{ skill.description }}</p>
+    		</div>
+	  	</md-list-item>
+
+	</md-list>
+</md-whiteframe>
+<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex-gt-lg="50" ng-if="skill" >
+	<div flex layout="row" class="skill-header">
+		<span flex="33">
+			<md-button class="md-button-small" ng-click="cancelSkill()">
+				<md-icon md-font-icon="fa-arrow-right" class="fa"></md-icon>
+			</md-button>
+			<span flex/>
+		</span>
+		<md-icon flex="33" md-font-icon="fa-key center" class="fa fa-3x"></md-icon>
+		<span flex/>
+        <md-button class="md-button-small" ng-click="deleteRecord()">
+            <md-icon md-font-icon="fa-trash-o" class="fa fa-lg"></md-icon>
+        </md-button>
+	</div>
+	<form flex layout-margin layout-padding flex ng-submit="saveSkill()" name="SkillForm">
+		
+		<md-autocomplete flex required
+            md-input-name="nameAutoComplete"
+            md-min-length="0"
+            md-input-maxlength="64"
+            md-input-minlength="0"
+            md-no-cache="false"
+            md-selected-item="selectedName"
+            md-search-text="nameSearchText"
+            md-items="item in nameQueryFilter(nameSearchText)"
+            md-item-text="item.display"
+            md-floating-label="{{nameLabel}}"
+            md-selected-item-change="nameSelectChanged(item)"
+            md-search-text-change="nameSearchTextChanged(nameSearchText)"
+            md-select-on-match="true">
+          <md-item-template>
+            <span md-highlight-text="nameSearchText" md-highlight-flags="^i">{{item.display}}</span>
+          </md-item-template>
+        </md-autocomplete>	
+
+        <md-input-container class="md-block md-icon-float">
+            <label>{{levelLabel}}</label>
+            <input min="0" max="5" type="text" name="description" ng-model="skill.level"></textarea>
+        </md-input-container>
+
+		
+		<md-input-container class="md-block md-icon-float">
+			<label>{{descriptionLabel}}</label>
+			<textarea rows="6" md-maxlength="512" type="text" name="description" ng-model="skill.description"></textarea>
+		</md-input-container>
+
+		<div layout="row" class="vertical-nudge-top">
+            <md-button type="submit" class="md-raised md-primary" flex>Save skill</md-button>
+      	</div>
+	</form>
+	<div flex/>
+</div>

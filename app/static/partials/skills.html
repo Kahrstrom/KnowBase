@@ -49,6 +49,6 @@
 			</div>
 		</md-whiteframe>
 	</div>
-	<div ng-if="activeSkill == 'education'" flex="70" ui-view="education" layout="row" layout-padding layout-margin/>
-	<div ng-if="activeSkill == 'workexperience'" flex="70" ui-view="workexperience" layout="row" layout-padding layout-margin/>
+
+	<div ng-if="activeSkill == skill.name" ng-repeat="skill in tiles" flex="70" ui-view="{{skill.name}}" layout="row" layout-padding layout-margin/>
 </md-content>

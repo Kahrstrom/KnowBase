@@ -1,0 +1,95 @@
+
+<md-whiteframe class="md-whiteframe-2dp full-height" layout="column" flex>
+	
+	
+	<md-list ng-cloak>
+		<div layout="row">
+		  	<md-subheader  flex class="md-no-sticky">{{title}}</md-subheader>
+		  	<md-button ng-if="!project" class="md-fab md-accent" ng-click="newProject()" aria-label="New Project">
+		        <md-icon md-font-icon="fa-plus" class="fa fa-lg white" ></md-icon>
+		    </md-button>
+		</div>
+	  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="project in projects" ng-click="editProject(project)">
+	    	<md-icon md-font-icon="fa-tasks" class="fa fa-lg avatar md-avatar-icon"></md-icon>
+    		<div class="md-list-item-text" >
+      			<h3> {{ project.name }} </h3>
+      			<p> {{ project.customername }}</p>
+      			<p ng-if="project.startdate && project.enddate"> {{project.startdate | date : 'yyyy-MM'}} - {{project.enddate | date : 'yyyy-MM'}} </p>
+    		</div>
+	  	</md-list-item>
+
+	</md-list>
+</md-whiteframe>
+<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex-gt-lg="50" ng-if="project" >
+	<div flex layout="row" class="skill-header">
+		<span flex="33">
+			<md-button class="md-button-small" ng-click="cancelProject()">
+				<md-icon md-font-icon="fa-arrow-right" class="fa"></md-icon>
+			</md-button>
+			<span flex/>
+		</span>
+		<md-icon flex="33" md-font-icon="fa-tasks center" class="fa fa-3x"></md-icon>
+		<span flex/>
+        <md-button class="md-button-small" ng-click="deleteRecord()">
+            <md-icon md-font-icon="fa-trash-o" class="fa fa-lg"></md-icon>
+        </md-button>
+	</div>
+	<form flex layout-margin layout-padding flex ng-submit="saveProject()" name="projectForm">
+		
+		<md-autocomplete flex required
+            md-input-name="nameAutoComplete"
+            md-min-length="0"
+            md-input-maxlength="64"
+            md-input-minlength="0"
+            md-no-cache="false"
+            md-selected-item="selectedName"
+            md-search-text="nameSearchText"
+            md-items="item in nameQueryFilter(nameSearchText)"
+            md-item-text="item.display"
+            md-floating-label="{{nameLabel}}"
+            md-selected-item-change="nameSelectChanged(item)"
+            md-search-text-change="nameSearchTextChanged(nameSearchText)"
+            md-select-on-match="true">
+          <md-item-template>
+            <span md-highlight-text="nameSearchText" md-highlight-flags="^i">{{item.display}}</span>
+          </md-item-template>
+        </md-autocomplete>	
+        <md-autocomplete flex required
+            md-input-name="customerAutoComplete"
+            md-min-length="0"
+            md-input-maxlength="64"
+            md-input-minlength="0"
+            md-no-cache="false"
+            md-selected-item="selectedCustomer"
+            md-search-text="customerSearchText"
+            md-items="item in customerQueryFilter(customerSearchText)"
+            md-item-text="item.display"
+            md-floating-label="{{customerLabel}}"
+            md-selected-item-change="customerSelectChanged(item)"
+            md-search-text-change="customerSearchTextChanged(customerSearchText)"
+            md-select-on-match="true">
+          <md-item-template>
+            <span md-highlight-text="customerSearchText" md-highlight-flags="^i">{{item.display}}</span>
+          </md-item-template>
+        </md-autocomplete>
+		
+		<md-input-container class="md-block md-icon-float">
+			<label>{{descriptionLabel}}</label>
+			<textarea rows="6" md-maxlength="512" type="text" name="description" ng-model="project.description"></textarea>
+		</md-input-container>
+
+        <md-input-container class="md-block md-icon-float">
+            <label>{{hoursLabel}}</label>
+            <input type="number" name="hours" ng-model="project.hours">
+        </md-input-container>
+		
+		<md-datepicker name="startdate" ng-model="project.startdate" md-placeholder="{{startdateLabel}}"></md-datepicker>
+		<div class="horizontal-spacer"></div>
+		<md-datepicker name="enddate" ng-model="project.enddate" md-placeholder="{{enddateLabel}}"></md-datepicker>
+
+		<div layout="row" class="vertical-nudge-top">
+            <md-button type="submit" class="md-raised md-primary" flex>Save project</md-button>
+      	</div>
+	</form>
+	<div flex/>
+</div>
