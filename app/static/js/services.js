@@ -15,7 +15,7 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
       var deferred = $q.defer();
       $http.post(self.urlBase + 'profile', profile)
         .success(function (data, status) {
-          if(status === 200 && data.response){
+          if(status === 200){
             deferred.resolve();
           } else {
             deferred.reject();
@@ -32,8 +32,9 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
       var deferred = $q.defer();
       $http.post(self.urlBase + type, json)
         .success(function (data, status) {
-          if(status === 200 && data.response){
-            deferred.resolve();
+          
+          if(status === 200){
+            deferred.resolve(data);
           } else {
             deferred.reject();
           }

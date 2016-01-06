@@ -1,9 +1,15 @@
-var knowBase = angular.module('knowBase',  ['ui.router','ngCookies', 'ngAnimate', 'ngMaterial', 'ngMessages', 'ngImgCrop']);
+var knowBase = angular.module('knowBase',  ['ui.router','ngCookies', 'ngAnimate', 'ngMaterial', 'ngMessages', 'ngImgCrop', 'am.date-picker']);
 
-knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider) {
+knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, amDatePickerConfigProvider) {
+    var self = this;
+    var $cookies;
+    angular.injector(['ngCookies']).invoke(['$cookies', function(_$cookies_) {
+        $cookies = _$cookies_;
+    }]);
+
     
+
     $urlRouterProvider.otherwise('/home');
-    
     $mdThemingProvider.theme('default')
         .primaryPalette('deep-purple', {
           'default': '700', // primary
@@ -21,6 +27,22 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider) 
           'hue-2': '500', // md-hue-2
           'hue-3': 'A200' // md-hue-3
     });
+
+    self.locale = $cookies.get('locale');
+    self.locale = self.locale ? JSON.parse(self.locale).value : 'en';
+    
+
+    
+    console.log(self.locale)
+
+    amDatePickerConfigProvider.setOptions({
+        popupDateFormat: 'LL',
+        locale: self.locale ? self.locale : 'en',
+        calendarIcon: '/static/resources/icons/ic_today_24px.svg',
+        clearIcon: '/static/resources/icons/ic_close_24px.svg',
+        nextIcon: '/static/resources/icons/ic_chevron_right_18px.svg',
+        prevIcon: '/static/resources/icons/ic_chevron_left_18px.svg'
+    })
 
 
 

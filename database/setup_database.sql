@@ -120,7 +120,7 @@ BEGIN
 		[idpublication] [int] IDENTITY(1,1) NOT NULL,
 		[title] [nvarchar](128) NOT NULL DEFAULT (''),
 		[authors] [nvarchar](4000) NOT NULL DEFAULT (''),
-		[publicationdate] [datetime] NULL,
+		[date] [datetime] NULL,
 		[publication] [nvarchar] (128) NULL,
 		[description] [nvarchar](512) NOT NULL DEFAULT (''),
 		[profile] [int] NULL,

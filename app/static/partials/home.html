@@ -1,5 +1,10 @@
 
 <header ui-view="toolbar"></header>
 <md-content class="full-height">
-	hej
+	<am-date-picker ng-model="date"
+                am-input-date-format="L"
+                am-input-label="Pick a Date"
+                am-today-button="Today"
+                am-show-input-icon="true">
+	</am-date-picker>
 </md-content>

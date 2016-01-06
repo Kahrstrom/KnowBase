@@ -5,22 +5,22 @@
 	<md-list ng-cloak>
 		<div layout="row">
 		  	<md-subheader  flex class="md-no-sticky">{{title}}</md-subheader>
-		  	<md-button ng-if="!Publication" class="md-fab md-accent" ng-click="newPublication()" aria-label="New Publication">
+		  	<md-button ng-if="!publication" class="md-fab md-accent" ng-click="newPublication()" aria-label="New publication">
 		        <md-icon md-font-icon="fa-plus" class="fa fa-lg white" ></md-icon>
 		    </md-button>
 		</div>
-	  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="Publication in Publications" ng-click="editPublication(Publication)">
-	    	<md-icon md-font-icon="fa-graduation-cap" class="fa fa-lg avatar md-avatar-icon"></md-icon>
+	  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="publication in publications" ng-click="editPublication(publication)">
+	    	<md-icon md-font-icon="fa-book" class="fa fa-lg avatar md-avatar-icon"></md-icon>
     		<div class="md-list-item-text" >
-      			<h3> {{ Publication.title }} </h3>
-      			<p> {{ Publication.school }}</p>
-      			<p> {{Publication.startdate | date : 'yyyy-MM'}} - {{Publication.enddate | date : 'yyyy-MM'}} </p>
+      			<h3> {{ publication.title }} </h3>
+      			<p> {{ publication.description }}</p>
+      			<p> {{ publication.date | date : 'yyyy-MM' }}</p>
     		</div>
 	  	</md-list-item>
 
 	</md-list>
 </md-whiteframe>
-<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex-gt-lg="50" ng-if="Publication" >
+<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex-gt-lg="50" ng-if="publication" >
 	<div flex layout="row" class="publication-header">
 		<span flex="33">
 			<md-button class="md-button-small" ng-click="cancelPublication()">
@@ -28,9 +28,9 @@
 			</md-button>
 			<span flex/>
 		</span>
-		<md-icon flex="33" md-font-icon="fa-graduation-cap center" class="fa fa-3x"></md-icon>
+		<md-icon flex="33" md-font-icon="fa-book center" class="fa fa-3x"></md-icon>
 		<span flex/>
-        <md-button class="md-button-small" ng-click="deleteRecord()">
+        <md-button ng-if="publication.idpublication" class="md-button-small" ng-click="deleteRecord()">
             <md-icon md-font-icon="fa-trash-o" class="fa fa-lg"></md-icon>
         </md-button>
 	</div>
@@ -54,36 +54,26 @@
             <span md-highlight-text="titleSearchText" md-highlight-flags="^i">{{item.display}}</span>
           </md-item-template>
         </md-autocomplete>	
-        <md-autocomplete flex required
-            md-input-name="schoolAutoComplete"
-            md-min-length="0"
-            md-input-maxlength="64"
-            md-input-minlength="0"
-            md-no-cache="false"
-            md-selected-item="selectedSchool"
-            md-search-text="schoolSearchText"
-            md-items="item in schoolQueryFilter(schoolSearchText)"
-            md-item-text="item.display"
-            md-floating-label="{{schoolLabel}}"
-            md-selected-item-change="schoolSelectChanged(item)"
-            md-search-text-change="schoolSearchTextChanged(schoolSearchText)"
-            md-select-on-match="true">
-          <md-item-template>
-            <span md-highlight-text="schoolSearchText" md-highlight-flags="^i">{{item.display}}</span>
-          </md-item-template>
-        </md-autocomplete>
 		
 		<md-input-container class="md-block md-icon-float">
 			<label>{{descriptionLabel}}</label>
-			<textarea rows="6" md-maxlength="512" type="text" name="description" ng-model="Publication.description"></textarea>
+			<textarea rows="6" md-maxlength="512" type="text" name="description" ng-model="publication.description"></textarea>
 		</md-input-container>
+
+        <md-input-container class="md-block md-icon-float">
+            <label>{{authorLabel}}</label>
+            <textarea rows="6" md-maxlength="4000" type="text" name="authors" ng-model="publication.authors"></textarea>
+        </md-input-container>
 		
-		<md-datepicker name="startdate" ng-model="Publication.startdate" md-placeholder="{{startdateLabel}}"></md-datepicker>
-		<div class="horizontal-spacer"></div>
-		<md-datepicker name="enddate" ng-model="Publication.enddate" md-placeholder="{{enddateLabel}}"></md-datepicker>
+		<md-datepicker name="date" ng-model="publication.date" md-placeholder="{{dateLabel}}"></md-datepicker>
+		
+        <md-input-container class="md-block md-icon-float">
+            <label>{{publicationLabel}}</label>
+            <input md-maxlength="128" type="text" name="publication" ng-model="publication.publication">
+        </md-input-container>
 
 		<div layout="row" class="vertical-nudge-top">
-            <md-button type="submit" class="md-raised md-primary" flex>Save Publication</md-button>
+            <md-button type="submit" class="md-raised md-primary" flex>Save publication</md-button>
       	</div>
 	</form>
 	<div flex/>

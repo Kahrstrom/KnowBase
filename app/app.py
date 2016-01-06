@@ -205,7 +205,10 @@ def create_workexperience():
     cursor.execute(stmt)
     cursor.commit()
 
-    return jsonify(response='success')
+    if idworkexperience is None:
+        idworkexperience = cursor.execute("SELECT @@IDENTITY").fetchone()[0]
+
+    return jsonify(idrecord="{idrecord}".format(idrecord=idworkexperience))
 
 @app.route('/api/merits', methods=['GET'])
 @require_login()
@@ -229,7 +232,10 @@ def create_merit():
 
     cursor.execute(stmt)
     cursor.commit()
-    return jsonify(response='success')
+    if idmerit is None:
+        idmerit = cursor.execute("SELECT @@IDENTITY").fetchone()[0]
+
+    return jsonify(idrecord="{idrecord}".format(idrecord=idmerit))
 
 @app.route('/api/educations', methods=['GET'])
 @require_login()
@@ -244,9 +250,9 @@ def get_user_educations():
 @app.route('/api/education', methods=['POST'])
 @require_login()
 def create_education():
-
+    print("")
     ideducation = request.json['ideducation']
-
+    print(ideducation)
     if ideducation is None:
         stmt = insert_from_request("education",request)
     else:
@@ -254,7 +260,10 @@ def create_education():
 
     cursor.execute(stmt)
     cursor.commit()
-    return jsonify(response='success')
+    if ideducation is None:
+        ideducation = cursor.execute("SELECT @@IDENTITY").fetchone()[0]
+
+    return jsonify(idrecord="{idrecord}".format(idrecord=ideducation))
 
 @app.route('/api/skills', methods=['GET'])
 @require_login()
@@ -279,7 +288,10 @@ def create_skill():
 
     cursor.execute(stmt)
     cursor.commit()
-    return jsonify(response='success')
+    if idskill is None:
+        idskill = cursor.execute("SELECT @@IDENTITY").fetchone()[0]
+
+    return jsonify(idrecord="{idrecord}".format(idrecord=idskill))
 
 @app.route('/api/experiences', methods=['GET'])
 @require_login()
@@ -304,7 +316,38 @@ def create_experience():
 
     cursor.execute(stmt)
     cursor.commit()
-    return jsonify(response='success')
+    if idexperience is None:
+        idexperience = cursor.execute("SELECT @@IDENTITY").fetchone()[0]
+
+    return jsonify(idrecord="{idrecord}".format(idrecord=idexperience))
+
+@app.route('/api/publications', methods=['GET'])
+@require_login()
+def get_user_publications():
+    publications = select_from_table("publication")
+    if len(publications) == 0:
+        return abort(404)
+
+    return jsonify(data=serialize_table(publications[0].cursor_description, publications))
+
+
+@app.route('/api/publication', methods=['POST'])
+@require_login()
+def create_publication():
+
+    idpublication = request.json['idpublication']
+    print(idpublication)
+    if idpublication is None:
+        stmt = insert_from_request("publication",request)
+    else:
+        stmt = update_from_request("publication", request)
+
+    cursor.execute(stmt)
+    cursor.commit()
+    if idpublication is None:
+        idpublication = cursor.execute("SELECT @@IDENTITY").fetchone()[0]
+
+    return jsonify(idrecord="{idrecord}".format(idrecord=idpublication))
 
 @app.route('/api/projects', methods=['GET'])
 @require_login()
@@ -332,30 +375,34 @@ def get_customeroptions():
 def create_project():
 
     idproject = request.json['idproject']
+
     idcustomer = request.json['customer']
 
     if request.json['customername'] != '' and idcustomer is None:
         idcustomer = cursor.execute("SELECT [idcustomer] FROM [customer] WHERE [name] = '{name}'".format(
-            name=request.json['customername'])).fetchone()[0]
+            name=request.json['customername'])).fetchone()
 
         if idcustomer is None:
             stmt = "INSERT INTO [customer] ([name]) VALUES ('{name}')".format(name=request.json['customername'])
             cursor.execute(stmt)
             cursor.commit()
-            idcustomer = cursor.execute("SELECT @@IDENTITY").fetchone()[0]
+            idcustomer = cursor.execute("SELECT @@IDENTITY").fetchone()
 
 
-    request.json['customer'] = idcustomer
+    request.json['customer'] = idcustomer[0]
 
     del request.json['customername']
     if idproject is None:
         stmt = insert_from_request("project", request)
     else:
         stmt = update_from_request("project", request)
-
+    print(stmt)
     cursor.execute(stmt)
     cursor.commit()
-    return jsonify(response='success')
+
+    if idproject is None:
+        idproject = cursor.execute("SELECT @@IDENTITY").fetchone()[0]
+    return jsonify(idrecord="{idrecord}".format(idrecord=idproject))
 
 @app.route('/api/deleterecord', methods=['DELETE'])
 @require_login()
@@ -396,7 +443,7 @@ def update_from_request(table, request):
     for field in data:
         if field != "id" + table:
             if data[field] is not None:
-                statement = "[{field}] = '{val}',".format(field=field,val=data[field])
+                statement = "[{field}] = '{val}',".format(field=field,val=str(data[field]).replace("'","''"))
             else:
                 statement = "[{field}] = {val},".format(field=field,val="NULL")
             SQL = SQL + statement
@@ -422,7 +469,8 @@ def insert_from_request(table, request):
     for field in data:
         if field != "id" + table:
             if data[field] is not None:
-                statements = statements + ", '{val}'".format(val=data[field])
+
+                statements = statements + ", '{val}'".format(val=str(data[field]).replace("'","''"))
             else:
                 statements = statements + ", {val}".format(val="NULL")
 

@@ -138,7 +138,7 @@ angular.module('knowBase').controller('toolbarController',
       $cookies.put('locale', JSON.stringify(locale), {expires : new Date().setDate(new Date() + 14)});
       LocaleService.setLocale(locale.value)
         .then(function () {
-          
+          $state.go($state.current, {}, {reload: true});
         },
         // handle error
         function () {
@@ -165,7 +165,7 @@ angular.module('knowBase').controller('homeController',
   ['$scope', '$state', 'DataService',
   function ($scope, $state, DataService) {
     getProfile();
-
+    $scope.date = new Date();
 
     function getProfile() {
         DataService.getProfile()
@@ -255,13 +255,18 @@ angular.module('knowBase').controller('educationController',
     }
     $scope.saveEducation = function(){
       DataService.saveSkill($scope.education,'education')
-        .then(function () {
+        .then(function (data) {
             $scope.success = true;
             $mdToast.show({
                 template: '<md-toast class="md-toast-success">Successfully saved education!</md-toast>',
                 hideDelay: 3000,
                 position: 'bottom left'
             });
+            console.log(data)
+            if(!$scope.education.ideducation){
+              $scope.education.ideducation = data.idrecord;
+              $scope.educations.push($scope.education);
+            }
             $scope.education = null;
             $scope.titleSearchText = null;
             $scope.schoolSearchText = null;
@@ -276,10 +281,6 @@ angular.module('knowBase').controller('educationController',
                 position: 'bottom left'
             }); 
         });
-        $timeout(function () {
-            getEducations();
-            getOptions();
-        }, 3000);
     }
     $scope.cancelEducation = function(){
       $scope.education = null;
@@ -318,6 +319,7 @@ angular.module('knowBase').controller('educationController',
                 hideDelay: 3000,
                 position: 'bottom left'
             }); 
+           $scope.education = null;
         }, 
         function(response) {
           $mdToast.show({
@@ -447,13 +449,17 @@ angular.module('knowBase').controller('projectController',
     $scope.saveProject = function(){
 
       DataService.saveSkill($scope.project, 'project')
-        .then(function () {
+        .then(function (data) {
             $scope.success = true;
             $mdToast.show({
                 template: '<md-toast class="md-toast-success">Successfully saved project!</md-toast>',
                 hideDelay: 3000,
                 position: 'bottom left'
             });
+            if(!$scope.project.idproject){
+              $scope.project.idproject = data.idrecord;
+              $scope.projects.push($scope.project);
+            }
             $scope.project = null;
             $scope.nameSearchText = null;
             $scope.customerSearchText = null;
@@ -468,10 +474,6 @@ angular.module('knowBase').controller('projectController',
                 position: 'bottom left'
             }); 
         });
-        $timeout(function () {
-            getProjects();
-            getOptions();
-        }, 3000);
     }
     $scope.cancelProject = function(){
       $scope.project = null;
@@ -509,7 +511,8 @@ angular.module('knowBase').controller('projectController',
                 template: '<md-toast class="md-toast-success">Project successfully removed!</md-toast>',
                 hideDelay: 3000,
                 position: 'bottom left'
-            }); 
+            });
+           $scope.project = null;
         }, 
         function(response) {
           $mdToast.show({
@@ -558,7 +561,6 @@ angular.module('knowBase').controller('projectController',
           $scope.names = response.data.data.map(function(t){
             return {display: t.option, value: t.option.toLowerCase()}
           });
-          console.log($scope.names)
         }, function(response) {
           console.log("error")    
       });
@@ -623,13 +625,17 @@ angular.module('knowBase').controller('meritController',
     }
     $scope.saveMerit = function(){
       DataService.saveSkill($scope.merit, 'merit')
-        .then(function () {
+        .then(function (data) {
             $scope.success = true;
             $mdToast.show({
                 template: '<md-toast class="md-toast-success">Successfully saved merit!</md-toast>',
                 hideDelay: 3000,
                 position: 'bottom left'
             });
+            if(!$scope.merit.idmerit){
+              $scope.merit.idmerit = data.idrecord;
+              $scope.merits.push($scope.merit);
+            }
             $scope.merit = null;
             $scope.nameSearchText = null;
         },
@@ -643,10 +649,6 @@ angular.module('knowBase').controller('meritController',
                 position: 'bottom left'
             }); 
         });
-        $timeout(function () {
-            getMerits();
-            getOptions();
-        }, 3000);
     }
     $scope.cancelMerit = function(){
       $scope.merit = null;
@@ -682,6 +684,7 @@ angular.module('knowBase').controller('meritController',
                 hideDelay: 3000,
                 position: 'bottom left'
             }); 
+           $scope.merit = null;
         }, 
         function(response) {
           $mdToast.show({
@@ -775,13 +778,17 @@ angular.module('knowBase').controller('experienceController',
     }
     $scope.saveExperience = function(){
       DataService.saveSkill($scope.experience,'experience')
-        .then(function () {
+        .then(function (data) {
             $scope.success = true;
             $mdToast.show({
                 template: '<md-toast class="md-toast-success">Successfully saved experience!</md-toast>',
                 hideDelay: 3000,
                 position: 'bottom left'
             });
+            if(!$scope.experience.idexperience){
+              $scope.experience.idexperience = data.idrecord;
+              $scope.experiences.push($scope.experience);
+            }
             $scope.experience = null;
             $scope.nameSearchText = null;
         },
@@ -795,10 +802,6 @@ angular.module('knowBase').controller('experienceController',
                 position: 'bottom left'
             }); 
         });
-        $timeout(function () {
-            getExperiences();
-            getOptions();
-        }, 3000);
     }
     $scope.cancelExperience = function(){
       $scope.experience = null;
@@ -828,6 +831,7 @@ angular.module('knowBase').controller('experienceController',
                 hideDelay: 3000,
                 position: 'bottom left'
             }); 
+           $scope.experience = null;
         }, 
         function(response) {
           $mdToast.show({
@@ -927,14 +931,17 @@ angular.module('knowBase').controller('skillController',
     
     $scope.saveSkill = function(){
       DataService.saveSkill($scope.skill,'skill')
-        .then(function () {
+        .then(function (data) {
             $scope.success = true;
             $mdToast.show({
                 template: '<md-toast class="md-toast-success">Successfully saved skill!</md-toast>',
                 hideDelay: 3000,
                 position: 'bottom left'
             });
-
+            if(!$scope.skill.idskill){
+              $scope.skill.idskill = data.idrecord;
+              $scope.skills.push($scope.skill);
+            }
             $scope.skill = null;
             $scope.nameSearchText = null;
             // $state.transitionTo($state.current, params, { reload: true, inherit: true, notify: true })
@@ -950,10 +957,6 @@ angular.module('knowBase').controller('skillController',
                 position: 'bottom left'
             }); 
         });
-        $timeout(function () {
-            getSkills();
-            getOptions();
-        }, 3000);
     }
     $scope.cancelSkill = function(){
       $scope.skill = null;
@@ -989,6 +992,7 @@ angular.module('knowBase').controller('skillController',
                 hideDelay: 3000,
                 position: 'bottom left'
             }); 
+           $scope.skill = null;
         }, 
         function(response) {
           $mdToast.show({
@@ -1092,13 +1096,18 @@ angular.module('knowBase').controller('workExperienceController',
     }
     $scope.saveWorkExperience = function(){
       DataService.saveSkill($scope.workExperience,'workexperience')
-        .then(function () {
+        .then(function (data) {
             $scope.success = true;
             $mdToast.show({
                 template: '<md-toast class="md-toast-success">Successfully saved workExperience!</md-toast>',
                 hideDelay: 3000,
                 position: 'bottom left'
             });
+           
+            if(!$scope.workExperience.idworkexperience){
+              $scope.workExperience.idworkexperience = data.idrecord;
+              $scope.workExperiences.push($scope.workExperience);
+            }
             $scope.workExperience = null;
             $scope.titleSearchText = null;
             $scope.employerSearchText = null;
@@ -1113,10 +1122,6 @@ angular.module('knowBase').controller('workExperienceController',
                 position: 'bottom left'
             }); 
         });
-        $timeout(function () {
-            getWorkExperiences();
-            getOptions();
-        }, 3000);
     }
     $scope.cancelWorkExperience = function(){
       $scope.workExperience = null;
@@ -1157,6 +1162,7 @@ angular.module('knowBase').controller('workExperienceController',
                 hideDelay: 3000,
                 position: 'bottom left'
             }); 
+           $scope.workExperience = null;
         }, 
         function(response) {
           $mdToast.show({
@@ -1221,6 +1227,168 @@ angular.module('knowBase').controller('workExperienceController',
 
     getOptions();
     getWorkExperiences();
+});
+
+angular.module('knowBase').controller('publicationController',
+  function ($scope, $state, $http, $templateCache, DataService, $mdToast) {
+    $scope.submitText = 'Update publication';
+    $scope.publications = [];
+    $scope.titleLabel = 'Title';
+    $scope.authorLabel = 'Author list';
+    $scope.dateLabel = 'Publication date';
+    $scope.descriptionLabel = 'Description';
+    $scope.publicationLabel = 'Published in';
+
+    //Title autocomplete stuff
+    $scope.titles = [];
+    $scope.selectedTitle = null;
+    $scope.titleSearchText = null;
+    $scope.titleSearchTextChanged = titleSearchTextChanged;
+    $scope.titleSelectChanged = titleSelectChanged;
+    $scope.titleQueryFilter = titleQueryFilter;
+
+
+    var Publication = function(e){
+      var self = this;
+      self.idpublication = e ? e.idpublication : null;
+      self.authors = e ? e.authors : '';
+      self.title = e ? e.title : '';
+      self.date = e ? (e.date ? new Date(e.date) : null) : null;
+      self.description = e ? e.description : '';
+      self.publication = e ? e.publication : '';
+    }
+
+    function getPublications() {
+      $scope.publications = [];
+      $http({method: 'GET', url: '/api/publications', cache: $templateCache}).
+        then(function(response) {
+          $scope.status = response.status;
+          $.each(response.data.data, function(i,e){
+            $scope.publications.push(new Publication(e));
+          });
+          $scope.title = 'Add all your publications';
+        }, function(response) {
+          $scope.data = response.data || "Request failed";
+          $scope.status = response.status;
+          if($scope.status == 404){
+            $scope.title = 'No publications found. Try adding some to improve your CV!';
+          }else{
+            $scope.title = 'An unexpected error occurred.';
+          }
+      });
+    }
+
+    $scope.savePublication = function(){
+      DataService.saveSkill($scope.publication,'publication')
+        .then(function (data) {
+            console.log(data)
+            $scope.success = true;
+            $mdToast.show({
+                template: '<md-toast class="md-toast-success">Successfully saved publication!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            });
+
+            if(!$scope.publication.idpublication){
+              $scope.publication.idpublication = data.idrecord;
+              $scope.publications.push($scope.publication);
+            }
+
+            $scope.publication = null;
+            $scope.titleSearchText = null;
+            $scope.schoolSearchText = null;
+        },
+        // handle error
+        function (reason) {
+            $scope.errorMessage = reason; 
+            $scope.error = true;
+            $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to save publication!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+        });
+
+    }
+
+    $scope.cancelPublication = function(){
+      $scope.publication = null;
+      $scope.titleSearchText = null;
+      $scope.schoolSearchText = null;
+    }
+
+    $scope.editPublication = function(e){
+      $scope.publication = e;
+      $scope.titleSearchText = e.title;
+      $scope.schoolSearchText = e.school;
+    }
+
+    $scope.newPublication = function(){
+      $scope.publication = new Publication(null);
+      $scope.titleSearchText = null;
+      $scope.schoolSearchText = null; 
+    }
+
+    $scope.createFilterFor = function(query) {
+      var lowercaseQuery = angular.lowercase(query);
+      return function filterFn(option) {
+        return (option.value.indexOf(lowercaseQuery) > -1);
+      };
+    }
+
+    $scope.deleteRecord = function(){
+      $http({method: 'DELETE', url: '/api/deleterecord?table=publication&idrecord=' + $scope.publication.idpublication})
+        .then(function() {
+          $scope.publications = $scope.publications
+           .filter(function (o) {
+                    return o.idpublication !== $scope.publication.idpublication;
+                   });
+           $mdToast.show({
+                template: '<md-toast class="md-toast-success">Publication successfully removed!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+           $scope.publication = null;
+        }, 
+        function(response) {
+          $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to remove publication!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+      });
+    }
+
+    function titleQueryFilter (query) {
+      return query ? $scope.titles.filter( $scope.createFilterFor(query) ) : $scope.titles;
+    }
+
+    function titleSearchTextChanged(text){
+      $scope.publication.title = text;
+    }
+
+    function titleSelectChanged(item){
+      if(item){
+        $scope.selectedTitle = item;
+        $scope.publication.title = item.display;
+      }
+    }
+
+    function getOptions(){
+      // Titles
+      $http({method: 'GET', url: '/api/options?table=publication&field=title', cache: $templateCache}).
+        then(function(response) {
+          $scope.titles = response.data.data.map(function(t){
+            return {display: t.option, value: t.option.toLowerCase()}
+          });
+          console.log($scope.titles)
+        }, function(response) {
+          console.log("error")    
+      });
+    }
+
+    getOptions();
+    getPublications();
 });
 
 angular.module('knowBase').controller('skillsController',
