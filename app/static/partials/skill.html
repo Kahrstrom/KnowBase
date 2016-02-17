@@ -19,7 +19,7 @@
 
 	</md-list>
 </md-whiteframe>
-<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex-gt-lg="50" ng-if="skill" >
+<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex="50" ng-if="skill" >
 	<div flex layout="row" class="skill-header">
 		<span flex="33">
 			<md-button class="md-button-small" ng-click="cancelSkill()">
@@ -54,9 +54,14 @@
           </md-item-template>
         </md-autocomplete>	
 
-        <md-input-container class="md-block md-icon-float">
+        <md-input-container class="md-block">
             <label>{{levelLabel}}</label>
-            <input min="0" max="5" type="text" name="description" ng-model="skill.level"></textarea>
+            <md-select ng-model="skill.level" flex>
+              <md-option ng-repeat="level in levels" value="{{level.level}}">
+                {{level.level}}
+              </md-option>
+            </md-select>
+            <md-tooltip>Rate yourself 1 to 5.</md-tooltip>
         </md-input-container>
 
 		

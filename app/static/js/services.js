@@ -12,6 +12,7 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
     };
 
     self.updateProfile = function(profile){
+      console.log(profile)
       var deferred = $q.defer();
       $http.post(self.urlBase + 'profile', profile)
         .success(function (data, status) {

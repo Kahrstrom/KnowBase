@@ -20,7 +20,7 @@
 
 	</md-list>
 </md-whiteframe>
-<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex-gt-lg="50" ng-if="publication" >
+<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex="50" ng-if="publication" >
 	<div flex layout="row" class="publication-header">
 		<span flex="33">
 			<md-button class="md-button-small" ng-click="cancelPublication()">
@@ -65,7 +65,12 @@
             <textarea rows="6" md-maxlength="4000" type="text" name="authors" ng-model="publication.authors"></textarea>
         </md-input-container>
 		
-		<md-datepicker name="date" ng-model="publication.date" md-placeholder="{{dateLabel}}"></md-datepicker>
+		<am-date-picker flex ng-model="publication.date"
+            am-input-date-format="L"
+            am-input-label="{{dateLabel}}"
+            am-today-button="Today"
+            am-show-input-icon="true">
+        </am-date-picker>
 		
         <md-input-container class="md-block md-icon-float">
             <label>{{publicationLabel}}</label>

@@ -5,22 +5,21 @@
 	<md-list ng-cloak>
 		<div layout="row">
 		  	<md-subheader  flex class="md-no-sticky">{{title}}</md-subheader>
-		  	<md-button ng-if="!Language" class="md-fab md-accent" ng-click="newLanguage()" aria-label="New Language">
+		  	<md-button ng-if="!language" class="md-fab md-accent" ng-click="newLanguage()" aria-label="New Language">
 		        <md-icon md-font-icon="fa-plus" class="fa fa-lg white" ></md-icon>
 		    </md-button>
 		</div>
-	  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="Language in Languages" ng-click="editLanguage(Language)">
-	    	<md-icon md-font-icon="fa-graduation-cap" class="fa fa-lg avatar md-avatar-icon"></md-icon>
-    		<div class="md-list-item-text" >
-      			<h3> {{ Language.title }} </h3>
-      			<p> {{ Language.school }}</p>
-      			<p> {{Language.startdate | date : 'yyyy-MM'}} - {{Language.enddate | date : 'yyyy-MM'}} </p>
-    		</div>
+	  	<md-list-item ng-repeat="language in languages" ng-click="editLanguage(language)">
+	    	<md-icon md-font-icon="fa-comment-o" class="fa fa-lg avatar md-avatar-icon"></md-icon>
+    		<!-- <div class="md-list-item-text" > -->
+      			<h3> {{ language.language }} </h3>
+    		<!-- </div> -->
+            <span flex/>
 	  	</md-list-item>
 
 	</md-list>
 </md-whiteframe>
-<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex-gt-lg="50" ng-if="Language" >
+<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex="50" ng-if="language" >
 	<div flex layout="row" class="skill-header">
 		<span flex="33">
 			<md-button class="md-button-small" ng-click="cancelLanguage()">
@@ -28,7 +27,7 @@
 			</md-button>
 			<span flex/>
 		</span>
-		<md-icon flex="33" md-font-icon="fa-graduation-cap center" class="fa fa-3x"></md-icon>
+		<md-icon flex="33" md-font-icon="fa-comment-o center" class="fa fa-3x"></md-icon>
 		<span flex/>
         <md-button class="md-button-small" ng-click="deleteRecord()">
             <md-icon md-font-icon="fa-trash-o" class="fa fa-lg"></md-icon>
@@ -37,50 +36,69 @@
 	<form flex layout-margin layout-padding flex ng-submit="saveLanguage()" name="LanguageForm">
 		
 		<md-autocomplete flex required
-            md-input-name="titleAutoComplete"
+            md-input-name="languageAutoComplete"
             md-min-length="0"
             md-input-maxlength="64"
             md-input-minlength="0"
             md-no-cache="false"
-            md-selected-item="selectedTitle"
-            md-search-text="titleSearchText"
-            md-items="item in titleQueryFilter(titleSearchText)"
+            md-selected-item="selectedLanguage"
+            md-search-text="languageSearchText"
+            md-items="item in languageQueryFilter(languageSearchText)"
             md-item-text="item.display"
-            md-floating-label="{{titleLabel}}"
-            md-selected-item-change="titleSelectChanged(item)"
-            md-search-text-change="titleSearchTextChanged(titleSearchText)"
+            md-floating-label="{{languageLabel}}"
+            md-selected-item-change="languageSelectChanged(item)"
+            md-search-text-change="languageSearchTextChanged(languageSearchText)"
             md-select-on-match="true">
           <md-item-template>
-            <span md-highlight-text="titleSearchText" md-highlight-flags="^i">{{item.display}}</span>
+            <span md-highlight-text="languageSearchText" md-highlight-flags="^i">{{item.display}}</span>
           </md-item-template>
         </md-autocomplete>	
-        <md-autocomplete flex required
-            md-input-name="schoolAutoComplete"
-            md-min-length="0"
-            md-input-maxlength="64"
-            md-input-minlength="0"
-            md-no-cache="false"
-            md-selected-item="selectedSchool"
-            md-search-text="schoolSearchText"
-            md-items="item in schoolQueryFilter(schoolSearchText)"
-            md-item-text="item.display"
-            md-floating-label="{{schoolLabel}}"
-            md-selected-item-change="schoolSelectChanged(item)"
-            md-search-text-change="schoolSearchTextChanged(schoolSearchText)"
-            md-select-on-match="true">
-          <md-item-template>
-            <span md-highlight-text="schoolSearchText" md-highlight-flags="^i">{{item.display}}</span>
-          </md-item-template>
-        </md-autocomplete>
 		
-		<md-input-container class="md-block md-icon-float">
-			<label>{{descriptionLabel}}</label>
-			<textarea rows="6" md-maxlength="512" type="text" name="description" ng-model="Language.description"></textarea>
-		</md-input-container>
-		
-		<md-datepicker name="startdate" ng-model="Language.startdate" md-placeholder="{{startdateLabel}}"></md-datepicker>
-		<div class="horizontal-spacer"></div>
-		<md-datepicker name="enddate" ng-model="Language.enddate" md-placeholder="{{enddateLabel}}"></md-datepicker>
+		<md-input-container class="md-block">
+            <label>{{listeningLabel}}</label>
+            <md-select ng-model="language.listening" flex>
+              <md-option ng-repeat="level in levels" value="{{level.level}}">
+                {{level.level}}
+              </md-option>
+            </md-select>
+            <md-tooltip>Rate yourself from lowest A1 to highest C2.</md-tooltip>
+        </md-input-container>
+        <md-input-container class="md-block">
+            <label>{{writingLabel}}</label>
+            <md-select ng-model="language.writing" flex>
+              <md-option ng-repeat="level in levels" value="{{level.level}}">
+                {{level.level}}
+              </md-option>
+            </md-select>
+            <md-tooltip>Rate yourself from lowest A1 to highest C2.</md-tooltip>
+        </md-input-container>
+        <md-input-container class="md-block">
+            <label>{{readingLabel}}</label>
+            <md-select ng-model="language.reading" flex>
+              <md-option ng-repeat="level in levels" value="{{level.level}}">
+                {{level.level}}
+              </md-option>
+            </md-select>
+            <md-tooltip>Rate yourself from lowest A1 to highest C2.</md-tooltip>
+        </md-input-container>
+        <md-input-container class="md-block">
+            <label>{{conversationLabel}}</label>
+            <md-select ng-model="language.conversation" flex>
+              <md-option ng-repeat="level in levels" value="{{level.level}}">
+                {{level.level}}
+              </md-option>
+            </md-select>
+            <md-tooltip>Rate yourself from lowest A1 to highest C2.</md-tooltip>
+        </md-input-container>
+        <md-input-container class="md-block">
+            <label>{{verbalLabel}}</label>
+            <md-select ng-model="language.verbal" flex>
+              <md-option ng-repeat="level in levels" value="{{level.level}}">
+                {{level.level}}
+              </md-option>
+            </md-select>
+            <md-tooltip>Rate yourself from lowest A1 to highest C2.</md-tooltip>
+        </md-input-container>
 
 		<div layout="row" class="vertical-nudge-top">
             <md-button type="submit" class="md-raised md-primary" flex>Save Language</md-button>

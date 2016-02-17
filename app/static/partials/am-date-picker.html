@@ -1,7 +1,7 @@
-<div style="outline-style: none;">
+<div class="icon-datepicker">
     <!-- Date picker input -->
     <div>
-        <md-input-container class="md-icon-float md-icon-right">
+        <md-input-container class="md-icon-float md-icon-right am-datepicker-input">
             <label>{{ amDatePicker.inputLabel }}</label>
             <md-icon ng-show="amDatePicker.showInputIcon"
                      md-svg-icon="{{ amDatePicker.calendarIcon }}"
@@ -25,9 +25,9 @@
 
         <!-- Current date -->
         <div layout-align="center" class="am-date-picker__header-current-date">
-            <p>{{ amDatePicker.moment(amDatePicker.ngModel).format('YYYY') }}</p>
-            <h2>{{ amDatePicker.moment(amDatePicker.ngModel).format(amDatePicker.popupDateFormat) }}</h2>
-        </div>
+            <p >{{ amDatePicker.ngModelMoment ? amDatePicker.moment(amDatePicker.ngModelMoment).format('YYYY') : '' }}</p>
+            <h2 >{{ amDatePicker.ngModel ? amDatePicker.moment(amDatePicker.ngModel).format(amDatePicker.popupDateFormat) : '' }}</h2>
+        </div> 
 
     </div>
 
@@ -98,7 +98,7 @@
          ng-if="amDatePicker.yearSelection">
         <a class="am-date-picker__year"
            ng-class="{ 'am-date-picker__year--is-active':
-                        year == amDatePicker.moment(amDatePicker.ngModel).format('YYYY') }"
+                        year == amDatePicker.moment(amDatePicker.ngModelMoment).format('YYYY') }"
            ng-repeat="year in amDatePicker.years"
            ng-click="amDatePicker.selectYear(year)">
             <p>{{ year }}</p>

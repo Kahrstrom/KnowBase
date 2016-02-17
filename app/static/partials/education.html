@@ -12,15 +12,15 @@
 	  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="education in educations" ng-click="editEducation(education)">
 	    	<md-icon md-font-icon="fa-graduation-cap" class="fa fa-lg avatar md-avatar-icon"></md-icon>
     		<div class="md-list-item-text" >
-      			<h3> {{ education.title }} </h3>
+      			<h3> {{ education.title }} - {{ education.education }} </h3>
       			<p> {{ education.school }}</p>
-      			<p ng-if="education.startdate && education.enddate"> {{education.startdate | date : 'yyyy-MM'}} - {{education.enddate | date : 'yyyy-MM'}} </p>
+      			<p ng-if="education.startdate || education.enddate"> {{education.startdate | date : 'yyyy-MM'}} - {{education.enddate | date : 'yyyy-MM'}} </p>
     		</div>
 	  	</md-list-item>
 
 	</md-list>
 </md-whiteframe>
-<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex-gt-lg="50" ng-if="education" >
+<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex="50" ng-if="education" >
 	<div flex layout="row" class="skill-header">
 		<span flex="33">
 			<md-button class="md-button-small" ng-click="cancelEducation()">
@@ -53,6 +53,24 @@
           <md-item-template>
             <span md-highlight-text="titleSearchText" md-highlight-flags="^i">{{item.display}}</span>
           </md-item-template>
+        </md-autocomplete>
+        <md-autocomplete flex required
+            md-input-name="educationAutoComplete"
+            md-min-length="0"
+            md-input-maxlength="64"
+            md-input-minlength="0"
+            md-no-cache="false"
+            md-selected-item="selectedEducation"
+            md-search-text="educationSearchText"
+            md-items="item in educationQueryFilter(educationSearchText)"
+            md-item-text="item.display"
+            md-floating-label="{{educationLabel}}"
+            md-selected-item-change="educationSelectChanged(item)"
+            md-search-text-change="educationSearchTextChanged(educationSearchText)"
+            md-select-on-match="true">
+          <md-item-template>
+            <span md-highlight-text="educationSearchText" md-highlight-flags="^i">{{item.display}}</span>
+          </md-item-template>
         </md-autocomplete>	
         <md-autocomplete flex required
             md-input-name="schoolAutoComplete"
@@ -77,11 +95,21 @@
 			<label>{{descriptionLabel}}</label>
 			<textarea rows="6" md-maxlength="512" type="text" name="description" ng-model="education.description"></textarea>
 		</md-input-container>
-		
-		<md-datepicker name="startdate" ng-model="education.startdate" md-placeholder="{{startdateLabel}}"></md-datepicker>
-		<div class="horizontal-spacer"></div>
-		<md-datepicker name="enddate" ng-model="education.enddate" md-placeholder="{{enddateLabel}}"></md-datepicker>
+        <div layout="row">
 
+    		<am-date-picker flex ng-model="education.startdate"
+                    am-input-date-format="L"
+                    am-input-label="{{startdateLabel}}"
+                    am-today-button="Today"
+                    am-show-input-icon="true">
+            </am-date-picker>
+            <am-date-picker flex ng-model="education.enddate"
+                am-input-date-format="L"
+                am-input-label="{{enddateLabel}}"
+                am-today-button="Today"
+                am-show-input-icon="true">
+            </am-date-picker>
+        </div>
 		<div layout="row" class="vertical-nudge-top">
             <md-button type="submit" class="md-raised md-primary" flex>Save education</md-button>
       	</div>

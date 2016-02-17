@@ -1,3 +1,16 @@
+--drop table education
+--drop table [language]
+--drop table activity
+--drop table workexperience
+--drop table skill
+--drop table skilltype
+--drop table localization
+--drop table publication
+--drop table experience
+--drop table tag
+--drop table project
+--drop table merit
+USE [knowbase]
 
 IF  NOT EXISTS (SELECT * FROM sys.objects 
 WHERE object_id = OBJECT_ID(N'[dbo].[education]') AND [type] IN (N'U'))
@@ -6,6 +19,7 @@ BEGIN
 	CREATE TABLE [dbo].[education](
 		[ideducation] [int] IDENTITY(1,1) NOT NULL,
 		[title] [nvarchar](64) NOT NULL,
+		[education] [nvarchar](64) NOT NULL, 
 		[school] [nvarchar](64) NOT NULL,
 		[startdate] [datetime] NULL,
 		[enddate] [datetime] NULL,
@@ -222,27 +236,236 @@ END
 GO
 
 IF  NOT EXISTS (SELECT * FROM sys.objects 
-WHERE object_id = OBJECT_ID(N'[dbo].[tag]') AND [type] IN (N'U'))
+WHERE object_id = OBJECT_ID(N'[dbo].[profile]') AND [type] IN (N'U'))
 BEGIN
-	-- TAG
-	CREATE TABLE [dbo].[tag](
-		[idtag] [int] IDENTITY(1,1) NOT NULL,
-		[text] [nvarchar](16) NOT NULL,
-		[category] [nvarchar](16) NOT NULL,
+-- PROFILE
+	CREATE TABLE [dbo].[profile](
+		[idprofile] [int] IDENTITY(1,1) NOT NULL,
+		[firstname] [nvarchar](72) NOT NULL DEFAULT (''),
+		[lastname] [nvarchar](72) NULL DEFAULT (''),
+		[address] [nvarchar](128) NULL DEFAULT (''),
+		[zipcode] [nvarchar](16) NULL DEFAULT (''),
+		[city] [nvarchar](32) NULL DEFAULT (''),
+		[country] [nvarchar](32) NULL DEFAULT (''),
+		[phone] [nvarchar](16) NULL DEFAULT (''),
+		[mobilephone] [nvarchar](16) NULL DEFAULT (''),
+		[profilepicture] [int] NULL,
+		[birthdate] [datetime] NULL,
+	PRIMARY KEY CLUSTERED 
+	(
+		[idprofile] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+END
+
+GO
+IF  NOT EXISTS (SELECT * FROM sys.objects 
+WHERE object_id = OBJECT_ID(N'[dbo].[rel_experience]') AND [type] IN (N'U'))
+BEGIN
+
+	-- CVPROFILES
+	CREATE TABLE [dbo].[rel_experience](
+		[idrel_experience] [int] IDENTITY(1,1) NOT NULL,
+		[idfield] [int] NULL,
+		[experience] [int] NULL,
+		[table] [nvarchar] (64) NULL,
+		[timestamp] [datetime] NULL,
+	PRIMARY KEY CLUSTERED 
+	(
+		[idrel_experience] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+
+	ALTER TABLE [dbo].[rel_experience] ADD  DEFAULT (getdate()) FOR [timestamp]
+END
+
+GO
+
+IF  NOT EXISTS (SELECT * FROM sys.objects 
+WHERE object_id = OBJECT_ID(N'[dbo].[rel_language]') AND [type] IN (N'U'))
+BEGIN
+
+	-- CVPROFILES
+	CREATE TABLE [dbo].[rel_language](
+		[idrel_language] [int] IDENTITY(1,1) NOT NULL,
+		[idfield] [int] NULL,
+		[language] [int] NULL,
+		[table] [nvarchar] (64) NULL,
+		[timestamp] [datetime] NULL,
+	PRIMARY KEY CLUSTERED 
+	(
+		[idrel_language] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+
+	ALTER TABLE [dbo].[rel_language] ADD  DEFAULT (getdate()) FOR [timestamp]
+END
+
+GO
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects 
+WHERE object_id = OBJECT_ID(N'[dbo].[rel_merit]') AND [type] IN (N'U'))
+BEGIN
+
+	-- CVPROFILES
+	CREATE TABLE [dbo].[rel_merit](
+		[idrel_merit] [int] IDENTITY(1,1) NOT NULL,
+		[idfield] [int] NULL,
+		[merit] [int] NULL,
+		[table] [nvarchar] (64) NULL,
+		[timestamp] [datetime] NULL,
+	PRIMARY KEY CLUSTERED 
+	(
+		[idrel_merit] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+
+	ALTER TABLE [dbo].[rel_merit] ADD  DEFAULT (getdate()) FOR [timestamp]
+END
+
+GO
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects 
+WHERE object_id = OBJECT_ID(N'[dbo].[rel_project]') AND [type] IN (N'U'))
+BEGIN
+
+	-- CVPROFILES
+	CREATE TABLE [dbo].[rel_project](
+		[idrel_project] [int] IDENTITY(1,1) NOT NULL,
+		[idfield] [int] NULL,
+		[project] [int] NULL,
+		[table] [nvarchar] (64) NULL,
+		[timestamp] [datetime] NULL,
+	PRIMARY KEY CLUSTERED 
+	(
+		[idrel_project] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+
+	ALTER TABLE [dbo].[rel_project] ADD  DEFAULT (getdate()) FOR [timestamp]
+END
+
+GO
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects 
+WHERE object_id = OBJECT_ID(N'[dbo].[rel_publication]') AND [type] IN (N'U'))
+BEGIN
+
+	-- CVPROFILES
+	CREATE TABLE [dbo].[rel_publication](
+		[idrel_publication] [int] IDENTITY(1,1) NOT NULL,
+		[idfield] [int] NULL,
+		[publication] [int] NULL,
+		[table] [nvarchar] (64) NULL,
+		[timestamp] [datetime] NULL,
+	PRIMARY KEY CLUSTERED 
+	(
+		[idrel_publication] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+
+	ALTER TABLE [dbo].[rel_publication] ADD  DEFAULT (getdate()) FOR [timestamp]
+END
+
+GO
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects 
+WHERE object_id = OBJECT_ID(N'[dbo].[rel_workexperience]') AND [type] IN (N'U'))
+BEGIN
+	-- CVPROFILES
+	CREATE TABLE [dbo].[rel_workexperience](
+		[idrel_workexperience] [int] IDENTITY(1,1) NOT NULL,
+		[idfield] [int] NULL,
+		[workexperience] [int] NULL,
+		[table] [nvarchar] (64) NULL,
+		[timestamp] [datetime] NULL,
+	PRIMARY KEY CLUSTERED 
+	(
+		[idrel_workexperience] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+
+	ALTER TABLE [dbo].[rel_workexperience] ADD  DEFAULT (getdate()) FOR [timestamp]
+END
+
+GO
+
+
+IF  NOT EXISTS (SELECT * FROM sys.objects 
+WHERE object_id = OBJECT_ID(N'[dbo].[rel_skill]') AND [type] IN (N'U'))
+BEGIN
+	-- CVPROFILES
+	CREATE TABLE [dbo].[rel_skill](
+		[idrel_skill] [int] IDENTITY(1,1) NOT NULL,
+		[idfield] [int] NULL,
+		[skill] [int] NULL,
+		[table] [nvarchar] (64) NULL,
+		[timestamp] [datetime] NULL,
+	PRIMARY KEY CLUSTERED 
+	(
+		[idrel_skill] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+
+	ALTER TABLE [dbo].[rel_skill] ADD  DEFAULT (getdate()) FOR [timestamp]
+END
+
+GO
+
+IF  NOT EXISTS (SELECT * FROM sys.objects 
+WHERE object_id = OBJECT_ID(N'[dbo].[cvprofile]') AND [type] IN (N'U'))
+BEGIN
+
+	-- CVPROFILES
+	CREATE TABLE [dbo].[cvprofile](
+		[idcvprofile] [int] IDENTITY(1,1) NOT NULL,
+		--[education] [int] NULL,
+		--[experience] [int] NULL,
+		--[language] [int] NULL,
+		--[merit] [int] NULL,
+		--[project] [int] NULL,
+		--[publication] [int] NULL,
+		--[skill] [int] NULL,
+		--[workexperience] [int] NULL,
 		[profile] [int] NULL,
 		[timestamp] [datetime] NULL,
 	PRIMARY KEY CLUSTERED 
 	(
-		[idtag] ASC
+		[idcvprofile] ASC
 	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
 	) ON [PRIMARY]
 
-	ALTER TABLE [dbo].[tag] ADD  DEFAULT ('') FOR [text]
-	ALTER TABLE [dbo].[tag] ADD  DEFAULT ('') FOR [category]
-	ALTER TABLE [dbo].[tag] ADD  DEFAULT (getdate()) FOR [timestamp]
+	ALTER TABLE [dbo].[cvprofile] ADD  DEFAULT (getdate()) FOR [timestamp]
 END
 
 GO
+
+IF  NOT EXISTS (SELECT * FROM sys.objects 
+WHERE object_id = OBJECT_ID(N'[dbo].[rel_education]') AND [type] IN (N'U'))
+BEGIN
+
+	-- CVPROFILES
+	CREATE TABLE [dbo].[rel_education](
+		[idrel_education] [int] IDENTITY(1,1) NOT NULL,
+		[idfield] [int] NULL,
+		[education] [int] NULL,
+		[table] [nvarchar] (64) NULL,
+		[timestamp] [datetime] NULL,
+	PRIMARY KEY CLUSTERED 
+	(
+		[idrel_education] ASC
+	)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+	) ON [PRIMARY]
+
+	ALTER TABLE [dbo].[rel_education] ADD  DEFAULT (getdate()) FOR [timestamp]
+END
+
+GO
+
 
 
 IF  NOT EXISTS (SELECT * FROM sys.objects 

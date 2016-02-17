@@ -20,7 +20,7 @@
 
 	</md-list>
 </md-whiteframe>
-<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex-gt-lg="50" ng-if="merit" >
+<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex="50" ng-if="merit" >
 	<div flex layout="row" class="merit-header">
 		<span flex="33">
 			<md-button class="md-button-small" ng-click="cancelMerit()">
@@ -57,11 +57,16 @@
 		
 		<md-input-container class="md-block md-icon-float">
 			<label>{{descriptionLabel}}</label>
-			<textarea rows="6" md-maxlength="512" type="text" name="description" ng-model="Merit.description"></textarea>
+			<textarea rows="6" md-maxlength="512" type="text" name="description" ng-model="merit.description"></textarea>
 		</md-input-container>
-		
-		<md-datepicker name="date" ng-model="Merit.date" md-placeholder="{{dateLabel}}"></md-datepicker>
 
+		<am-date-picker flex ng-model="merit.date"
+            am-input-date-format="L"
+            am-input-label="{{dateLabel}}"
+            am-today-button="Today"
+            am-show-input-icon="true">
+        </am-date-picker>
+		
 		<div layout="row" class="vertical-nudge-top">
             <md-button type="submit" class="md-raised md-primary" flex>Save Merit</md-button>
       	</div>

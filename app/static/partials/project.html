@@ -14,13 +14,13 @@
     		<div class="md-list-item-text" >
       			<h3> {{ project.name }} </h3>
       			<p> {{ project.customername }}</p>
-      			<p ng-if="project.startdate && project.enddate"> {{project.startdate | date : 'yyyy-MM'}} - {{project.enddate | date : 'yyyy-MM'}} </p>
+      			<p ng-if="project.startdate || project.enddate"> {{project.startdate | date : 'yyyy-MM'}} - {{project.enddate | date : 'yyyy-MM'}} </p>
     		</div>
 	  	</md-list-item>
 
 	</md-list>
 </md-whiteframe>
-<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex-gt-lg="50" ng-if="project" >
+<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex="50" ng-if="project" >
 	<div flex layout="row" class="skill-header">
 		<span flex="33">
 			<md-button class="md-button-small" ng-click="cancelProject()">
@@ -83,9 +83,21 @@
             <input type="number" name="hours" ng-model="project.hours">
         </md-input-container>
 		
-		<md-datepicker name="startdate" ng-model="project.startdate" md-placeholder="{{startdateLabel}}"></md-datepicker>
-		<div class="horizontal-spacer"></div>
-		<md-datepicker name="enddate" ng-model="project.enddate" md-placeholder="{{enddateLabel}}"></md-datepicker>
+		<div layout="row">
+
+            <am-date-picker flex ng-model="project.startdate"
+                    am-input-date-format="L"
+                    am-input-label="{{startdateLabel}}"
+                    am-today-button="Today"
+                    am-show-input-icon="true">
+            </am-date-picker>
+            <am-date-picker flex ng-model="project.enddate"
+                am-input-date-format="L"
+                am-input-label="{{enddateLabel}}"
+                am-today-button="Today"
+                am-show-input-icon="true">
+            </am-date-picker>
+        </div>
 
 		<div layout="row" class="vertical-nudge-top">
             <md-button type="submit" class="md-raised md-primary" flex>Save project</md-button>

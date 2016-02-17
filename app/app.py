@@ -1,45 +1,29 @@
 from flask import Flask, request, jsonify, abort, session
-
-from werkzeug import generate_password_hash, check_password_hash, secure_filename
+from flask_sqlalchemy import SQLAlchemy
 from functools import update_wrapper
 import os
-import pypyodbc
+import json
+import config
 import collections
+from base64 import *
 
 app = Flask(__name__)
 app.secret_key = 'qwertyasdfghzxcvb'
+app.config['SQLALCHEMY_DATABASE_URI'] = config.connection_string
 
-db_name = os.environ['KNOWBASE_DB']
-db_uid = os.environ['KNOWBASE_UID']
-db_pw = os.environ['KNOWBASE_PW']
-server_type = '{SQL Server}'
-server_name = os.environ['KNOWBASE_SERVER']
-host_ip = os.environ['KNOWBASE_HOST']
+db = SQLAlchemy(app)
 
-ALLOWED_EXTENSIONS = set(['jpeg', 'jpg', 'png', 'gif'])
+db.init_app(app)
 
-
-#app.secret_key = 'devkey'
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://test_user:pass@localhost:5432/knowledge_test'
-#db.init_app(app)
-
-
-connection_string = "DRIVER={type};SERVER={server};UID={uid};PWD={pw};DATABASE={db}".format(
-	type=server_type, server=server_name, uid=db_uid, pw=db_pw, db=db_name)
-
-print(connection_string)
-
-conn = pypyodbc.connect(connection_string)
-cursor = conn.cursor()
+from models import *
 
 def require_login():
     def decorator(fn):
         def decorated_function(*args, **kwargs):
             if 'email' not in session:
                 return abort(401)
-            user = cursor.execute("SELECT TOP 1 [iduser] FROM [user] WHERE [email] = ?",[session['email']])
-           #user = User.query.filter_by(email=session['email']).first()
-            if user.rowcount == 0:
+            user = User.query.filter_by(email=session['email']).first()
+            if user is None:
                 return abort(401)
 
             return fn(*args, **kwargs)
@@ -50,7 +34,7 @@ def require_login():
 
 def allowed_file(filename):
     return '.' in filename and \
-           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+           filename.rsplit('.', 1)[1] in config.ALLOWED_EXTENSIONS
 
 @app.route('/')
 def home():
@@ -61,13 +45,12 @@ def home():
 @app.route('/api/skilltypes', methods=['GET'])
 @require_login()
 def skill_types():
-    stmt = "EXECUTE sp_get_skilltypes @@email = '{email}', @@locale = '{localize}'".format(
-        localize=session['locale'], email=session['email'])
 
-    skilltypes = cursor.execute(stmt).fetchall()
-
-    retval = serialize_table(skilltypes[0].cursor_description, skilltypes)
-
+    user = User.query.filter_by(email=session['email']).first()
+    try:
+        retval = get_skilltypes(user.profile)
+    except Exception as err:
+        print(err)
     return jsonify(data=retval)
 
 @app.route('/api/profilepicture', methods=['POST'])
@@ -77,28 +60,38 @@ def upload_profile_picture():
     data = request.json['data']
 
     if data and allowed_file("." + extension):
-        cursor.execute("EXECUTE sp_add_profile_picture @@email = '{email}', @@data = '{data}',"
-                       "@@extension = '{extension}', @@filename = '{filename}'".format(email=session['email'],
-                                                                                   data=data,
-                                                                                   extension=extension,
-                                                                                   filename='profilepicture'))
-        cursor.commit()
+        profile = User.query.filter_by(email=session['email']).first().rel_profile
+        if profile.rel_profilepicture is None:
+            picture = File(data=data, extension=extension, filename='profilepicture')
+            db.session.add(picture)
+            db.session.commit()
+            profile.profilepicture = picture.idfile
+        else:
+            picture = profile.rel_profilepicture
+            picture.data = base64.b64decode(data)
+        db.session.commit()
 
+        #cursor.commit()
 
     return jsonify(response='success')
 
 @app.route('/api/profilepicture', methods=['GET'])
 @require_login()
 def get_profile_picture():
-    img = cursor.execute("EXECUTE sp_get_profile_picture @@email='{email}'".format(email=session['email'])).fetchone()
-    return jsonify({'data': img[0], 'extension': img[1]})
+    try:
+        user = User.query.filter_by(email=session['email']).first()
+        img = user.rel_profile.rel_profilepicture
+    except Exception as err:
+        print(err)
+    return jsonify(img.serialize)
 
 @app.route('/api/profile', methods=['POST'])
 @require_login()
 def update_profile():
-    update_stmt = update_from_request("profile", request)
-    cursor.execute(update_stmt)
-    cursor.commit()
+
+    profile = User.query.filter_by(email=session['email']).first().rel_profile
+    profile.update(request.json)
+    db.session.commit()
     return jsonify(response='success')
 
 
@@ -108,12 +101,12 @@ def login():
     email = json_data['email']
     password = json_data['password']
 
-    user = cursor.execute('SELECT [iduser],[password] FROM [user] WHERE [email] = ?', [email]).fetchone()
+    user = User.query.filter_by(email=email).first()
 
     if user is None:
         return jsonify(response=False)
 
-    if check_password_hash(user[1], password):
+    if user.check_password(password):
         session['email'] = email
         return jsonify(response=True)
 
@@ -138,34 +131,30 @@ def signup():
     firstname = json_data['firstname']
     lastname = json_data['lastname']
 
-    res = cursor.execute('SELECT [iduser],[email] FROM [user] WHERE [email] = ?', [email])
+    user = User.query.filter_by(email=email).first()
 
-    if res.fetchone() is not None:
+    if user is not None:
         return jsonify(response='user already exists')
 
-    cursor.execute('INSERT INTO [profile] ([firstname], [lastname]) VALUES (?,?)', [firstname, lastname])
-    idprofile = cursor.execute("SELECT @@IDENTITY").fetchone()
-    cursor.commit()
+    profile = Profile(firstname=firstname, lastname=lastname)
+    db.session.add(profile)
+    db.session.commit()
 
-    
-    cursor.execute('INSERT INTO [user] ([email],[password],[profile]) VALUES (?, ?, ?)',
-                   [email, generate_password_hash(password), idprofile[0]])
-    cursor.commit()
-
+    user = User(email=email, password=password, profile=profile.idprofile)
+    db.session.add(user)
+    db.session.commit()
     return jsonify(response='success')
 
 @app.route('/api/profile', methods=['GET'])
 @require_login()
 def profile():
 
-    user = cursor.execute("SELECT [iduser],[profile] FROM [user] WHERE [email] = ?", [session['email']]).fetchone()
+    user = User.query.filter_by(email=session['email']).first()
 
     if user is None:
         return abort(404)
-    profile = cursor.execute("SELECT * FROM [profile] WHERE [idprofile] = ?", [user[1]]).fetchone()
-    profile = serialize_row(profile.cursor_description, profile)
 
-    return jsonify(data=profile)
+    return jsonify(data=user.rel_profile.serialize)
 
 
 @app.route('/api/options', methods=['GET'])
@@ -173,196 +162,251 @@ def profile():
 def get_options():
     table = request.args['table']
     field = request.args['field']
-    stmt = "SELECT DISTINCT [{field}] AS 'option' FROM [{table}] ORDER BY [{field}] ASC".format(table=table,field=field)
-    options = cursor.execute(stmt).fetchall()
-    if len(options) == 0:
-        return abort(404)
-    return jsonify(data=serialize_table(options[0].cursor_description, options))
+
+    t = get_class_by_tablename(table.lower())
+    c = getattr(t,field.lower())
+    query = db.session.query(c.distinct().label("option"))
+
+    options = [{"option":row.option} for row in query.all()]
+    return jsonify(data=options)
 
 @app.route('/api/workexperience', methods=['GET'])
 @require_login()
 def get_user_workexperience():
-    workexperience = cursor.execute("SELECT w.* FROM [workexperience] w INNER JOIN [profile] p ON p.[idprofile] = w.[profile] "
-                                "INNER JOIN [user] u ON u.[profile] = p.[idprofile] WHERE u.[email] = ? "
-                                "ORDER BY w.[enddate] DESC", [session['email']]).fetchall()
-
-
-    if len(workexperience) == 0:
+    user = User.query.filter_by(email=session['email']).first()
+    workexperience = WorkExperience.query.filter_by(profile=user.profile).all()
+    if workexperience is None:
         return abort(404)
+    retval = []
+    for w in workexperience:
+            retval.append(w.serialize)
 
-    return jsonify(data=serialize_table(workexperience[0].cursor_description, workexperience))
+    return jsonify(data=retval)
 
 @app.route('/api/workexperience', methods=['POST'])
 @require_login()
 def create_workexperience():
-
     idworkexperience = request.json['idworkexperience']
+
+    profile = User.query.filter_by(email=session['email']).first().rel_profile
+
     if idworkexperience is None:
-        stmt = insert_from_request("workexperience", request)
+        workexperience = WorkExperience(request.json, profile.idprofile)
+        db.session.add(workexperience)
     else:
-        stmt = update_from_request("workexperience", request)
+        workexperience = WorkExperience.query.get(idworkexperience)
+        workexperience.update(request.json)
+        
+    db.session.commit()
 
-    cursor.execute(stmt)
-    cursor.commit()
-
-    if idworkexperience is None:
-        idworkexperience = cursor.execute("SELECT @@IDENTITY").fetchone()[0]
-
-    return jsonify(idrecord="{idrecord}".format(idrecord=idworkexperience))
+    return jsonify(idrecord="{idrecord}".format(idrecord=workexperience.idworkexperience))
 
 @app.route('/api/merits', methods=['GET'])
 @require_login()
 def get_user_merits():
-    merits = select_from_table("merit")
-    if len(merits) == 0:
+    user = User.query.filter_by(email=session['email']).first()
+    merits = Merit.query.filter_by(profile=user.profile).all()
+    if merits is None:
         return abort(404)
+    retval = []
+    for m in merits:
+            retval.append(m.serialize)
 
-    return jsonify(data=serialize_table(merits[0].cursor_description, merits))
+    return jsonify(data=retval)
 
 @app.route('/api/merit', methods=['POST'])
 @require_login()
 def create_merit():
-
     idmerit = request.json['idmerit']
+    profile = User.query.filter_by(email=session['email']).first().rel_profile
 
     if idmerit is None:
-        stmt = insert_from_request("merit", request)
+        merit = Merit(request.json, profile.idprofile)
+        db.session.add(merit)
     else:
-        stmt = update_from_request("merit", request)
+        merit = Merit.query.get(idmerit)
+        merit.update(request.json)
+        
+    db.session.commit()
 
-    cursor.execute(stmt)
-    cursor.commit()
-    if idmerit is None:
-        idmerit = cursor.execute("SELECT @@IDENTITY").fetchone()[0]
-
-    return jsonify(idrecord="{idrecord}".format(idrecord=idmerit))
+    return jsonify(idrecord="{idrecord}".format(idrecord=merit.idmerit))
 
 @app.route('/api/educations', methods=['GET'])
 @require_login()
 def get_user_educations():
-    educations = select_from_table("education")
-    if len(educations) == 0:
+    user = User.query.filter_by(email=session['email']).first()
+    educations = Education.query.filter_by(profile=user.profile).all()
+    if educations is None:
         return abort(404)
+    retval = []
+    for edu in educations:
+            retval.append(edu.serialize)
 
-    return jsonify(data=serialize_table(educations[0].cursor_description, educations))
+    return jsonify(data=retval)
 
 
 @app.route('/api/education', methods=['POST'])
 @require_login()
-def create_education():
-    print("")
+def update_education():
+
     ideducation = request.json['ideducation']
-    print(ideducation)
+    profile = User.query.filter_by(email=session['email']).first().rel_profile
+
     if ideducation is None:
-        stmt = insert_from_request("education",request)
+        education = Education(request.json, profile.idprofile)
+        db.session.add(education)
+
     else:
-        stmt = update_from_request("education", request)
+        education = Education.query.get(ideducation)
+        education.update(request.json)
+        print(education.serialize)
 
-    cursor.execute(stmt)
-    cursor.commit()
-    if ideducation is None:
-        ideducation = cursor.execute("SELECT @@IDENTITY").fetchone()[0]
+    db.session.commit()
 
-    return jsonify(idrecord="{idrecord}".format(idrecord=ideducation))
+    return jsonify(idrecord="{idrecord}".format(idrecord=education.ideducation))
+
 
 @app.route('/api/skills', methods=['GET'])
 @require_login()
 def get_user_skills():
-    skills = select_from_table("skill")
-    if len(skills) == 0:
+    user = User.query.filter_by(email=session['email']).first()
+    skills = Skill.query.filter_by(profile=user.profile).all()
+    if skills is None:
         return abort(404)
+    retval = []
+    for s in skills:
+            retval.append(s.serialize)
 
-    return jsonify(data=serialize_table(skills[0].cursor_description, skills))
+    return jsonify(data=retval)
 
 
 @app.route('/api/skill', methods=['POST'])
 @require_login()
-def create_skill():
+def update_skill():
 
     idskill = request.json['idskill']
+    profile = User.query.filter_by(email=session['email']).first().rel_profile
 
     if idskill is None:
-        stmt = insert_from_request("skill", request)
+        skill = Skill(request.json, profile.idprofile)
+        db.session.add(skill)
     else:
-        stmt = update_from_request("skill", request)
+        skill = Skill.query.get(idskill)
+        skill.update(request.json)
 
-    cursor.execute(stmt)
-    cursor.commit()
-    if idskill is None:
-        idskill = cursor.execute("SELECT @@IDENTITY").fetchone()[0]
+    db.session.commit()
 
-    return jsonify(idrecord="{idrecord}".format(idrecord=idskill))
+    return jsonify(idrecord="{idrecord}".format(idrecord=skill.idskill))
 
 @app.route('/api/experiences', methods=['GET'])
 @require_login()
 def get_user_experiences():
-    experiences = select_from_table("experience")
-    if len(experiences) == 0:
+    user = User.query.filter_by(email=session['email']).first()
+    experiences = Experience.query.filter_by(profile=user.profile).all()
+    if experiences is None:
         return abort(404)
+    retval = []
+    for e in experiences:
+            retval.append(e.serialize)
 
-    return jsonify(data=serialize_table(experiences[0].cursor_description, experiences))
+    return jsonify(data=retval)
 
 
 @app.route('/api/experience', methods=['POST'])
 @require_login()
-def create_experience():
-
+def update_experience():
     idexperience = request.json['idexperience']
+    profile = User.query.filter_by(email=session['email']).first().rel_profile
 
     if idexperience is None:
-        stmt = insert_from_request("experience",request)
+        experience = Experience(request.json, profile.idprofile)
+        db.session.add(experience)
     else:
-        stmt = update_from_request("experience", request)
+        experience = Experience.query.get(idexperience)
+        experience.update(request.json)
+        
+    db.session.commit()
 
-    cursor.execute(stmt)
-    cursor.commit()
-    if idexperience is None:
-        idexperience = cursor.execute("SELECT @@IDENTITY").fetchone()[0]
+    return jsonify(idrecord="{idrecord}".format(idrecord=experience.idexperience))
 
-    return jsonify(idrecord="{idrecord}".format(idrecord=idexperience))
+@app.route('/api/languages', methods=['GET'])
+@require_login()
+def get_languages():
+    user = User.query.filter_by(email=session['email']).first()
+    languages = Language.query.filter_by(profile=user.profile).all()
+    if languages is None:
+        return abort(404)
+    retval = []
+    for l in languages:
+            retval.append(l.serialize)
+
+    return jsonify(data=retval)
+
+
+@app.route('/api/language', methods=['POST'])
+@require_login()
+def update_language():
+    idlanguage = request.json['idlanguage']
+
+    profile = User.query.filter_by(email=session['email']).first().rel_profile
+
+    if idlanguage is None:
+        try:
+            language = Language(request.json, profile.idprofile)
+            db.session.add(language)
+        except Exception as err:
+            print(err)
+    else:
+        language = Language.query.get(idlanguage)
+        language.update(request.json)
+        
+    db.session.commit()
+
+    return jsonify(idrecord="{idrecord}".format(idrecord=language.idlanguage))
 
 @app.route('/api/publications', methods=['GET'])
 @require_login()
 def get_user_publications():
-    publications = select_from_table("publication")
-    if len(publications) == 0:
+    user = User.query.filter_by(email=session['email']).first()
+    publications = Publication.query.filter_by(profile=user.profile).all()
+    if publications is None:
         return abort(404)
+    retval = []
+    for p in publications:
+        retval.append(p.serialize)
 
-    return jsonify(data=serialize_table(publications[0].cursor_description, publications))
+    return jsonify(data=retval)
 
 
 @app.route('/api/publication', methods=['POST'])
 @require_login()
 def create_publication():
-
     idpublication = request.json['idpublication']
-    print(idpublication)
+    profile = User.query.filter_by(email=session['email']).first().rel_profile
+
     if idpublication is None:
-        stmt = insert_from_request("publication",request)
+        publication = Publication(request.json, profile.idprofile)
+        db.session.add(publication)
     else:
-        stmt = update_from_request("publication", request)
+        publication = Publication.query.get(idpublication)
+        publication.update(request.json)
+        
+    db.session.commit()
 
-    cursor.execute(stmt)
-    cursor.commit()
-    if idpublication is None:
-        idpublication = cursor.execute("SELECT @@IDENTITY").fetchone()[0]
-
-    return jsonify(idrecord="{idrecord}".format(idrecord=idpublication))
+    return jsonify(idrecord="{idrecord}".format(idrecord=publication.idpublication))
 
 @app.route('/api/projects', methods=['GET'])
 @require_login()
 def get_user_projects():
-    SQL = "SELECT t.*, c.[name] as 'customername' FROM [project] t " \
-          "LEFT JOIN [customer] c ON c.[idcustomer] = t.[customer]" \
-          "INNER JOIN [profile] p ON p.[idprofile] = t.[profile] " \
-          "INNER JOIN [user] u ON u.[profile] = p.[idprofile] " \
-          "WHERE u.[email] = '{email}' ".format(email=session['email'])
-
-    projects = cursor.execute(SQL).fetchall()
-    if len(projects) == 0:
+    user = User.query.filter_by(email=session['email']).first()
+    projects = Project.query.filter_by(profile=user.profile).all()
+    if projects is None:
         return abort(404)
+    retval = []
+    for p in projects:
+            retval.append(p.serialize)
 
-    return jsonify(data=serialize_table(projects[0].cursor_description, projects))
+    return jsonify(data=retval)
 
 @app.route('/api/customeroptions',methods=['GET'])
 @require_login()
@@ -409,13 +453,9 @@ def create_project():
 def delete_object():
     table = request.args['table']
     idrecord = request.args['idrecord']
-    print("hej")
-    if table not in ['experience','workexperience','education','skill','merit','language','publication','project']:
-        return abort(401)
-    SQL = "DELETE FROM [{table}] WHERE [id{table}] = {idrecord}".format(table=table,idrecord=idrecord)
-
-    cursor.execute(SQL)
-    cursor.commit()
+    record = get_class_by_tablename(table)
+    db.session.delete(record.query.get(idrecord))
+    db.session.commit()
     return jsonify(reponse='success')
 
 def serialize_table(columns, values):
@@ -479,4 +519,4 @@ def insert_from_request(table, request):
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
-    app.run(host=host_ip, port=port)
+    app.run(host=config.host_ip, port=port)

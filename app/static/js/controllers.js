@@ -110,7 +110,7 @@ angular.module('knowBase').controller('toolbarController',
     $scope.languageMenuOpen = false;
 
 
-    if($cookies.get('locale') === undefined){
+    if(!$cookies.get('locale')){
       $cookies.put('locale', JSON.stringify({value: 'en-us',display: 'Eng'}), {expires : new Date().setDate(new Date() + 14)});
       LocaleService.setLocale('en-us')
         .then(function () {
@@ -121,7 +121,7 @@ angular.module('knowBase').controller('toolbarController',
           
         });
     }
-
+    console.log($cookies.get('locale'));
     $scope.locale = JSON.parse($cookies.get('locale')).display;
     
     $scope.locales = [
@@ -165,7 +165,7 @@ angular.module('knowBase').controller('homeController',
   ['$scope', '$state', 'DataService',
   function ($scope, $state, DataService) {
     getProfile();
-    $scope.date = new Date();
+    $scope.date = null;//new Date();
 
     function getProfile() {
         DataService.getProfile()
@@ -201,6 +201,7 @@ angular.module('knowBase').controller('educationController',
     $scope.submitText = 'Update education';
     $scope.educations = [];
     $scope.titleLabel = 'Title';
+    $scope.educationLabel = 'Education';
     $scope.schoolLabel = 'School';
     $scope.startdateLabel = 'Start date';
     $scope.enddateLabel = 'End date';
@@ -222,10 +223,19 @@ angular.module('knowBase').controller('educationController',
     $scope.schoolSelectChanged = schoolSelectChanged;
     $scope.schoolQueryFilter = schoolQueryFilter;
 
+    //Education autocomplete stuff
+    $scope.educationValues = [];
+    $scope.selectedEducation = null;
+    $scope.educationSearchText = null;
+    $scope.educationSearchTextChanged = educationSearchTextChanged;
+    $scope.educationSelectChanged = educationSelectChanged;
+    $scope.educationQueryFilter = educationQueryFilter;
+
     var Education = function(e){
       var self = this;
       self.ideducation = e ? e.ideducation : null;
       self.title = e ? e.title : '';
+      self.education = e ? e.education : '';
       self.school = e ? e.school : '';
       self.startdate = e ? (e.startdate ? new Date(e.startdate) : null) : null;
       self.enddate = e ? (e.enddate ? new Date(e.enddate) : null) : null;
@@ -262,7 +272,6 @@ angular.module('knowBase').controller('educationController',
                 hideDelay: 3000,
                 position: 'bottom left'
             });
-            console.log(data)
             if(!$scope.education.ideducation){
               $scope.education.ideducation = data.idrecord;
               $scope.educations.push($scope.education);
@@ -282,22 +291,30 @@ angular.module('knowBase').controller('educationController',
             }); 
         });
     }
+    
     $scope.cancelEducation = function(){
       $scope.education = null;
       $scope.titleSearchText = null;
+      $scope.selectedTitle = null;
+      $scope.selectedSchool = null;
       $scope.schoolSearchText = null;
+      $scope.selectedEducation = null;
+      $scope.educationSearchText = null;
     }
 
     $scope.editEducation = function(e){
+      console.log(e);
       $scope.education = e;
       $scope.titleSearchText = e.title;
       $scope.schoolSearchText = e.school;
+      $scope.educationSearchText = e.education;
     }
 
     $scope.newEducation = function(){
       $scope.education = new Education(null);
       $scope.titleSearchText = null;
       $scope.schoolSearchText = null; 
+      $scope.educationSearchText = null;
     }
 
     $scope.createFilterFor = function(query) {
@@ -345,6 +362,21 @@ angular.module('knowBase').controller('educationController',
       }
     }
 
+    function educationQueryFilter (query) {
+      return query ? $scope.educationValues.filter( $scope.createFilterFor(query) ) : $scope.educationValues;
+    }
+
+    function educationSearchTextChanged(text){
+      $scope.education.education = text;
+    }
+
+    function educationSelectChanged(item){
+      if(item){
+        $scope.selectedEducation = item;
+        $scope.education.education = item.display;
+      }
+    }
+
     function schoolQueryFilter (query) {
       return query ? $scope.schools.filter( $scope.createFilterFor(query) ) : $scope.schools;
     }
@@ -367,7 +399,6 @@ angular.module('knowBase').controller('educationController',
           $scope.titles = response.data.data.map(function(t){
             return {display: t.option, value: t.option.toLowerCase()}
           });
-          console.log($scope.titles)
         }, function(response) {
           console.log("error")    
       });
@@ -375,6 +406,16 @@ angular.module('knowBase').controller('educationController',
       $http({method: 'GET', url: '/api/options?table=education&field=school', cache: $templateCache}).
         then(function(response) {
           $scope.schools = response.data.data.map(function(t){
+            return {display: t.option, value: t.option.toLowerCase()}
+          });
+        }, function(response) {
+          console.log("error")    
+      });
+
+      //Educations
+      $http({method: 'GET', url: '/api/options?table=education&field=education', cache: $templateCache}).
+        then(function(response) {
+          $scope.educationValues = response.data.data.map(function(t){
             return {display: t.option, value: t.option.toLowerCase()}
           });
         }, function(response) {
@@ -477,6 +518,8 @@ angular.module('knowBase').controller('projectController',
     }
     $scope.cancelProject = function(){
       $scope.project = null;
+      $scope.selectedName = null;
+      $scope.selectedCustomer = null;
       $scope.nameSearchText = null;
       $scope.customerSearchText = null;
     }
@@ -652,6 +695,7 @@ angular.module('knowBase').controller('meritController',
     }
     $scope.cancelMerit = function(){
       $scope.merit = null;
+      $scope.selectedName = null;
       $scope.nameSearchText = null;
     }
 
@@ -805,6 +849,7 @@ angular.module('knowBase').controller('experienceController',
     }
     $scope.cancelExperience = function(){
       $scope.experience = null;
+      $scope.selectedName = null;
       $scope.nameSearchText = null;
     }
 
@@ -881,6 +926,176 @@ angular.module('knowBase').controller('experienceController',
     getExperiences();
 });
 
+angular.module('knowBase').controller('languageController',
+  function ($scope, $state, $http, $templateCache, DataService, $mdToast, $timeout) {
+    $scope.submitText = 'Update language';
+    $scope.languages = [];
+    $scope.languageLabel = 'Language';
+    $scope.writingLabel = 'Writing profficiency';
+    $scope.listeningLabel = 'Listening profficiency';
+    $scope.readingLabel = 'Reading profficiency';
+    $scope.conversationLabel = 'Conversation profficiency';
+    $scope.verbalLabel = 'Verbal production';
+    $scope.language = null;
+
+    //Name autocomplete stuff
+    $scope.languageValues = [];
+    $scope.selectedLanguage = null;
+    $scope.languageSearchText = null;
+    $scope.languageSearchTextChanged = languageSearchTextChanged;
+    $scope.languageSelectChanged = languageSelectChanged;
+    $scope.languageQueryFilter = languageQueryFilter;
+
+    $scope.levels = [
+      "A1",
+      "A2",
+      "B1",
+      "B2",
+      "C1",
+      "C2"
+    ].map(function (level) { return { level: level }; });
+
+    var Language = function(o){
+      var self = this;
+      self.idlanguage = o ? o.idlanguage : null;
+      self.language = o ? o.language : '';
+      self.writing = o ? o.writing : '';
+      self.listening = o ? o.listening : '';
+      self.reading = o ? o.reading : '';
+      self.conversation = o ? o.conversation : '';
+      self.verbal = o ? o.verbal : '';
+    }
+
+    function getLanguages() {
+      $scope.languages = [];
+      
+      $http({method: 'GET', url: '/api/languages', cache: $templateCache}).
+        then(function(response) {
+          $scope.status = response.status;
+          $.each(response.data.data, function(i,o){
+            $scope.languages.push(new Language(o));
+          });
+          console.log(response.data.data)
+          $scope.title = 'Add all your languages';
+
+        }, function(response) {
+          $scope.data = response.data || "Request failed";
+          $scope.status = response.status;
+          if($scope.status == 404){
+            $scope.title = 'No languages found. Try adding some to improve your CV!';
+          }else{
+            $scope.title = 'An unexpected error occurred.';
+          }
+      });
+    }
+    
+    $scope.saveLanguage = function(){
+      DataService.saveSkill($scope.language,'language')
+        .then(function (data) {
+            $scope.success = true;
+            $mdToast.show({
+                template: '<md-toast class="md-toast-success">Successfully saved language!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            });
+            if(!$scope.language.idlanguage){
+              $scope.language.idlanguage = data.idrecord;
+              $scope.languages.push($scope.language);
+            }
+            $scope.language = null;
+            $scope.nameSearchText = null;
+            // $state.transitionTo($state.current, params, { reload: true, inherit: true, notify: true })
+
+        },
+        // handle error
+        function (reason) {
+            $scope.errorMessage = reason; 
+            $scope.error = true;
+            $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to save language!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+        });
+    }
+    $scope.cancelLanguage = function(){
+      $scope.language = null;
+      $scope.selectedLanguage = null;
+      $scope.languageSearchText = null;
+    }
+
+    $scope.editLanguage = function(o){
+      $scope.language = o;
+      $scope.languageSearchText = o.language;
+    }
+
+    $scope.newLanguage = function(){
+      $scope.language = new Language(null);
+      $scope.languageSearchText = null;
+    }
+
+    $scope.createFilterFor = function(query) {
+      var lowercaseQuery = angular.lowercase(query);
+      return function filterFn(option) {
+        return (option.value.indexOf(lowercaseQuery) > -1);
+      };
+    }
+
+    $scope.deleteRecord = function(){
+      $http({method: 'DELETE', url: '/api/deleterecord?table=language&idrecord=' + $scope.language.idlanguage})
+        .then(function() {
+          $scope.languages = $scope.languages
+           .filter(function (o) {
+                    return o.idlanguage !== $scope.language.idlanguage;
+                   });
+           $mdToast.show({
+                template: '<md-toast class="md-toast-success">Language successfully removed!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+           $scope.language = null;
+        }, 
+        function(response) {
+          $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to remove language!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+      });
+    }
+
+    function languageQueryFilter (query) {
+      return query ? $scope.languageValues.filter( $scope.createFilterFor(query) ) : $scope.languageValues;
+    }
+
+    function languageSearchTextChanged(text){
+      $scope.language.language = text;
+    }
+
+    function languageSelectChanged(item){
+      if(item){
+        $scope.selectedLanguage = item;
+        $scope.language.language = item.display;
+      }
+    }
+
+    function getOptions(){
+      // Names
+      $http({method: 'GET', url: '/api/options?table=language&field=name', cache: $templateCache}).
+        then(function(response) {
+          $scope.languageValues = response.data.data.map(function(t){
+            return {display: t.option, value: t.option.toLowerCase()}
+          });
+          console.log($scope.languageValues)
+        }, function(response) {
+          console.log("error")    
+      });
+    }
+
+    getOptions();
+    getLanguages();
+});
+
 angular.module('knowBase').controller('skillController',
   function ($scope, $state, $http, $templateCache, DataService, $mdToast, $timeout) {
     $scope.submitText = 'Update skill';
@@ -897,6 +1112,14 @@ angular.module('knowBase').controller('skillController',
     $scope.nameSearchTextChanged = nameSearchTextChanged;
     $scope.nameSelectChanged = nameSelectChanged;
     $scope.nameQueryFilter = nameQueryFilter;
+
+    $scope.levels = [
+      "1",
+      "2",
+      "3",
+      "4",
+      "5"
+    ].map(function (level) { return { level: level }; });
 
     var Skill = function(o){
       var self = this;
@@ -960,6 +1183,7 @@ angular.module('knowBase').controller('skillController',
     }
     $scope.cancelSkill = function(){
       $scope.skill = null;
+      $scope.selectedName = null;
       $scope.nameSearchText = null;
     }
 
@@ -1081,6 +1305,7 @@ angular.module('knowBase').controller('workExperienceController',
           $.each(response.data.data, function(i,w){
             $scope.workExperiences.push(new WorkExperience(w));
           });
+          console.log($scope.workExperiences)
           // $scope.workExperiences = response.data.data;
           // formatWorkExperienceData($scope.workExperiences);
           $scope.title = 'Add all your workExperiences';
@@ -1125,6 +1350,8 @@ angular.module('knowBase').controller('workExperienceController',
     }
     $scope.cancelWorkExperience = function(){
       $scope.workExperience = null;
+      $scope.selectedTitle = null;
+      $scope.selectedEmployer = null;
       $scope.titleSearchText = null;
       $scope.employerSearchText = null;
     }
@@ -1313,8 +1540,8 @@ angular.module('knowBase').controller('publicationController',
 
     $scope.cancelPublication = function(){
       $scope.publication = null;
+      $scope.selectedTitle = null;
       $scope.titleSearchText = null;
-      $scope.schoolSearchText = null;
     }
 
     $scope.editPublication = function(e){
@@ -1524,6 +1751,13 @@ angular.module('knowBase').controller('profileController',
     $scope.profileTab = 'info';
     $scope.imgsrc = '';
 
+    $('#tab-control').on('hide',function(){
+      console.log("hej")
+      $('#right-column').show();
+      $('#left-column').show();
+
+    });
+
     function getProfile() {
       DataService.getProfile()
           .success(function (response) { 
@@ -1532,6 +1766,21 @@ angular.module('knowBase').controller('profileController',
           .error(function (error) {
               $scope.status = 'Unable to load profile data: ' + error.message;
           });
+    }
+
+    $scope.togglePage = function($event){
+
+      $('#profile-column').toggleClass("hide");
+      $('#messages-column').toggleClass("hide");
+
+      $('.tab-selector').toggleClass("selected");
+      
+      if($('#messages-column').attr('hide')){
+        $('#messages-column').removeAttr('hide');
+      }else{
+        $('#messages-column').attr('hide','true');
+      }
+
     }
 
     var Profile = function(p){
@@ -1543,8 +1792,9 @@ angular.module('knowBase').controller('profileController',
       self.mobilephone = p.mobilephone;
       self.address = p.address;
       self.city = p.city;
+      self.zipcode = p.zipcode;
       self.country = p.country;
-      self.birthdate = p.birthdate ? new Date(p.birthdate) : null;
+      self.birthdate = p ? (p.birthdate ? new Date(p.birthdate) : null) : null;
     }
 
     $http({method: 'GET', url: '/api/profilepicture', cache: $templateCache})

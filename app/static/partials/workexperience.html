@@ -14,13 +14,13 @@
     		<div class="md-list-item-text" >
       			<h3> {{ workExperience.title }} </h3>
       			<p> {{ workExperience.employer }}</p>
-      			<p ng-if="workExperience.startdate && workExperience.enddate"> {{workExperience.startdate | date : 'yyyy-MM'}} - {{workExperience.enddate | date : 'yyyy-MM'}} </p>
+      			<p ng-if="workExperience.startdate || workExperience.enddate"> {{workExperience.startdate | date : 'yyyy-MM'}} - {{workExperience.enddate | date : 'yyyy-MM'}} </p>
     		</div>
 	  	</md-list-item>
 
 	</md-list>
 </md-whiteframe>
-<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex-gt-lg="40" ng-if="workExperience" >
+<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex="50" ng-if="workExperience" >
 	<div flex layout="row">
     	<span flex="33">
     		<md-button class="md-button-small" ng-click="cancelWorkExperience()">
@@ -77,13 +77,25 @@
 			<label>{{descriptionLabel}}</label>
 			<textarea rows="6" md-maxlength="512" type="text" name="description" ng-model="workExperience.description"></textarea>
 		</md-input-container>
-		
-		<md-datepicker name="startdate" ng-model="workExperience.startdate" md-placeholder="{{startdateLabel}}"></md-datepicker>
-		<div class="horizontal-spacer"></div>
-		<md-datepicker name="enddate" ng-model="workExperience.enddate" md-placeholder="{{enddateLabel}}"></md-datepicker>
+		<div layout="row">
+
+            <am-date-picker flex ng-model="workExperience.startdate"
+                    am-input-date-format="L"
+                    am-input-label="{{startdateLabel}}"
+                    am-today-button="Today"
+                    am-show-input-icon="true">
+            </am-date-picker>
+            <am-date-picker flex ng-model="workExperience.enddate"
+                am-input-date-format="L"
+                am-input-label="{{enddateLabel}}"
+                am-today-button="Today"
+                am-show-input-icon="true">
+            </am-date-picker>
+        </div>
+
 
 		<div layout="row" class="vertical-nudge-top">
-        	<!-- <div flex-gt-md="33" flex="20"></div> -->
+        	<!-- <div flex="33" flex="20"></div> -->
             <md-button type="submit" class="md-raised md-primary" flex>Save work experience</md-button>
       	</div>
 	</form>

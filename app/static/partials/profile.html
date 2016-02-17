@@ -1,77 +1,107 @@
 <header ui-view="toolbar"></header>
-<md-content layout="row" layout-margin layout-padding>
-	<md-whiteframe class="md-whiteframe-2dp" layout="column" flex-gt-md="50" flex-sm="100" >
-		<div layout="row">
-			<div flex="50"></div>
-			<div flex>
-				<md-button md-theme="grey" ng-click="uploadPicture($event)" class="md-primary md-fab btn-huge">
-					<img id="profilepicture"></img>
-					<md-icon md-font-icon="fa-picture-o" class="fa fa-3x white"></md-icon>
-					
-					
-				</md-button>
-			</div>
-			
-		</div>
-
-		<form layout-margin layout-padding flex ng-submit="updateProfile()" name="profileForm">
-			<div layout-gt-sm="row" flex>
-				<md-input-container flex class="md-block">
-					<label>First name</label>
-					<!-- <md-icon md-font-icon="fa-user" class="fa fa-lg"></md-icon> -->
-					<input md-maxlength="32" type="text" name="firstname" ng-model="profile.firstname" required>
-				</md-input-container>
-				<md-input-container flex class="md-block">
-					<label>Last name</label>
-					<!-- <md-icon md-font-icon="fa-user" class="fa fa-lg"></md-icon> -->
-					<input md-maxlength="32" type="text" name="lastname" ng-model="profile.lastname" required>
-				</md-input-container>
-			</div>
-
-			<md-datepicker name="birthdate" ng-model="profile.birthdate" md-placeholder="Birth date"></md-datepicker>
-			<div layout-gt-sm="row">
-				<md-input-container flex class="md-block">
-					<label>Phone</label>
-					<!-- <md-icon md-font-icon="fa-phone" class="fa fa-lg"></md-icon> -->
-					<input md-maxlength="16" type="tel" name="phone" ng-model="profile.phone">
-				</md-input-container>
-				<md-input-container flex class="md-block">
-					<label>Mobile phone</label>
-					<!-- <md-icon md-font-icon="fa-mobile-phone" class="fa fa-lg"></md-icon> -->
-					<input md-maxlength="16" type="tel" name="mobilephone" ng-model="profile.mobilephone">
-				</md-input-container>
-			</div>
-			<md-input-container class="md-block">
-				<label>Address</label>
-				<!-- <md-icon md-font-icon="fa-map-signs" class="fa fa-lg"></md-icon> -->
-				<input md-maxlength="72" type="text" name="address" ng-model="profile.address">
-			</md-input-container>
-			<div layout-gt-sm="row">
-				<md-input-container flex class="md-block">
-					<label>Zipcode</label>
-					<!-- <md-icon md-font-icon="fa-building-o" class="fa fa-lg"></md-icon> -->
-					<input md-maxlength="32" type="text" name="zipcode" ng-model="profile.zipcode">
-				</md-input-container>
-				<md-input-container flex class="md-block">
-					<label>City</label>
-					<!-- <md-icon md-font-icon="fa-building-o" class="fa fa-lg"></md-icon> -->
-					<input md-maxlength="32" type="text" name="city" ng-model="profile.city">
-				</md-input-container>
-				<md-input-container flex class="md-block">
-					<label>Country</label>
-					<!-- <md-icon md-font-icon="fa-globe" class="fa fa-lg"></md-icon> -->
-					<input md-maxlength="32" type="text" name="country" ng-model="profile.country">
-				</md-input-container>
-			</div>
-			
-			<div layout="row" class="vertical-nudge-top">
-	        	<div flex-gt-md="33" flex="20"></div>
-	            <md-button type="submit" class="md-raised md-primary" flex-gt-md="33" flex="60">Update profile</md-button>
-	      	</div>
 	
-	    </form>
-	</md-whiteframe>
-	<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex-gt-md="50" flex-sm="0"  >
-	</md-whiteframe>
+<md-content layout="row" layout-margin>
+	
+	<md-whiteframe  id="profile-column" class="md-whiteframe-2dp" layout="column" flex-gt-md="50" show-gt-md flex >
+		<md-toolbar md-theme="grey" id="tab-control" hide-gt-md>
+			<div class="md-toolbar-tools">
+				<span flex="10"/>
+				<span class="tab-selector selected" flex="30" ng-click="togglePage($event)">Profile</span>
+				<span class="tab-selector" flex="30" ng-click="togglePage($event)">Messages</span>
+			</div>
+		</md-toolbar>
+		<div layout="column" layout-margin layout-padding>
+			<div layout="row">
+				<div flex="50"></div>
+				<div flex>
+					<md-button md-theme="grey" ng-click="uploadPicture($event)" class="md-primary md-fab btn-huge">
+						<img id="profilepicture"></img>
+						<md-icon md-font-icon="fa-picture-o" class="fa fa-3x white"></md-icon>
+						
+						
+					</md-button>
+				</div>
+				
+			</div>
 
+			<form layout-margin layout-padding flex ng-submit="updateProfile()" name="profileForm">
+				<div layout-gt-sm="row" flex>
+					<md-input-container flex class="md-block">
+						<label>First name</label>
+						<!-- <md-icon md-font-icon="fa-user" class="fa fa-lg"></md-icon> -->
+						<input md-maxlength="32" type="text" name="firstname" ng-model="profile.firstname" required>
+					</md-input-container>
+					<span flex="5"/>
+					<md-input-container flex class="md-block">
+						<label>Last name</label>
+						<!-- <md-icon md-font-icon="fa-user" class="fa fa-lg"></md-icon> -->
+						<input md-maxlength="32" type="text" name="lastname" ng-model="profile.lastname" required>
+					</md-input-container>
+				</div>
+				<am-date-picker ng-model="profile.birthdate"
+			                am-input-date-format="L"
+			                am-input-label="Birthdate"
+			                am-today-button="Today"
+			                am-show-input-icon="true" >
+				</am-date-picker>
+
+				<div layout-gt-sm="row">
+					<md-input-container flex class="md-block">
+						<label>Phone</label>
+						<!-- <md-icon md-font-icon="fa-phone" class="fa fa-lg"></md-icon> -->
+						<input md-maxlength="16" type="tel" name="phone" ng-model="profile.phone">
+					</md-input-container>
+					<span flex="5"/>
+					<md-input-container flex class="md-block">
+						<label>Mobile phone</label>
+						<!-- <md-icon md-font-icon="fa-mobile-phone" class="fa fa-lg"></md-icon> -->
+						<input md-maxlength="16" type="tel" name="mobilephone" ng-model="profile.mobilephone">
+					</md-input-container>
+				</div>
+				<md-input-container class="md-block">
+					<label>Address</label>
+					<!-- <md-icon md-font-icon="fa-map-signs" class="fa fa-lg"></md-icon> -->
+					<input md-maxlength="72" type="text" name="address" ng-model="profile.address">
+				</md-input-container>
+				<div layout-gt-sm="row">
+					<md-input-container flex class="md-block">
+						<label>Zipcode</label>
+						<!-- <md-icon md-font-icon="fa-building-o" class="fa fa-lg"></md-icon> -->
+						<input md-maxlength="32" type="text" name="zipcode" ng-model="profile.zipcode">
+					</md-input-container>
+					<span flex="5"/>
+					<md-input-container flex class="md-block">
+						<label>City</label>
+						<!-- <md-icon md-font-icon="fa-building-o" class="fa fa-lg"></md-icon> -->
+						<input md-maxlength="32" type="text" name="city" ng-model="profile.city">
+					</md-input-container>
+					<span flex="5"/>
+					<md-input-container flex class="md-block">
+						<label>Country</label>
+						<!-- <md-icon md-font-icon="fa-globe" class="fa fa-lg"></md-icon> -->
+						<input md-maxlength="32" type="text" name="country" ng-model="profile.country">
+					</md-input-container>
+				</div>
+				
+				<div layout="row" class="vertical-nudge-top">
+		        	<div flex-gt-md="33" flex="20"></div>
+		            <md-button type="submit" class="md-raised md-primary" flex-gt-md="33" flex="60">Update profile</md-button>
+		      	</div>
+		
+		    </form>
+	    </div>
+	</md-whiteframe>
+	<md-whiteframe id="messages-column" class="md-whiteframe-2dp full-height" layout="column" hide="true" show-gt-md flex-gt-md="50" flex  >
+		<md-toolbar md-theme="grey" id="tab-control" hide-gt-md>
+			<div class="md-toolbar-tools">
+				<span flex="10"/>
+				<span class="tab-selector selected" flex="30" ng-click="togglePage($event)">Profile</span>
+				<span class="tab-selector" flex="30" ng-click="togglePage($event)">Messages</span>
+			</div>
+		</md-toolbar>
+		<div layout="column" layout-margin layout-padding>
+			<h3>Messages</h3>
+		</div>
+	</md-whiteframe>
+	
 </md-content>
