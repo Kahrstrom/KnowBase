@@ -31,6 +31,7 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
 
     self.saveSkill = function(json,type){
       var deferred = $q.defer();
+      console.log(json)
       $http.post(self.urlBase + type, json)
         .success(function (data, status) {
           

@@ -1,5 +1,5 @@
 
-<md-whiteframe class="md-whiteframe-2dp full-height" layout="column" flex>
+<div class="full-height" layout="column" flex ng-if="!project">
 	
 	
 	<md-list ng-cloak>
@@ -19,8 +19,9 @@
 	  	</md-list-item>
 
 	</md-list>
-</md-whiteframe>
-<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex="50" ng-if="project" >
+</div>
+
+<div class="full-height" layout="column" flex ng-if="project">
 	<div flex layout="row" class="skill-header">
 		<span flex="33">
 			<md-button class="md-button-small" ng-click="cancelProject()">
@@ -103,5 +104,5 @@
             <md-button type="submit" class="md-raised md-primary" flex>Save project</md-button>
       	</div>
 	</form>
-	<div flex/>
+
 </div>

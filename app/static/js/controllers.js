@@ -461,7 +461,7 @@ angular.module('knowBase').controller('projectController',
       self.idproject = o ? o.idproject : null;
       self.name = o ? o.name : '';
       self.customer = o ? o.customer : null;
-      self.customername = o ? o.customername : '';
+      self.customername = o ? o.customer.name : '';
       self.startdate = o ? (o.startdate ? new Date(o.startdate) : null) : null;
       self.enddate = o ? (o.enddate ? new Date(o.enddate) : null) : null;
       self.hours = o ? o.hours : 0;
@@ -504,6 +504,8 @@ angular.module('knowBase').controller('projectController',
             $scope.project = null;
             $scope.nameSearchText = null;
             $scope.customerSearchText = null;
+            $scope.selectedCustomer = null;
+            $scope.selectedName = null;
         },
         // handle error
         function (reason) {
@@ -556,6 +558,8 @@ angular.module('knowBase').controller('projectController',
                 position: 'bottom left'
             });
            $scope.project = null;
+           $scope.selectedCustomer = null;
+           $scope.selectedName = null;
         }, 
         function(response) {
           $mdToast.show({
@@ -586,13 +590,21 @@ angular.module('knowBase').controller('projectController',
     }
 
     function customerSearchTextChanged(text){
+      var matches = customerQueryFilter(text);
+      if(matches.length > 0){
+        $scope.project.customer = matches[0].value == angular.lowercase(text) ? matches[0] : null;
+      }
+      else{
+        $scope.project.customer = null;
+      }
+      
       $scope.project.customername = text;
     }
 
     function customerSelectChanged(item){
       if(item){
         $scope.selectedCustomer = item;
-        $scope.project.customer = item.id;
+        $scope.project.customer = item;
         $scope.project.customername = item.display;
       }
     }
@@ -608,10 +620,10 @@ angular.module('knowBase').controller('projectController',
           console.log("error")    
       });
       // Customers
-      $http({method: 'GET', url: '/api/customeroptions', cache: $templateCache}).
+      $http({method: 'GET', url: '/api/customers', cache: $templateCache}).
         then(function(response) {
           $scope.customers = response.data.data.map(function(t){
-            return {display: t.name, value: t.name.toLowerCase(), id : t.idcustomer}
+            return {display: t.name, value: t.name.toLowerCase(), idcustomer : t.idcustomer}
           });
         }, function(response) {
           console.log("error")    
@@ -1081,7 +1093,7 @@ angular.module('knowBase').controller('languageController',
 
     function getOptions(){
       // Names
-      $http({method: 'GET', url: '/api/options?table=language&field=name', cache: $templateCache}).
+      $http({method: 'GET', url: '/api/options?table=language&field=language', cache: $templateCache}).
         then(function(response) {
           $scope.languageValues = response.data.data.map(function(t){
             return {display: t.option, value: t.option.toLowerCase()}
@@ -1689,13 +1701,34 @@ angular.module('knowBase').controller('skillsController',
       return results;
     }
 
+    $scope.togglePage = function(){
+      console.log("test1")
+      $('#list-column').toggleClass("hide");
+      $('#skill-column').toggleClass("hide");
+
+      $('.tab-selector').toggleClass("selected");
+      
+      if($('#skill-column').attr('hide')){
+        console.log("removed")
+        $('#skill-column').removeAttr('hide');
+      }else{
+        $('#skill-column').attr('hide','true');
+      }
+      console.log("test2")
+
+    }
+
     $scope.setActiveSkill = function(skill){
       console.log(skill)
+      // $scope.togglePage();
       $scope.activeSkill = skill;
+      
     }
 
     getSkillTypes();
-
+    console.log("skill:")
+    console.log($scope.activeSkill)
+    console.log("/")
 
 });
 

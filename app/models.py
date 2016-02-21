@@ -123,9 +123,10 @@ class Project(db.Model):
 
     idproject = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(72))
-    customer = db.Column(db.Integer)
-    #rel_customer = db.relationship('Customer', primaryjoin='Project.customer == Customer.idcustomer',
-    #                              backref=db.backref('project', lazy='dynamic'))
+    customer = db.Column(db.Integer, db.ForeignKey('customer.idcustomer'))
+    rel_customer = db.relationship('Customer', primaryjoin='Project.customer == Customer.idcustomer',
+                                  backref=db.backref('project', lazy='dynamic'))
+
     hours = db.Column(db.Integer)
     startdate = db.Column(db.DateTime)
     enddate = db.Column(db.DateTime)
@@ -159,7 +160,7 @@ class Project(db.Model):
             'idproject': self.idproject,
             'name': self.name,
             'hours': self.hours,
-            #'customer': self.rel_customer.serialize,
+            'customer': self.rel_customer.serialize,
             'startdate': self.startdate,
             'enddate': self.enddate,
             'description': self.description,
@@ -435,7 +436,6 @@ def get_class_by_tablename(tablename):
       return c
 
 def count_table(idprofile, table):
-    print("hej")
     c = get_class_by_tablename(table)
     return c.query.filter_by(profile=idprofile).count()
 

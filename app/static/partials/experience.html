@@ -1,11 +1,11 @@
 
-<md-whiteframe class="md-whiteframe-2dp full-height" layout="column" flex>
+<div class=" full-height" layout="column" flex ng-if="!experience">
 	
 	
 	<md-list ng-cloak>
 		<div layout="row">
 		  	<md-subheader  flex class="md-no-sticky">{{title}}</md-subheader>
-		  	<md-button ng-if="!Experience" class="md-fab md-accent" ng-click="newExperience()" aria-label="New Experience">
+		  	<md-button class="md-fab md-accent" ng-click="newExperience()" aria-label="New Experience">
 		        <md-icon md-font-icon="fa-plus" class="fa fa-lg white" ></md-icon>
 		    </md-button>
 		</div>
@@ -19,8 +19,8 @@
 	  	</md-list-item>
 
 	</md-list>
-</md-whiteframe>
-<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex="50" ng-if="experience" >
+</div>
+<div layout="column" class="full-height" flex ng-if="experience" >
 	<div flex layout="row" class="skill-header">
 		<span flex="33">
 			<md-button class="md-button-small" ng-click="cancelExperience()">
@@ -79,5 +79,4 @@
             <md-button type="submit" class="md-raised md-primary" flex>Save Experience</md-button>
       	</div>
 	</form>
-	<div flex/>
 </div>

@@ -1,5 +1,6 @@
 
-<md-whiteframe class="md-whiteframe-2dp full-height" layout="column" flex>
+
+<div class="full-height" layout="column" flex ng-if="!workExperience">
 	
 	
 	<md-list ng-cloak>
@@ -19,8 +20,9 @@
 	  	</md-list-item>
 
 	</md-list>
-</md-whiteframe>
-<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex="50" ng-if="workExperience" >
+</div>
+
+<div class="full-height" layout="column" flex ng-if="workExperience">
 	<div flex layout="row">
     	<span flex="33">
     		<md-button class="md-button-small" ng-click="cancelWorkExperience()">

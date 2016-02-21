@@ -1,5 +1,5 @@
 
-<md-whiteframe class="md-whiteframe-2dp full-height" layout="column" flex>
+<div class="full-height" layout="column" flex ng-if="!merit">
 	
 	
 	<md-list ng-cloak>
@@ -19,8 +19,8 @@
 	  	</md-list-item>
 
 	</md-list>
-</md-whiteframe>
-<md-whiteframe class="md-whiteframe-2dp" layout="column"  flex="50" ng-if="merit" >
+</div>
+<div class="full-height" layout="column" flex ng-if="merit">
 	<div flex layout="row" class="merit-header">
 		<span flex="33">
 			<md-button class="md-button-small" ng-click="cancelMerit()">

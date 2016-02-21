@@ -13,9 +13,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = config.connection_string
 
 db = SQLAlchemy(app)
 
-db.init_app(app)
-
 from models import *
+
+db.create_all()
+db.session.commit()
+
+db.init_app(app)
 
 def require_login():
     def decorator(fn):
@@ -162,11 +165,12 @@ def profile():
 def get_options():
     table = request.args['table']
     field = request.args['field']
-
-    t = get_class_by_tablename(table.lower())
-    c = getattr(t,field.lower())
-    query = db.session.query(c.distinct().label("option"))
-
+    try:
+        t = get_class_by_tablename(table.lower())
+        c = getattr(t,field.lower())
+        query = db.session.query(c.distinct().label("option"))
+    except Exception as err:
+        print(err)
     options = [{"option":row.option} for row in query.all()]
     return jsonify(data=options)
 
@@ -408,44 +412,49 @@ def get_user_projects():
 
     return jsonify(data=retval)
 
-@app.route('/api/customeroptions',methods=['GET'])
+@app.route('/api/customers',methods=['GET'])
 @require_login()
 def get_customeroptions():
-    customers = cursor.execute("SELECT [idcustomer],[name] FROM [customer]").fetchall()
-    return jsonify(data=serialize_table(customers[0].cursor_description, customers))
+    customers = Customer.query.all()
+    retval = []
+    for c in customers:
+        retval.append(c.serialize)
+    print(retval)
+    return jsonify(data=retval)
 
 @app.route('/api/project', methods=['POST'])
 @require_login()
 def create_project():
 
     idproject = request.json['idproject']
+    profile = User.query.filter_by(email=session['email']).first().rel_profile
 
-    idcustomer = request.json['customer']
+    customer = request.json['customer']
 
-    if request.json['customername'] != '' and idcustomer is None:
-        idcustomer = cursor.execute("SELECT [idcustomer] FROM [customer] WHERE [name] = '{name}'".format(
-            name=request.json['customername'])).fetchone()
-
-        if idcustomer is None:
-            stmt = "INSERT INTO [customer] ([name]) VALUES ('{name}')".format(name=request.json['customername'])
-            cursor.execute(stmt)
-            cursor.commit()
-            idcustomer = cursor.execute("SELECT @@IDENTITY").fetchone()
-
-
-    request.json['customer'] = idcustomer[0]
-
-    del request.json['customername']
-    if idproject is None:
-        stmt = insert_from_request("project", request)
+    if customer is None:
+        print(request.json['customername'])
+        customer = Customer({'name' : request.json['customername']})
+        print(customer)
+        db.session.add(customer)
+        db.session.commit()
+        request.json['customer'] = customer.idcustomer
     else:
-        stmt = update_from_request("project", request)
-    print(stmt)
-    cursor.execute(stmt)
-    cursor.commit()
+        request.json['customer'] = customer['idcustomer']
+
 
     if idproject is None:
-        idproject = cursor.execute("SELECT @@IDENTITY").fetchone()[0]
+        project = Project(request.json,profile.idprofile)
+        db.session.add(project)
+    else:
+        try:
+            project = Project.query.get(idproject)
+            print(request.json)
+            project.update(request.json)
+        except Exception as err:
+            print(err)
+
+    db.session.commit()
+
     return jsonify(idrecord="{idrecord}".format(idrecord=idproject))
 
 @app.route('/api/deleterecord', methods=['DELETE'])
