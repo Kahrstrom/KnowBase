@@ -1,0 +1,310 @@
+<div class="full-height" layout="column" ng-if="!competenceProfile" flex>
+	
+	<md-list ng-cloak>
+		<div layout="row">
+		  	<md-subheader  flex class="md-no-sticky">{{title}}</md-subheader>
+		  	<md-button class="md-fab md-accent" ng-click="newCompetenceProfile()" aria-label="New CompetenceProfile">
+		        <md-icon md-font-icon="fa-plus" class="fa fa-lg white" ></md-icon>
+		    </md-button>
+		</div>
+	  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="competenceProfile in competenceProfiles" ng-click="editCompetenceProfile(competenceProfile)">
+	    	<md-icon md-font-icon="fa-graduation-cap" class="fa fa-lg avatar md-avatar-icon"></md-icon>
+    		<div class="md-list-item-text" >
+      			<h3> {{ competenceProfile.name }}</h3>
+    		</div>
+	  	</md-list-item>
+
+	</md-list>
+</div>
+
+<div layout="column" class="full-height" flex ng-if="competenceProfile" >
+	<div flex layout="row" class="skill-header">
+		<span flex="33">
+			<md-button class="md-button-small" ng-click="cancelCompetenceProfile()">
+				<md-icon md-font-icon="fa-arrow-right" class="fa"></md-icon>
+			</md-button>
+			<span flex/>
+		</span>
+		<md-icon flex="33" md-font-icon="fa-puzzle-piece center" class="fa fa-3x"></md-icon>
+		<span flex/>
+        <md-button class="md-button-small" ng-click="deleteRecord()">
+            <md-icon md-font-icon="fa-trash-o" class="fa fa-lg"></md-icon>
+        </md-button>
+	</div>
+	<form flex layout-margin layout-padding flex ng-submit="saveCompetenceProfile()" name="competenceProfileForm">
+		<md-input-container class="md-block md-icon-float">
+			<label>{{nameLabel}}</label>
+			<input md-maxlength="64" type="text" name="description" ng-model="competenceProfile.name">
+		</md-input-container>
+		<div class="autocomplete md-padding" layout="column">
+	        <md-contact-chips id="educationChips"
+	        	ng-click="focused.skilltype = 'educations'"
+		        ng-model="educations"
+		        md-contacts="querySearch($query, 'education')"
+		        md-contact-name="education"
+		        md-require-match="true"
+		        md-min-length="0"
+		        md-highlight-flags="i"
+		        filter-selected="filter_skilltypes"
+		        placeholder="Add educations">
+		    </md-contact-chips>
+		    <div layout="column" ng-if="focused.skilltype == 'educations'">
+			    <md-list id="educationList" class="fixedRows">
+			      	<md-subheader class="md-no-sticky">Educations</md-subheader>
+			      	<md-list-item class="md-2-line contact-item" ng-repeat="(index, education) in allEducations"
+			          	ng-if="educations.indexOf(education) < 0">
+			        	<md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
+			        	<div class="md-list-item-text compact">
+			          		<h3>{{education.title}} - {{education.education}}</h3>
+			          	
+			          		<p>{{education.school}}</p>
+			        	</div>
+			      	</md-list-item>
+			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, education) in educations">
+				        <md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
+				        <div class="md-list-item-text compact">
+							<h3>{{education.title}} - {{education.education}}</h3>
+							<p>{{education.school}}</p>
+				        </div>
+			      	</md-list-item>
+			    </md-list>
+		    </div>
+	    </div>
+	    <div class="autocomplete md-padding" layout="column">
+	        <md-contact-chips id="workExperienceChips"
+	        	ng-click="focused.skilltype = 'workExperience'"
+		        ng-model="workExperiences"
+		        md-contacts="querySearch($query, 'workExperience')"
+		        md-contact-name="title"
+		        md-require-match="true"
+		        md-min-length="0"
+		        md-highlight-flags="i"
+		        filter-selected="filter_skilltypes"
+		        placeholder="Add work experience">
+		    </md-contact-chips>
+		    <div layout="column" ng-if="focused.skilltype == 'workExperience'">
+			    <md-list class="fixedRows">
+			      	<md-subheader class="md-no-sticky">Work experience</md-subheader>
+			      	<md-list-item class="md-2-line contact-item" ng-repeat="(index, workExperience) in allWorkExperiences"
+			          	ng-if="workExperiences.indexOf(workExperience) < 0">
+			        	<md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
+			        	<div class="md-list-item-text compact">
+			          		<h3>{{workExperience.employer}}</h3>
+			          		<p>{{workExperience.title}}</p>
+			        	</div>
+			      	</md-list-item>
+			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, workExperience) in workExperiences">
+				        <md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
+				        <div class="md-list-item-text compact">
+							<h3>{{workExperience.employer}}</h3>
+			          		<p>{{workExperience.title}}</p>
+				        </div>
+			      	</md-list-item>
+			    </md-list>
+		    </div>
+	    </div>
+	    <div class="autocomplete md-padding" layout="column">
+	        <md-contact-chips id="experienceChips"
+	        	ng-click="focused.skilltype = 'experience'"
+		        ng-model="experiences"
+		        md-contacts="querySearch($query, 'experience')"
+		        md-contact-name="name"
+		        md-require-match="true"
+		        md-min-length="0"
+		        md-highlight-flags="i"
+		        filter-selected="filter_skilltypes"
+		        placeholder="Add experience">
+		    </md-contact-chips>
+		    <div layout="column" ng-if="focused.skilltype == 'experience'">
+			    <md-list class="fixedRows">
+			      	<md-subheader class="md-no-sticky">Experience</md-subheader>
+			      	<md-list-item class="md-2-line contact-item" ng-repeat="(index, experience) in allExperiences"
+			          	ng-if="experiences.indexOf(experience) < 0">
+			        	<md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
+			        	<div class="md-list-item-text compact">
+			          		<h3>{{experience.name}}</h3>
+			          		<!-- <p>{{workExperience.title}}</p> -->
+			        	</div>
+			      	</md-list-item>
+			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, experience) in experiences">
+				        <md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
+				        <div class="md-list-item-text compact">
+							<h3>{{experience.name}}</h3>
+			          		<!-- <p>{{workExperience.title}}</p> -->
+				        </div>
+			      	</md-list-item>
+			    </md-list>
+		    </div>
+	    </div>
+	    <div class="autocomplete md-padding" layout="column">
+	        <md-contact-chips id="publicationChips"
+	        	ng-click="focused.skilltype = 'publication'"
+		        ng-model="publications"
+		        md-contacts="querySearch($query, 'publication')"
+		        md-contact-name="title"
+		        md-require-match="true"
+		        md-min-length="0"
+		        md-highlight-flags="i"
+		        filter-selected="filter_skilltypes"
+		        placeholder="Add publication">
+		    </md-contact-chips>
+		    <div layout="column" ng-if="focused.skilltype == 'publication'">
+			    <md-list class="fixedRows">
+			      	<md-subheader class="md-no-sticky">Publications</md-subheader>
+			      	<md-list-item class="md-2-line contact-item" ng-repeat="(index, publication) in allPublications"
+			          	ng-if="publications.indexOf(publication) < 0">
+			        	<md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
+			        	<div class="md-list-item-text compact">
+			          		<h3>{{publication.title}}</h3>
+			          		<!-- <p>{{workExperience.title}}</p> -->
+			        	</div>
+			      	</md-list-item>
+			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, publication) in publications">
+				        <md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
+				        <div class="md-list-item-text compact">
+							<h3>{{publication.title}}</h3>
+			          		<!-- <p>{{workExperience.title}}</p> -->
+				        </div>
+			      	</md-list-item>
+			    </md-list>
+		    </div>
+	    </div>
+	    <div class="autocomplete md-padding" layout="column">
+	        <md-contact-chips id="projectChips"
+	        	ng-click="focused.skilltype = 'project'"
+		        ng-model="projects"
+		        md-contacts="querySearch($query, 'project')"
+		        md-contact-name="name"
+		        md-require-match="true"
+		        md-min-length="0"
+		        md-highlight-flags="i"
+		        filter-selected="filter_skilltypes"
+		        placeholder="Add projects">
+		    </md-contact-chips>
+		    <div layout="column" ng-if="focused.skilltype == 'project'">
+			    <md-list class="fixedRows">
+			      	<md-subheader class="md-no-sticky">Projects</md-subheader>
+			      	<md-list-item class="md-2-line contact-item" ng-repeat="(index, project) in allProjects"
+			          	ng-if="projects.indexOf(project) < 0">
+			        	<md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
+			        	<div class="md-list-item-text compact">
+			          		<h3>{{project.name}}</h3>
+			          		<!-- <p>{{workExperience.title}}</p> -->
+			        	</div>
+			      	</md-list-item>
+			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, project) in projects">
+				        <md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
+				        <div class="md-list-item-text compact">
+							<h3>{{project.title}}</h3>
+			          		<!-- <p>{{workExperience.title}}</p> -->
+				        </div>
+			      	</md-list-item>
+			    </md-list>
+		    </div>
+	    </div>
+	    <div class="autocomplete md-padding" layout="column">
+	        <md-contact-chips id="languageChips"
+	        	ng-click="focused.skilltype = 'language'"
+		        ng-model="languages"
+		        md-contacts="querySearch($query, 'language')"
+		        md-contact-name="language"
+		        md-require-match="true"
+		        md-min-length="0"
+		        md-highlight-flags="i"
+		        filter-selected="filter_skilltypes"
+		        placeholder="Add language skills">
+		    </md-contact-chips>
+		    <div layout="column" ng-if="focused.skilltype == 'language'">
+			    <md-list class="fixedRows">
+			      	<md-subheader class="md-no-sticky">Language skills</md-subheader>
+			      	<md-list-item class="md-2-line contact-item" ng-repeat="(index, language) in allLanguages"
+			          	ng-if="languages.indexOf(language) < 0">
+			        	<md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
+			        	<div class="md-list-item-text compact">
+			          		<h3>{{language.language}}</h3>
+			          		<!-- <p>{{workExperience.title}}</p> -->
+			        	</div>
+			      	</md-list-item>
+			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, language) in languages">
+				        <md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
+				        <div class="md-list-item-text compact">
+							<h3>{{language.language}}</h3>
+			          		<!-- <p>{{workExperience.title}}</p> -->
+				        </div>
+			      	</md-list-item>
+			    </md-list>
+		    </div>
+	    </div>
+	    <div class="autocomplete md-padding" layout="column">
+	        <md-contact-chips id="meritChips"
+	        	ng-click="focused.skilltype = 'merit'"
+		        ng-model="merits"
+		        md-contacts="querySearch($query, 'merit')"
+		        md-contact-name="name"
+		        md-require-match="true"
+		        md-min-length="0"
+		        md-highlight-flags="i"
+		        filter-selected="filter_skilltypes"
+		        placeholder="Add merits">
+		    </md-contact-chips>
+		    <div layout="column" ng-if="focused.skilltype == 'merit'">
+			    <md-list class="fixedRows">
+			      	<md-subheader class="md-no-sticky">Merits</md-subheader>
+			      	<md-list-item class="md-2-line contact-item" ng-repeat="(index, merit) in allMerits"
+			          	ng-if="merits.indexOf(merit) < 0">
+			        	<md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
+			        	<div class="md-list-item-text compact">
+			          		<h3>{{merit.name}}</h3>
+			          		<!-- <p>{{workExperience.title}}</p> -->
+			        	</div>
+			      	</md-list-item>
+			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, merit) in merits">
+				        <md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
+				        <div class="md-list-item-text compact">
+							<h3>{{merit.name}}</h3>
+			          		<!-- <p>{{workExperience.title}}</p> -->
+				        </div>
+			      	</md-list-item>
+			    </md-list>
+		    </div>
+	    </div>
+	    <div class="autocomplete md-padding" layout="column">
+	        <md-contact-chips id="skillChips"
+	        	ng-click="focused.skilltype = 'skill'"
+		        ng-model="skills"
+		        md-contacts="querySearch($query, 'skill')"
+		        md-contact-name="name"
+		        md-require-match="true"
+		        md-min-length="0"
+		        md-highlight-flags="i"
+		        filter-selected="filter_skilltypes"
+		        placeholder="Add key skills">
+		    </md-contact-chips>
+		    <div layout="column" ng-if="focused.skilltype == 'skill'">
+			    <md-list class="fixedRows">
+			      	<md-subheader class="md-no-sticky">Key skills</md-subheader>
+			      	<md-list-item class="md-2-line contact-item" ng-repeat="(index, skill) in allSkills"
+			          	ng-if="skills.indexOf(skill) < 0">
+			        	<md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
+			        	<div class="md-list-item-text compact">
+			          		<h3>{{skill.name}}</h3>
+			          		<!-- <p>{{workExperience.title}}</p> -->
+			        	</div>
+			      	</md-list-item>
+			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, skill) in skills">
+				        <md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
+				        <div class="md-list-item-text compact">
+							<h3>{{skill.name}}</h3>
+			          		<!-- <p>{{workExperience.title}}</p> -->
+				        </div>
+			      	</md-list-item>
+			    </md-list>
+		    </div>
+	    </div>
+		<div layout="row" class="vertical-nudge-top">
+            <div flex="33" flex="20"></div>
+            <md-button  flex-gt-md="33" flex="60" type="submit" class="md-raised md-primary" flex>Save</md-button>
+        </div>
+	</form>
+
+</div>

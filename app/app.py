@@ -165,12 +165,10 @@ def profile():
 def get_options():
     table = request.args['table']
     field = request.args['field']
-    try:
-        t = get_class_by_tablename(table.lower())
-        c = getattr(t,field.lower())
-        query = db.session.query(c.distinct().label("option"))
-    except Exception as err:
-        print(err)
+
+    t = get_class_by_tablename(table.lower())
+    c = getattr(t,field.lower())
+    query = db.session.query(c.distinct().label("option"))
     options = [{"option":row.option} for row in query.all()]
     return jsonify(data=options)
 
@@ -305,8 +303,10 @@ def update_skill():
 @app.route('/api/experiences', methods=['GET'])
 @require_login()
 def get_user_experiences():
+    print("hej")
     user = User.query.filter_by(email=session['email']).first()
     experiences = Experience.query.filter_by(profile=user.profile).all()
+
     if experiences is None:
         return abort(404)
     retval = []
@@ -422,6 +422,26 @@ def get_customeroptions():
     print(retval)
     return jsonify(data=retval)
 
+@app.route('/api/competenceprofiles',methods=['GET'])
+@require_login()
+def get_competenceprofiles():
+
+    profile = User.query.filter_by(email=session['email']).first().rel_profile
+
+    if profile is None:
+
+        return abort(401)
+    try:
+        profiles = CompetenceProfile.query.filter_by(profile=profile.idprofile).all()
+    except Exception as err:
+        print(err)
+    retval = []
+    print(profiles)
+    for p in profiles:
+        retval.append(p.serialize)
+    print(retval)
+    return jsonify(data=retval)
+
 @app.route('/api/project', methods=['POST'])
 @require_login()
 def create_project():
@@ -467,64 +487,6 @@ def delete_object():
     db.session.commit()
     return jsonify(reponse='success')
 
-def serialize_table(columns, values):
-    t = []
-    for r in values:
-        t.append(serialize_row(columns, r))
-    return t
-
-def serialize_row(columns, values):
-    d = collections.OrderedDict()
-    for c in columns:
-        t = c[0]
-        d[t] = values[t]
-    return d
-
-def select_from_table(table):
-    SQL = "SELECT t.* FROM [{table}] t INNER JOIN [profile] p ON p.[idprofile] = t.[profile] " \
-          "INNER JOIN [user] u ON u.[profile] = p.[idprofile] WHERE u.[email] = '{email}' ".format(
-            table=table, email=session['email'])
-    return cursor.execute(SQL).fetchall()
-
-def update_from_request(table, request):
-    data = request.json
-    SQL = "UPDATE [{table}] SET ".format(table=table)
-    for field in data:
-        if field != "id" + table:
-            if data[field] is not None:
-                statement = "[{field}] = '{val}',".format(field=field,val=str(data[field]).replace("'","''"))
-            else:
-                statement = "[{field}] = {val},".format(field=field,val="NULL")
-            SQL = SQL + statement
-
-    SQL = SQL[:len(SQL)-1] + " WHERE [{idfield}] = {idvalue}".format(idfield=("id"+table),idvalue=data["id"+table])
-
-    return SQL
-
-
-def insert_from_request(table, request):
-    data = request.json
-    idprofile = cursor.execute("SELECT [profile] FROM [user] WHERE [email] = '{email}'".format(
-        email=session['email'])).fetchone()[0]
-    SQL = "INSERT INTO [{table}] (".format(table=table)
-    statements = ""
-    for field in data:
-        if field != "id" + table:
-            statements = statements + ", [{field}]".format(field=field)
-
-    SQL = SQL + statements[1:len(statements)] + ", [profile]) VALUES ("
-
-    statements = ""
-    for field in data:
-        if field != "id" + table:
-            if data[field] is not None:
-
-                statements = statements + ", '{val}'".format(val=str(data[field]).replace("'","''"))
-            else:
-                statements = statements + ", {val}".format(val="NULL")
-
-    SQL = SQL + statements[1:len(statements)] + ", {profile})".format(profile=idprofile)
-    return SQL
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))

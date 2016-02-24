@@ -1,20 +1,20 @@
 angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', function ($q,$timeout,$http) {
-    var self = this;
-    self.urlBase = '/api/';
+    var dataservice = this;
+    dataservice.urlBase = '/api/';
 
-    self.getProfile = function () {
-      return $http.get(self.urlBase + 'profile');
+    dataservice.getProfile = function () {
+      return $http.get(dataservice.urlBase + 'profile');
     };
 
-    self.getEducations = function () {
+    dataservice.getEducations = function () {
   
-      return $http.get(self.urlBase + 'educations');
+      return $http.get(dataservice.urlBase + 'educations');
     };
 
-    self.updateProfile = function(profile){
+    dataservice.updateProfile = function(profile){
       console.log(profile)
       var deferred = $q.defer();
-      $http.post(self.urlBase + 'profile', profile)
+      $http.post(dataservice.urlBase + 'profile', profile)
         .success(function (data, status) {
           if(status === 200){
             deferred.resolve();
@@ -29,10 +29,10 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
       return deferred.promise;
     }
 
-    self.saveSkill = function(json,type){
+    dataservice.saveSkill = function(json,type){
       var deferred = $q.defer();
       console.log(json)
-      $http.post(self.urlBase + type, json)
+      $http.post(dataservice.urlBase + type, json)
         .success(function (data, status) {
           
           if(status === 200){
@@ -49,10 +49,10 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
     }
 
 
-    self.uploadPicture = function(img){
+    dataservice.uploadPicture = function(img){
       var deferred = $q.defer();
       console.log(img)
-      $http.post(self.urlBase + 'profilepicture', img)
+      $http.post(dataservice.urlBase + 'profilepicture', img)
         .success(function(data,status){
           if(status === 200 && data.response){
             deferred.resolve();
@@ -65,7 +65,106 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
         });
       return deferred.promise;
     }
+
+    dataservice.Profile = function(p){
+      var self = this;
+      self.idprofile = p.idprofile;
+      self.firstname = p.firstname;
+      self.lastname = p.lastname;
+      self.phone = p.phone;
+      self.mobilephone = p.mobilephone;
+      self.address = p.address;
+      self.city = p.city;
+      self.zipcode = p.zipcode;
+      self.country = p.country;
+      self.birthdate = p ? (p.birthdate ? new Date(p.birthdate) : null) : null;
+    }
+
+    dataservice.CompetenceProfile = function(p){
+      var self = this;
+      self.idcompetenceprofile = p ? p.idcompetenceprofile : null;
+      self.name = p ? p.name : '';
+      self.workexperiences = p ? p.workexperiences : [];
+    }
+
+    dataservice.Education = function(e){
+      var self = this;
+      self.ideducation = e ? e.ideducation : null;
+      self.title = e ? e.title : '';
+      self.education = e ? e.education : '';
+      self.school = e ? e.school : '';
+      self.startdate = e ? (e.startdate ? new Date(e.startdate) : null) : null;
+      self.enddate = e ? (e.enddate ? new Date(e.enddate) : null) : null;
+      self.description = e ? e.description : '';
+    }
+
+    dataservice.WorkExperience = function(w){
+      var self = this;
+      self.idworkexperience = w ? w.idworkexperience : null;
+      self.title = w ? w.title : '';
+      self.employer = w ? w.employer : '';
+      self.startdate = w ? (w.startdate ? new Date(w.startdate) : null) : null;
+      self.enddate = w ? (w.enddate ? new Date(w.enddate) : null) : null;
+      self.description = w ? w.description : '';
+    }
+
+    dataservice.Publication = function(e){
+      var self = this;
+      self.idpublication = e ? e.idpublication : null;
+      self.authors = e ? e.authors : '';
+      self.title = e ? e.title : '';
+      self.date = e ? (e.date ? new Date(e.date) : null) : null;
+      self.description = e ? e.description : '';
+      self.publication = e ? e.publication : '';
+    }
+
+    dataservice.Language = function(o){
+      var self = this;
+      self.idlanguage = o ? o.idlanguage : null;
+      self.language = o ? o.language : '';
+      self.writing = o ? o.writing : '';
+      self.listening = o ? o.listening : '';
+      self.reading = o ? o.reading : '';
+      self.conversation = o ? o.conversation : '';
+      self.verbal = o ? o.verbal : '';
+    }
    
+    dataservice.Skill = function(o){
+      var self = this;
+      self.idskill = o ? o.idskill : null;
+      self.name = o ? o.name : '';
+      self.level = o ? o.level : null;
+      self.description = o ? o.description : '';
+    }
+
+    dataservice.Merit = function(m){
+      var self = this;
+      self.idmerit = m ? m.idmerit : null;
+      self.name = m ? m.name : '';
+      self.date = m ? (m.date ? new Date(m.date) : null) : null;
+      self.description = m ? m.description : '';
+    }
+
+    dataservice.Experience = function(o){
+      var self = this;
+      self.idexperience = o ? o.idexperience : null;
+      self.name = o ? o.name : '';
+      self.startdate = o ? (o.startdate ? new Date(o.startdate) : null) : null;
+      self.enddate = o ? (o.enddate ? new Date(o.enddate) : null) : null;
+      self.description = o ? o.description : '';
+    }
+
+    dataservice.Project = function(o){
+      var self = this;
+      self.idproject = o ? o.idproject : null;
+      self.name = o ? o.name : '';
+      self.customer = o ? o.customer : null;
+      self.customername = o ? o.customer.name : '';
+      self.startdate = o ? (o.startdate ? new Date(o.startdate) : null) : null;
+      self.enddate = o ? (o.enddate ? new Date(o.enddate) : null) : null;
+      self.hours = o ? o.hours : 0;
+      self.description = o ? o.description : '';
+    }
 }]);
 
 

@@ -231,16 +231,7 @@ angular.module('knowBase').controller('educationController',
     $scope.educationSelectChanged = educationSelectChanged;
     $scope.educationQueryFilter = educationQueryFilter;
 
-    var Education = function(e){
-      var self = this;
-      self.ideducation = e ? e.ideducation : null;
-      self.title = e ? e.title : '';
-      self.education = e ? e.education : '';
-      self.school = e ? e.school : '';
-      self.startdate = e ? (e.startdate ? new Date(e.startdate) : null) : null;
-      self.enddate = e ? (e.enddate ? new Date(e.enddate) : null) : null;
-      self.description = e ? e.description : '';
-    }
+    
 
     function getEducations() {
       $scope.educations = [];
@@ -248,7 +239,7 @@ angular.module('knowBase').controller('educationController',
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,e){
-            $scope.educations.push(new Education(e));
+            $scope.educations.push(new DataService.Education(e));
           });
           // $scope.educations = response.data.data;
           // formatEducationData($scope.educations);
@@ -311,7 +302,7 @@ angular.module('knowBase').controller('educationController',
     }
 
     $scope.newEducation = function(){
-      $scope.education = new Education(null);
+      $scope.education = new DataService.Education(null);
       $scope.titleSearchText = null;
       $scope.schoolSearchText = null; 
       $scope.educationSearchText = null;
@@ -456,17 +447,7 @@ angular.module('knowBase').controller('projectController',
     $scope.customerSelectChanged = customerSelectChanged;
     $scope.customerQueryFilter = customerQueryFilter;
 
-    var Project = function(o){
-      var self = this;
-      self.idproject = o ? o.idproject : null;
-      self.name = o ? o.name : '';
-      self.customer = o ? o.customer : null;
-      self.customername = o ? o.customer.name : '';
-      self.startdate = o ? (o.startdate ? new Date(o.startdate) : null) : null;
-      self.enddate = o ? (o.enddate ? new Date(o.enddate) : null) : null;
-      self.hours = o ? o.hours : 0;
-      self.description = o ? o.description : '';
-    }
+    
 
     function getProjects() {
       $scope.projects = [];
@@ -474,7 +455,7 @@ angular.module('knowBase').controller('projectController',
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,o){
-            $scope.projects.push(new Project(o));
+            $scope.projects.push(new DataService.Project(o));
           });
           $scope.title = 'Add all your projects';
         }, function(response) {
@@ -533,7 +514,7 @@ angular.module('knowBase').controller('projectController',
     }
 
     $scope.newProject = function(){
-      $scope.project = new Project(null);
+      $scope.project = new DataService.Project(null);
       $scope.nameSearchText = null;
       $scope.customerSearchText = null; 
     }
@@ -650,13 +631,6 @@ angular.module('knowBase').controller('meritController',
     $scope.nameSelectChanged = nameSelectChanged;
     $scope.nameQueryFilter = nameQueryFilter;
 
-    var Merit = function(m){
-      var self = this;
-      self.idmerit = m ? m.idmerit : null;
-      self.name = m ? m.name : '';
-      self.date = m ? (m.date ? new Date(m.date) : null) : null;
-      self.description = m ? m.description : '';
-    }
 
     function getMerits() {
       $scope.merits = [];
@@ -664,7 +638,7 @@ angular.module('knowBase').controller('meritController',
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,m){
-            $scope.merits.push(new Merit(m));
+            $scope.merits.push(new DataService.Merit(m));
           });
 
           $scope.title = 'Add all your merits';
@@ -717,7 +691,7 @@ angular.module('knowBase').controller('meritController',
     }
 
     $scope.newMerit = function(){
-      $scope.merit = new Merit(null);
+      $scope.merit = new DataService.Merit(null);
       $scope.nameSearchText = null;
     }
 
@@ -801,14 +775,6 @@ angular.module('knowBase').controller('experienceController',
     $scope.nameSelectChanged = nameSelectChanged;
     $scope.nameQueryFilter = nameQueryFilter;
 
-    var Experience = function(o){
-      var self = this;
-      self.idexperience = o ? o.idexperience : null;
-      self.name = o ? o.name : '';
-      self.startdate = o ? (o.startdate ? new Date(o.startdate) : null) : null;
-      self.enddate = o ? (o.enddate ? new Date(o.enddate) : null) : null;
-      self.description = o ? o.description : '';
-    }
 
     function getExperiences() {
       $scope.experiences = [];
@@ -816,7 +782,7 @@ angular.module('knowBase').controller('experienceController',
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,o){
-            $scope.experiences.push(new Experience(o));
+            $scope.experiences.push(new DataService.Experience(o));
           });
           console.log($scope.experiences)
           // $scope.experiences = response.data.data;
@@ -871,7 +837,7 @@ angular.module('knowBase').controller('experienceController',
     }
 
     $scope.newExperience = function(){
-      $scope.experience = new Experience(null);
+      $scope.experience = new DataService.Experience(null);
       $scope.nameSearchText = null;
     }
 
@@ -967,16 +933,6 @@ angular.module('knowBase').controller('languageController',
       "C2"
     ].map(function (level) { return { level: level }; });
 
-    var Language = function(o){
-      var self = this;
-      self.idlanguage = o ? o.idlanguage : null;
-      self.language = o ? o.language : '';
-      self.writing = o ? o.writing : '';
-      self.listening = o ? o.listening : '';
-      self.reading = o ? o.reading : '';
-      self.conversation = o ? o.conversation : '';
-      self.verbal = o ? o.verbal : '';
-    }
 
     function getLanguages() {
       $scope.languages = [];
@@ -985,7 +941,7 @@ angular.module('knowBase').controller('languageController',
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,o){
-            $scope.languages.push(new Language(o));
+            $scope.languages.push(new DataService.Language(o));
           });
           console.log(response.data.data)
           $scope.title = 'Add all your languages';
@@ -1042,7 +998,7 @@ angular.module('knowBase').controller('languageController',
     }
 
     $scope.newLanguage = function(){
-      $scope.language = new Language(null);
+      $scope.language = new DataService.Language(null);
       $scope.languageSearchText = null;
     }
 
@@ -1133,13 +1089,7 @@ angular.module('knowBase').controller('skillController',
       "5"
     ].map(function (level) { return { level: level }; });
 
-    var Skill = function(o){
-      var self = this;
-      self.idskill = o ? o.idskill : null;
-      self.name = o ? o.name : '';
-      self.level = o ? o.level : null;
-      self.description = o ? o.description : '';
-    }
+    
 
     function getSkills() {
       $scope.skills = [];
@@ -1148,7 +1098,7 @@ angular.module('knowBase').controller('skillController',
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,o){
-            $scope.skills.push(new Skill(o));
+            $scope.skills.push(new DataService.Skill(o));
           });
         
           $scope.title = 'Add all your skills';
@@ -1205,7 +1155,7 @@ angular.module('knowBase').controller('skillController',
     }
 
     $scope.newSkill = function(){
-      $scope.skill = new Skill(null);
+      $scope.skill = new DataService.Skill(null);
       $scope.nameSearchText = null;
     }
 
@@ -1299,23 +1249,14 @@ angular.module('knowBase').controller('workExperienceController',
     $scope.employerSelectChanged = employerSelectChanged;
     $scope.employerQueryFilter = employerQueryFilter;
 
-    var WorkExperience = function(w){
-      var self = this;
-      self.idworkexperience = w ? w.idworkexperience : null;
-      self.title = w ? w.title : '';
-      self.employer = w ? w.employer : '';
-      self.startdate = w ? (w.startdate ? new Date(w.startdate) : null) : null;
-      self.enddate = w ? (w.enddate ? new Date(w.enddate) : null) : null;
-      self.description = w ? w.description : '';
-    }
-
+    
     function getWorkExperiences() {
       $scope.workExperiences = [];
       $http({method: 'GET', url: '/api/workexperience', cache: $templateCache}).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,w){
-            $scope.workExperiences.push(new WorkExperience(w));
+            $scope.workExperiences.push(new DataService.WorkExperience(w));
           });
           console.log($scope.workExperiences)
           // $scope.workExperiences = response.data.data;
@@ -1375,7 +1316,7 @@ angular.module('knowBase').controller('workExperienceController',
     }
 
     $scope.newWorkExperience = function(){
-      $scope.workExperience = new WorkExperience(null);
+      $scope.workExperience = new DataService.WorkExperience(null);
       $scope.titleSearchText = null;
       $scope.employerSearchText = null; 
     }
@@ -1487,23 +1428,13 @@ angular.module('knowBase').controller('publicationController',
     $scope.titleQueryFilter = titleQueryFilter;
 
 
-    var Publication = function(e){
-      var self = this;
-      self.idpublication = e ? e.idpublication : null;
-      self.authors = e ? e.authors : '';
-      self.title = e ? e.title : '';
-      self.date = e ? (e.date ? new Date(e.date) : null) : null;
-      self.description = e ? e.description : '';
-      self.publication = e ? e.publication : '';
-    }
-
     function getPublications() {
       $scope.publications = [];
       $http({method: 'GET', url: '/api/publications', cache: $templateCache}).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,e){
-            $scope.publications.push(new Publication(e));
+            $scope.publications.push(new DataService.Publication(e));
           });
           $scope.title = 'Add all your publications';
         }, function(response) {
@@ -1563,7 +1494,7 @@ angular.module('knowBase').controller('publicationController',
     }
 
     $scope.newPublication = function(){
-      $scope.publication = new Publication(null);
+      $scope.publication = new DataService.Publication(null);
       $scope.titleSearchText = null;
       $scope.schoolSearchText = null; 
     }
@@ -1794,7 +1725,7 @@ angular.module('knowBase').controller('profileController',
     function getProfile() {
       DataService.getProfile()
           .success(function (response) { 
-              $scope.profile = new Profile(response.data);
+              $scope.profile = new DataService.Profile(response.data);
           })
           .error(function (error) {
               $scope.status = 'Unable to load profile data: ' + error.message;
@@ -1816,19 +1747,7 @@ angular.module('knowBase').controller('profileController',
 
     }
 
-    var Profile = function(p){
-      var self = this;
-      self.idprofile = p.idprofile;
-      self.firstname = p.firstname;
-      self.lastname = p.lastname;
-      self.phone = p.phone;
-      self.mobilephone = p.mobilephone;
-      self.address = p.address;
-      self.city = p.city;
-      self.zipcode = p.zipcode;
-      self.country = p.country;
-      self.birthdate = p ? (p.birthdate ? new Date(p.birthdate) : null) : null;
-    }
+    
 
     $http({method: 'GET', url: '/api/profilepicture', cache: $templateCache})
     .then(function(response) {
@@ -1896,7 +1815,283 @@ angular.module('knowBase').controller('profileController',
       });
     };
 
-    
-
     getProfile();
 })
+
+
+angular.module('knowBase').controller('competenceProfilesController',
+  function ($scope, $state, $http, $templateCache, DataService, $mdToast) {
+    $scope.nameLabel = 'Name';
+    $scope.querySearch = querySearch;
+    $scope.competenceProfiles = [];
+    $scope.competenceProfile
+
+    $scope.educations = [];
+    $scope.workExperiences = [];
+    $scope.publications = [];
+    $scope.skills = [];
+    $scope.languages = [];
+    $scope.merits = [];
+    $scope.projects = [];
+    $scope.experiences = [];
+    $scope.allEducations = [];
+    $scope.allWorkExperiences = [];
+    $scope.allPublications = [];
+    $scope.allSkills = [];
+    $scope.allLanguages = [];
+    $scope.allMerits = [];
+    $scope.allProjects = [];
+    $scope.allExperiences = [];
+
+    $scope.filter_skilltypes = true;
+    $scope.focused = { skilltype: '' };
+    $scope.resetFocus = function(){
+      console.log('hej');
+      $scope.focused.skilltype = '';
+      console.log($scope.focused)
+    }
+    function getData() {
+
+      $http({method: 'GET', url: '/api/competenceprofiles', cache: $templateCache}).
+        then(function(response) {
+          $scope.status = response.status;
+          $.each(response.data.data, function(i,p){
+            $scope.competenceProfiles.push(new DataService.CompetenceProfile(p));
+          });
+          
+        }, function(response) {
+          $scope.data = response.data || "Request failed";
+          $scope.status = response.status;
+      });
+      $http({method: 'GET', url: '/api/educations', cache: $templateCache}).
+        then(function(response) {
+          $scope.status = response.status;
+          $.each(response.data.data, function(i,e){
+            $scope.allEducations.push(new DataService.Education(e));
+          });
+          
+        }, function(response) {
+          $scope.data = response.data || "Request failed";
+          $scope.status = response.status;
+      });
+      $http({method: 'GET', url: '/api/workexperience', cache: $templateCache}).
+        then(function(response) {
+          $scope.status = response.status;
+          $.each(response.data.data, function(i,w){
+            $scope.allWorkExperiences.push(new DataService.WorkExperience(w));
+          });
+          
+        }, function(response) {
+          $scope.data = response.data || "Request failed";
+          $scope.status = response.status;
+      });
+      $http({method: 'GET', url: '/api/languages', cache: $templateCache}).
+        then(function(response) {
+          $scope.status = response.status;
+          $.each(response.data.data, function(i,l){
+            $scope.allLanguages.push(new DataService.Language(l));
+          });
+          
+        }, function(response) {
+          $scope.data = response.data || "Request failed";
+          $scope.status = response.status;
+      });
+      $http({method: 'GET', url: '/api/skills', cache: $templateCache}).
+        then(function(response) {
+          $scope.status = response.status;
+          $.each(response.data.data, function(i,s){
+            $scope.allSkills.push(new DataService.Skill(s));
+          });
+          
+        }, function(response) {
+          $scope.data = response.data || "Request failed";
+          $scope.status = response.status;
+      });
+      $http({method: 'GET', url: '/api/projects', cache: $templateCache}).
+        then(function(response) {
+          $scope.status = response.status;
+          $.each(response.data.data, function(i,p){
+            $scope.allProjects.push(new DataService.Project(p));
+          });
+          
+        }, function(response) {
+          $scope.data = response.data || "Request failed";
+          $scope.status = response.status;
+      });
+      $http({method: 'GET', url: '/api/experiences', cache: $templateCache}).
+        then(function(response) {
+          $scope.status = response.status;
+          $.each(response.data.data, function(i,e){
+            $scope.allExperiences.push(new DataService.Experience(e));
+          });
+          
+        }, function(response) {
+          $scope.data = response.data || "Request failed";
+          $scope.status = response.status;
+      });
+      $http({method: 'GET', url: '/api/merits', cache: $templateCache}).
+        then(function(response) {
+          $scope.status = response.status;
+          $.each(response.data.data, function(i,m){
+            $scope.allMerits.push(new DataService.Merit(m));
+          });
+          
+        }, function(response) {
+          $scope.data = response.data || "Request failed";
+          $scope.status = response.status;
+      });
+      $http({method: 'GET', url: '/api/publications', cache: $templateCache}).
+        then(function(response) {
+          $scope.status = response.status;
+          $.each(response.data.data, function(i,p){
+            $scope.allPublications.push(new DataService.Publication(p));
+          });
+          
+        }, function(response) {
+          $scope.data = response.data || "Request failed";
+          $scope.status = response.status;
+      });
+
+
+    }
+    function querySearch (query, competence) {
+      switch(competence){
+        case "education":
+          var results = query ? $scope.allEducations.filter(createFilterFor(query, competence)) : $scope.allEducations;
+          return results;
+          break;
+        case "workExperience":
+          var results = query ? $scope.allWorkExperiences.filter(createFilterFor(query, competence)) : $scope.allWorkExperiences;
+          return results;
+          break;
+        case "skill":
+          var results = query ? $scope.allSkills.filter(createFilterFor(query, competence)) : $scope.allSkills;
+          return results;
+          break;
+        case "publication":
+          var results = query ? $scope.allPublications.filter(createFilterFor(query, competence)) : $scope.allPublications;
+          return results;
+          break;
+        case "experience":
+          var results = query ? $scope.allExperiences.filter(createFilterFor(query, competence)) : $scope.allExperiences;
+          return results;
+          break;
+        case "language":
+          var results = query ? $scope.allLanguages.filter(createFilterFor(query, competence)) : $scope.allLanguages;
+          return results;
+          break;
+        case "merit":
+          var results = query ? $scope.allMerits.filter(createFilterFor(query, competence)) : $scope.allMerits;
+          return results;
+          break;
+        case "project":
+          var results = query ? $scope.allProjects.filter(createFilterFor(query, competence)) : $scope.allProjects;
+          return results;
+          break;
+      }
+    }
+
+    function createFilterFor(query,competence) {
+      var lowercaseQuery = angular.lowercase(query);
+      switch(competence){
+        case "education":
+          return function filterFn(education) {
+            return (angular.lowercase(education.title).indexOf(lowercaseQuery) != -1) || 
+            (angular.lowercase(education.school).indexOf(lowercaseQuery) != -1) ||
+            (angular.lowercase(education.education).indexOf(lowercaseQuery) != -1);
+          };
+          break;
+        case "workExperience":
+          
+          return function filterFn(workExperience) {
+            return (angular.lowercase(workExperience.title).indexOf(lowercaseQuery) != -1) || 
+            (angular.lowercase(workExperience.employer).indexOf(lowercaseQuery) != -1);
+          };
+          break;
+        case "experience":
+          
+          return function filterFn(experience) {
+            return (angular.lowercase(experience.name).indexOf(lowercaseQuery) != -1);
+          };
+          break;
+        case "publication":
+          
+          return function filterFn(publication) {
+            return (angular.lowercase(publication.title).indexOf(lowercaseQuery) != -1);
+          };
+          break;
+        case "skill":
+          
+          return function filterFn(skill) {
+            return (angular.lowercase(skill.name).indexOf(lowercaseQuery) != -1);
+          };
+          break;
+        case "merit":
+          
+          return function filterFn(merit) {
+            return (angular.lowercase(merit.name).indexOf(lowercaseQuery) != -1);
+          };
+          break;
+        case "language":
+          
+          return function filterFn(language) {
+            return (angular.lowercase(language.language).indexOf(lowercaseQuery) != -1);
+          };
+          break;
+        case "project":
+          
+          return function filterFn(project) {
+            return (angular.lowercase(project.name).indexOf(lowercaseQuery) != -1);
+          };
+          break;
+      }
+    }
+
+    $scope.saveCompetenceProfile = function(){
+      DataService.saveSkill($scope.competenceProfile,'competenceProfile')
+        .then(function (data) {
+            $scope.success = true;
+            $mdToast.show({
+                template: '<md-toast class="md-toast-success">Successfully saved competence profile!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            });
+            if(!$scope.competenceProfile.idcompetenceprofile){
+              $scope.competenceProfile.idcompetenceprofile = data.idrecord;
+              $scope.competenceProfiles.push($scope.competenceProfile);
+            }
+            $scope.competenceProfile = null;
+            $scope.nameSearchText = null;
+            // $state.transitionTo($state.current, params, { reload: true, inherit: true, notify: true })
+
+        },
+        // handle error
+        function (reason) {
+            $scope.errorMessage = reason; 
+            $scope.error = true;
+            $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to save competence profile!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+        });
+    }
+
+    $scope.cancelCompetenceProfile = function(){
+      $scope.competenceProfile = null;
+      $scope.selectedCompetenceProfile = null;
+      $scope.competenceProfileSearchText = null;
+    }
+
+    $scope.editCompetenceProfile = function(o){
+      $scope.competenceProfile = o;
+      $scope.competenceProfileSearchText = o.competenceProfile;
+    }
+
+    $scope.newCompetenceProfile = function(){
+      $scope.competenceProfile = new DataService.CompetenceProfile(null);
+      $scope.competenceProfileSearchText = null;
+    }
+    
+    getData();
+});

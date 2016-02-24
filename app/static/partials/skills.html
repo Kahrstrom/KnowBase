@@ -1,7 +1,7 @@
 <header ui-view="toolbar"></header>
 <md-content layout="row">
 	<div flex id="list-column" layout="column" layout-margin layout-padding>
-		<md-toolbar md-theme="grey" id="tab-control" hide-gt-md flex>
+		<md-toolbar md-theme="grey" id="tab-control" hide-gt-md flex layout-margin layout-margin>
 			<div class="md-toolbar-tools">
 				<span flex="10"/>
 				<span class="tab-selector selected" flex="30" ng-click="togglePage()">My skills</span>
@@ -19,7 +19,7 @@
 			        md-gutter="8px" md-gutter-gt-sm="4px" >
 			    <md-grid-tile ng-repeat="tile in tiles"
 			                  md-rowspan="{{tile.span.row}}"
-			                  md-rowspan-sm="2"
+			                  md-rowspan-sm="1"
 			                  md-colspan="{{tile.span.col}}"
 			                  md-colspan-sm="1"
 			                  ng-class="tile.background" 
@@ -41,7 +41,7 @@
 			        md-cols="1" md-row-height="6:1"
 			        md-gutter="8px">
 			    <md-grid-tile ng-repeat="tile in tiles"
-			                  md-rowspan="2"
+			                  md-rowspan="1"
 			                  md-colspan="1"
 			                  ng-class="tile.background" 
 			                  ng-click="setActiveSkill(tile)"

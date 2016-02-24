@@ -188,12 +188,11 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
             	'toolbar@profile' : {
             		controller: 'toolbarController',
             		templateUrl: 'static/partials/toolbar.html'
-            	}
-                // ,
-                // 'activityfeed@profile' : {
-                //     controller: 'activityfeedController',
-                //     templateUrl: 'static/partials/activityfeed.html'
-                // }
+            	},
+                'competenceprofiles@profile' : {
+                    controller: 'competenceProfilesController',
+                    templateUrl: 'static/partials/competenceprofiles.html'
+                }
 
             },
             access: 'restricted'

@@ -97,6 +97,12 @@ class WorkExperience(db.Model):
             'timestamp': self.timestamp
         }
 
+workExperienceProfiles = db.Table('workexperienceprofiles',
+                                  db.Column('idworkexperience',db.Integer,db.ForeignKey('workexperience.idworkexperience')),
+                                  db.Column('idcompetenceprofile',db.Integer,db.ForeignKey('competenceprofile.idcompetenceprofile'))
+
+)
+
 class Customer(db.Model):
     __tablename__ = "customer"
     idcustomer = db.Column(db.Integer, primary_key=True)
@@ -116,6 +122,33 @@ class Customer(db.Model):
         return {
             'idcustomer':self.idcustomer,
             'name':self.name
+        }
+
+class CompetenceProfile(db.Model):
+    __tablename__ = "competenceprofile"
+
+    idcompetenceprofile = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    workexperiences = db.relationship('WorkExperience',secondary=workExperienceProfiles,
+                                      backref=db.backref('competenceprofile',lazy='dynamic'))
+    profile = db.Column(db.Integer, db.ForeignKey('profile.idprofile'))
+    rel_profile = db.relationship('Profile', primaryjoin='CompetenceProfile.profile == Profile.idprofile',
+                                  backref=db.backref('competenceprofile',lazy='dynamic'))
+    def __init__(self, json_data=None, profile=None):
+        self.profile=profile
+        self.name = json_data['name']
+
+    def __repr__(self):
+        return '<Experience %r>' % (self.name)
+
+    def update(self, json_data=None):
+        self.name = json_data['name']
+
+    @property
+    def serialize(self):
+        return {
+            "idcompetenceprofile" : self.idcompetenceprofile,
+            "name" : self.name
         }
 
 class Project(db.Model):

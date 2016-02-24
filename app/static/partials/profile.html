@@ -6,8 +6,8 @@
 		<md-toolbar md-theme="grey" id="tab-control" hide-gt-md>
 			<div class="md-toolbar-tools">
 				<span flex="10"/>
-				<span class="tab-selector selected" flex="30" ng-click="togglePage($event)">Profile</span>
-				<span class="tab-selector" flex="30" ng-click="togglePage($event)">Messages</span>
+				<span class="tab-selector selected" flex="30" ng-click="togglePage($event)">Details</span>
+				<span class="tab-selector" flex="30" ng-click="togglePage($event)">Competence profiles</span>
 			</div>
 		</md-toolbar>
 		<div layout="column" layout-margin layout-padding>
@@ -95,12 +95,11 @@
 		<md-toolbar md-theme="grey" id="tab-control" hide-gt-md>
 			<div class="md-toolbar-tools">
 				<span flex="10"/>
-				<span class="tab-selector selected" flex="30" ng-click="togglePage($event)">Profile</span>
-				<span class="tab-selector" flex="30" ng-click="togglePage($event)">Messages</span>
+				<span class="tab-selector selected" flex="30" ng-click="togglePage($event)">Details</span>
+				<span class="tab-selector" flex="30" ng-click="togglePage($event)">Competence profiles</span>
 			</div>
 		</md-toolbar>
-		<div layout="column" layout-margin layout-padding>
-			<h3>Messages</h3>
+		<div layout="column" layout-margin layout-padding ui-view="competenceprofiles">
 		</div>
 	</md-whiteframe>
 	
