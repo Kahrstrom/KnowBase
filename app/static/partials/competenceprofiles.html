@@ -39,7 +39,7 @@
 		<div class="autocomplete md-padding" layout="column">
 	        <md-contact-chips id="educationChips"
 	        	ng-click="focused.skilltype = 'educations'"
-		        ng-model="educations"
+		        ng-model="competenceProfile.educations"
 		        md-contacts="querySearch($query, 'education')"
 		        md-contact-name="education"
 		        md-require-match="true"
@@ -52,7 +52,7 @@
 			    <md-list id="educationList" class="fixedRows">
 			      	<md-subheader class="md-no-sticky">Educations</md-subheader>
 			      	<md-list-item class="md-2-line contact-item" ng-repeat="(index, education) in allEducations"
-			          	ng-if="educations.indexOf(education) < 0">
+			          	ng-if="competenceProfile.educations.indexOf(education) < 0">
 			        	<md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
 			        	<div class="md-list-item-text compact">
 			          		<h3>{{education.title}} - {{education.education}}</h3>
@@ -60,7 +60,7 @@
 			          		<p>{{education.school}}</p>
 			        	</div>
 			      	</md-list-item>
-			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, education) in educations">
+			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, education) in competenceProfile.educations">
 				        <md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
 				        <div class="md-list-item-text compact">
 							<h3>{{education.title}} - {{education.education}}</h3>
@@ -73,7 +73,7 @@
 	    <div class="autocomplete md-padding" layout="column">
 	        <md-contact-chips id="workExperienceChips"
 	        	ng-click="focused.skilltype = 'workExperience'"
-		        ng-model="workExperiences"
+		        ng-model="competenceProfile.workExperiences"
 		        md-contacts="querySearch($query, 'workExperience')"
 		        md-contact-name="title"
 		        md-require-match="true"
@@ -86,14 +86,14 @@
 			    <md-list class="fixedRows">
 			      	<md-subheader class="md-no-sticky">Work experience</md-subheader>
 			      	<md-list-item class="md-2-line contact-item" ng-repeat="(index, workExperience) in allWorkExperiences"
-			          	ng-if="workExperiences.indexOf(workExperience) < 0">
+			          	ng-if="competenceProfile.workExperiences.indexOf(workExperience) < 0">
 			        	<md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
 			        	<div class="md-list-item-text compact">
 			          		<h3>{{workExperience.employer}}</h3>
 			          		<p>{{workExperience.title}}</p>
 			        	</div>
 			      	</md-list-item>
-			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, workExperience) in workExperiences">
+			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, workExperience) in competenceProfile.workExperiences">
 				        <md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
 				        <div class="md-list-item-text compact">
 							<h3>{{workExperience.employer}}</h3>
@@ -106,7 +106,7 @@
 	    <div class="autocomplete md-padding" layout="column">
 	        <md-contact-chips id="experienceChips"
 	        	ng-click="focused.skilltype = 'experience'"
-		        ng-model="experiences"
+		        ng-model="competenceProfile.experiences"
 		        md-contacts="querySearch($query, 'experience')"
 		        md-contact-name="name"
 		        md-require-match="true"
@@ -119,14 +119,14 @@
 			    <md-list class="fixedRows">
 			      	<md-subheader class="md-no-sticky">Experience</md-subheader>
 			      	<md-list-item class="md-2-line contact-item" ng-repeat="(index, experience) in allExperiences"
-			          	ng-if="experiences.indexOf(experience) < 0">
+			          	ng-if="competenceProfile.experiences.indexOf(experience) < 0">
 			        	<md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
 			        	<div class="md-list-item-text compact">
 			          		<h3>{{experience.name}}</h3>
 			          		<!-- <p>{{workExperience.title}}</p> -->
 			        	</div>
 			      	</md-list-item>
-			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, experience) in experiences">
+			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, experience) in competenceProfile.experiences">
 				        <md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
 				        <div class="md-list-item-text compact">
 							<h3>{{experience.name}}</h3>
@@ -139,7 +139,7 @@
 	    <div class="autocomplete md-padding" layout="column">
 	        <md-contact-chips id="publicationChips"
 	        	ng-click="focused.skilltype = 'publication'"
-		        ng-model="publications"
+		        ng-model="competenceProfile.publications"
 		        md-contacts="querySearch($query, 'publication')"
 		        md-contact-name="title"
 		        md-require-match="true"
@@ -152,14 +152,14 @@
 			    <md-list class="fixedRows">
 			      	<md-subheader class="md-no-sticky">Publications</md-subheader>
 			      	<md-list-item class="md-2-line contact-item" ng-repeat="(index, publication) in allPublications"
-			          	ng-if="publications.indexOf(publication) < 0">
+			          	ng-if="competenceProfile.publications.indexOf(publication) < 0">
 			        	<md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
 			        	<div class="md-list-item-text compact">
 			          		<h3>{{publication.title}}</h3>
 			          		<!-- <p>{{workExperience.title}}</p> -->
 			        	</div>
 			      	</md-list-item>
-			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, publication) in publications">
+			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, publication) in competenceProfile.publications">
 				        <md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
 				        <div class="md-list-item-text compact">
 							<h3>{{publication.title}}</h3>
@@ -172,7 +172,7 @@
 	    <div class="autocomplete md-padding" layout="column">
 	        <md-contact-chips id="projectChips"
 	        	ng-click="focused.skilltype = 'project'"
-		        ng-model="projects"
+		        ng-model="competenceProfile.projects"
 		        md-contacts="querySearch($query, 'project')"
 		        md-contact-name="name"
 		        md-require-match="true"
@@ -185,14 +185,14 @@
 			    <md-list class="fixedRows">
 			      	<md-subheader class="md-no-sticky">Projects</md-subheader>
 			      	<md-list-item class="md-2-line contact-item" ng-repeat="(index, project) in allProjects"
-			          	ng-if="projects.indexOf(project) < 0">
+			          	ng-if="competenceProfile.projects.indexOf(project) < 0">
 			        	<md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
 			        	<div class="md-list-item-text compact">
 			          		<h3>{{project.name}}</h3>
 			          		<!-- <p>{{workExperience.title}}</p> -->
 			        	</div>
 			      	</md-list-item>
-			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, project) in projects">
+			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, project) in competenceProfile.projects">
 				        <md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
 				        <div class="md-list-item-text compact">
 							<h3>{{project.title}}</h3>
@@ -205,7 +205,7 @@
 	    <div class="autocomplete md-padding" layout="column">
 	        <md-contact-chips id="languageChips"
 	        	ng-click="focused.skilltype = 'language'"
-		        ng-model="languages"
+		        ng-model="competenceProfile.languages"
 		        md-contacts="querySearch($query, 'language')"
 		        md-contact-name="language"
 		        md-require-match="true"
@@ -218,14 +218,14 @@
 			    <md-list class="fixedRows">
 			      	<md-subheader class="md-no-sticky">Language skills</md-subheader>
 			      	<md-list-item class="md-2-line contact-item" ng-repeat="(index, language) in allLanguages"
-			          	ng-if="languages.indexOf(language) < 0">
+			          	ng-if="competenceProfile.languages.indexOf(language) < 0">
 			        	<md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
 			        	<div class="md-list-item-text compact">
 			          		<h3>{{language.language}}</h3>
 			          		<!-- <p>{{workExperience.title}}</p> -->
 			        	</div>
 			      	</md-list-item>
-			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, language) in languages">
+			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, language) in competenceProfile.languages">
 				        <md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
 				        <div class="md-list-item-text compact">
 							<h3>{{language.language}}</h3>
@@ -238,7 +238,7 @@
 	    <div class="autocomplete md-padding" layout="column">
 	        <md-contact-chips id="meritChips"
 	        	ng-click="focused.skilltype = 'merit'"
-		        ng-model="merits"
+		        ng-model="competenceProfile.merits"
 		        md-contacts="querySearch($query, 'merit')"
 		        md-contact-name="name"
 		        md-require-match="true"
@@ -251,14 +251,14 @@
 			    <md-list class="fixedRows">
 			      	<md-subheader class="md-no-sticky">Merits</md-subheader>
 			      	<md-list-item class="md-2-line contact-item" ng-repeat="(index, merit) in allMerits"
-			          	ng-if="merits.indexOf(merit) < 0">
+			          	ng-if="competenceProfile.merits.indexOf(merit) < 0">
 			        	<md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
 			        	<div class="md-list-item-text compact">
 			          		<h3>{{merit.name}}</h3>
 			          		<!-- <p>{{workExperience.title}}</p> -->
 			        	</div>
 			      	</md-list-item>
-			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, merit) in merits">
+			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, merit) in competenceProfile.merits">
 				        <md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
 				        <div class="md-list-item-text compact">
 							<h3>{{merit.name}}</h3>
@@ -271,7 +271,7 @@
 	    <div class="autocomplete md-padding" layout="column">
 	        <md-contact-chips id="skillChips"
 	        	ng-click="focused.skilltype = 'skill'"
-		        ng-model="skills"
+		        ng-model="competenceProfile.skills"
 		        md-contacts="querySearch($query, 'skill')"
 		        md-contact-name="name"
 		        md-require-match="true"
@@ -284,14 +284,14 @@
 			    <md-list class="fixedRows">
 			      	<md-subheader class="md-no-sticky">Key skills</md-subheader>
 			      	<md-list-item class="md-2-line contact-item" ng-repeat="(index, skill) in allSkills"
-			          	ng-if="skills.indexOf(skill) < 0">
+			          	ng-if="competenceProfile.skills.indexOf(skill) < 0">
 			        	<md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
 			        	<div class="md-list-item-text compact">
 			          		<h3>{{skill.name}}</h3>
 			          		<!-- <p>{{workExperience.title}}</p> -->
 			        	</div>
 			      	</md-list-item>
-			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, skill) in skills">
+			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, skill) in competenceProfile.skills">
 				        <md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
 				        <div class="md-list-item-text compact">
 							<h3>{{skill.name}}</h3>

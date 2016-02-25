@@ -84,7 +84,14 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
       var self = this;
       self.idcompetenceprofile = p ? p.idcompetenceprofile : null;
       self.name = p ? p.name : '';
-      self.workexperiences = p ? p.workexperiences : [];
+      self.workExperiences = p ? p.workexperiences : [];
+      self.educations = p ? p.educations : [];
+      self.publications = p ? p.publications : [];
+      self.skills = p ? p.skills : [];
+      self.experiences = p ? p.experiences : [];
+      self.projects = p ? p.projects : [];
+      self.merits = p ? p.merits : [];
+      self.languages = p ? p.languages : [];
     }
 
     dataservice.Education = function(e){

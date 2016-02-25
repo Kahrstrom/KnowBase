@@ -1856,6 +1856,7 @@ angular.module('knowBase').controller('competenceProfilesController',
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,p){
+            console.log(p)
             $scope.competenceProfiles.push(new DataService.CompetenceProfile(p));
           });
           
@@ -2048,6 +2049,8 @@ angular.module('knowBase').controller('competenceProfilesController',
     }
 
     $scope.saveCompetenceProfile = function(){
+
+
       DataService.saveSkill($scope.competenceProfile,'competenceProfile')
         .then(function (data) {
             $scope.success = true;
@@ -2080,17 +2083,18 @@ angular.module('knowBase').controller('competenceProfilesController',
     $scope.cancelCompetenceProfile = function(){
       $scope.competenceProfile = null;
       $scope.selectedCompetenceProfile = null;
-      $scope.competenceProfileSearchText = null;
+      // $scope.competenceProfileSearchText = null;
     }
 
     $scope.editCompetenceProfile = function(o){
       $scope.competenceProfile = o;
-      $scope.competenceProfileSearchText = o.competenceProfile;
+      console.log(o)
+      // $scope.competenceProfileSearchText = o.competenceProfile;
     }
 
     $scope.newCompetenceProfile = function(){
       $scope.competenceProfile = new DataService.CompetenceProfile(null);
-      $scope.competenceProfileSearchText = null;
+      // $scope.competenceProfileSearchText = null;
     }
     
     getData();

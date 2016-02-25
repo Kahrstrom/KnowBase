@@ -442,6 +442,37 @@ def get_competenceprofiles():
     print(retval)
     return jsonify(data=retval)
 
+@app.route('/api/competenceProfile',methods=['POST'])
+@require_login()
+def save_competenceprofiles():
+
+    profile = User.query.filter_by(email=session['email']).first().rel_profile
+    experiences = request.json['experiences']
+    publications = request.json['publications']
+    projects = request.json['projects']
+    educations = request.json['educations']
+    workExperiences = request.json['workExperiences']
+    languages = request.json['languages']
+    skills = request.json['skills']
+    merits = request.json['merits']
+
+    idcompetenceprofile = request.json['idcompetenceprofile']
+    if idcompetenceprofile is None:
+        competenceProfile = CompetenceProfile(request.json['name'],profile.idprofile)
+        db.session.add(competenceProfile)
+        db.session.commit()
+    else:
+        competenceProfile = CompetenceProfile.query.get(idcompetenceprofile)
+
+    for w in workExperiences:
+        print(w)
+        workExperience = WorkExperience.query.get(w['idworkexperience'])
+        competenceProfile.workexperiences.append(workExperience)
+    db.session.commit()
+
+    print(request.json)
+    return jsonify(idrecord="{idrecord}".format(idrecord=competenceProfile.idcompetenceprofile))
+
 @app.route('/api/project', methods=['POST'])
 @require_login()
 def create_project():

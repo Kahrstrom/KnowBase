@@ -134,9 +134,9 @@ class CompetenceProfile(db.Model):
     profile = db.Column(db.Integer, db.ForeignKey('profile.idprofile'))
     rel_profile = db.relationship('Profile', primaryjoin='CompetenceProfile.profile == Profile.idprofile',
                                   backref=db.backref('competenceprofile',lazy='dynamic'))
-    def __init__(self, json_data=None, profile=None):
+    def __init__(self, name=None, profile=None):
         self.profile=profile
-        self.name = json_data['name']
+        self.name = name
 
     def __repr__(self):
         return '<Experience %r>' % (self.name)
@@ -148,7 +148,8 @@ class CompetenceProfile(db.Model):
     def serialize(self):
         return {
             "idcompetenceprofile" : self.idcompetenceprofile,
-            "name" : self.name
+            "name" : self.name,
+            "workexperiences" : [w.serialize for w in self.workexperiences]
         }
 
 class Project(db.Model):
