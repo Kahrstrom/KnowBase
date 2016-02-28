@@ -438,7 +438,10 @@ def get_competenceprofiles():
     retval = []
     print(profiles)
     for p in profiles:
-        retval.append(p.serialize)
+        try:
+            retval.append(p.serialize)
+        except Exception as err:
+            print(err)
     print(retval)
     return jsonify(data=retval)
 
@@ -464,13 +467,16 @@ def save_competenceprofiles():
     else:
         competenceProfile = CompetenceProfile.query.get(idcompetenceprofile)
 
-    for w in workExperiences:
-        print(w)
-        workExperience = WorkExperience.query.get(w['idworkexperience'])
-        competenceProfile.workexperiences.append(workExperience)
-    db.session.commit()
+    competenceProfile.workexperiences = [WorkExperience.query.get(w['idworkexperience'])  for w in workExperiences]
+    competenceProfile.educations = [Education.query.get(e['ideducation'])  for e in educations]
+    competenceProfile.experiences = [Experience.query.get(e['idexperience'])  for e in experiences]
+    competenceProfile.skills = [Skill.query.get(s['idskill'])  for s in skills]
+    competenceProfile.publications = [Publication.query.get(p['idpublication'])  for p in publications]
+    competenceProfile.languages = [Language.query.get(l['idlanguage'])  for l in languages]
+    competenceProfile.projects = [Project.query.get(p['idproject'])  for p in projects]
+    competenceProfile.merits = [Merit.query.get(m['idmerit'])  for m in merits]
 
-    print(request.json)
+    db.session.commit()
     return jsonify(idrecord="{idrecord}".format(idrecord=competenceProfile.idcompetenceprofile))
 
 @app.route('/api/project', methods=['POST'])

@@ -1991,6 +1991,29 @@ angular.module('knowBase').controller('competenceProfilesController',
           break;
       }
     }
+    $scope.deleteRecord = function(){
+      $http({method: 'DELETE', url: '/api/deleterecord?table=competenceprofile&idrecord=' + $scope.competenceProfile.idcompetenceprofile})
+        .then(function() {
+          $scope.competenceProfiles = $scope.competenceProfiles
+           .filter(function (p) {
+                    return p.idcompetenceprofile !== $scope.competenceProfile.idcompetenceprofile;
+                   });
+           $mdToast.show({
+                template: '<md-toast class="md-toast-success">Education successfully removed!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+           $scope.focused.skilltype = '';
+           $scope.competenceProfile = null;
+        }, 
+        function(response) {
+          $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to remove education!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+      });
+    }
 
     function createFilterFor(query,competence) {
       var lowercaseQuery = angular.lowercase(query);
@@ -2065,6 +2088,7 @@ angular.module('knowBase').controller('competenceProfilesController',
             }
             $scope.competenceProfile = null;
             $scope.nameSearchText = null;
+            $scope.focused.skilltype = '';
             // $state.transitionTo($state.current, params, { reload: true, inherit: true, notify: true })
 
         },
@@ -2076,13 +2100,17 @@ angular.module('knowBase').controller('competenceProfilesController',
                 template: '<md-toast class="md-toast-error">Failed to save competence profile!</md-toast>',
                 hideDelay: 3000,
                 position: 'bottom left'
-            }); 
+            });
+            $scope.competenceProfile = null;
+            $scope.nameSearchText = null;
+            $scope.focused.skilltype = '';
         });
     }
 
     $scope.cancelCompetenceProfile = function(){
       $scope.competenceProfile = null;
-      $scope.selectedCompetenceProfile = null;
+      $scope.nameSearchText = null;
+      $scope.focused.skilltype = '';
       // $scope.competenceProfileSearchText = null;
     }
 

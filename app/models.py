@@ -5,6 +5,46 @@ from app import db
 import base64
 
 
+workExperienceProfiles = db.Table('workexperienceprofiles',
+      db.Column('idworkexperience',db.Integer,db.ForeignKey('workexperience.idworkexperience')),
+      db.Column('idcompetenceprofile',db.Integer,db.ForeignKey('competenceprofile.idcompetenceprofile'))
+)
+
+educationProfiles = db.Table('educationprofiles',
+      db.Column('ideducation',db.Integer,db.ForeignKey('education.ideducation')),
+      db.Column('idcompetenceprofile',db.Integer,db.ForeignKey('competenceprofile.idcompetenceprofile'))
+)
+
+skillProfiles = db.Table('skillprofiles',
+      db.Column('idskill',db.Integer,db.ForeignKey('skill.idskill')),
+      db.Column('idcompetenceprofile',db.Integer,db.ForeignKey('competenceprofile.idcompetenceprofile'))
+)
+
+languageProfiles = db.Table('languageprofiles',
+      db.Column('idlanguage',db.Integer,db.ForeignKey('language.idlanguage')),
+      db.Column('idcompetenceprofile',db.Integer,db.ForeignKey('competenceprofile.idcompetenceprofile'))
+)
+
+projectProfiles = db.Table('projectprofiles',
+      db.Column('idproject',db.Integer,db.ForeignKey('project.idproject')),
+      db.Column('idcompetenceprofile',db.Integer,db.ForeignKey('competenceprofile.idcompetenceprofile'))
+)
+
+experienceProfiles = db.Table('experienceprofiles',
+      db.Column('idexperience',db.Integer,db.ForeignKey('experience.idexperience')),
+      db.Column('idcompetenceprofile',db.Integer,db.ForeignKey('competenceprofile.idcompetenceprofile'))
+)
+
+meritProfiles = db.Table('meritprofiles',
+      db.Column('ideducidmeritation',db.Integer,db.ForeignKey('merit.idmerit')),
+      db.Column('idcompetenceprofile',db.Integer,db.ForeignKey('competenceprofile.idcompetenceprofile'))
+)
+
+publicationProfiles = db.Table('publicationprofiles',
+      db.Column('idpublication',db.Integer,db.ForeignKey('publication.idpublication')),
+      db.Column('idcompetenceprofile',db.Integer,db.ForeignKey('competenceprofile.idcompetenceprofile'))
+)
+
 
 # Create our database model
 class Education(db.Model):
@@ -97,11 +137,6 @@ class WorkExperience(db.Model):
             'timestamp': self.timestamp
         }
 
-workExperienceProfiles = db.Table('workexperienceprofiles',
-                                  db.Column('idworkexperience',db.Integer,db.ForeignKey('workexperience.idworkexperience')),
-                                  db.Column('idcompetenceprofile',db.Integer,db.ForeignKey('competenceprofile.idcompetenceprofile'))
-
-)
 
 class Customer(db.Model):
     __tablename__ = "customer"
@@ -131,6 +166,20 @@ class CompetenceProfile(db.Model):
     name = db.Column(db.String)
     workexperiences = db.relationship('WorkExperience',secondary=workExperienceProfiles,
                                       backref=db.backref('competenceprofile',lazy='dynamic'))
+    educations = db.relationship('Education',secondary=educationProfiles,
+                                      backref=db.backref('competenceprofile',lazy='dynamic'))
+    experiences = db.relationship('Experience',secondary=experienceProfiles,
+                                      backref=db.backref('competenceprofile',lazy='dynamic'))
+    publications = db.relationship('Publication',secondary=publicationProfiles,
+                                      backref=db.backref('competenceprofile',lazy='dynamic'))
+    skills = db.relationship('Skill',secondary=skillProfiles,
+                                      backref=db.backref('competenceprofile',lazy='dynamic'))
+    merits = db.relationship('Merit',secondary=meritProfiles,
+                                      backref=db.backref('competenceprofile',lazy='dynamic'))
+    projects = db.relationship('Project',secondary=projectProfiles,
+                                      backref=db.backref('competenceprofile',lazy='dynamic'))
+    languages = db.relationship('Language',secondary=languageProfiles,
+                                      backref=db.backref('competenceprofile',lazy='dynamic'))
     profile = db.Column(db.Integer, db.ForeignKey('profile.idprofile'))
     rel_profile = db.relationship('Profile', primaryjoin='CompetenceProfile.profile == Profile.idprofile',
                                   backref=db.backref('competenceprofile',lazy='dynamic'))
@@ -147,9 +196,16 @@ class CompetenceProfile(db.Model):
     @property
     def serialize(self):
         return {
-            "idcompetenceprofile" : self.idcompetenceprofile,
-            "name" : self.name,
-            "workexperiences" : [w.serialize for w in self.workexperiences]
+            "idcompetenceprofile":self.idcompetenceprofile,
+            "name":self.name,
+            "workexperiences":[w.serialize for w in self.workexperiences],
+            "educations":[e.serialize for e in self.educations],
+            "languages":[l.serialize for l in self.languages],
+            "skills":[s.serialize for s in self.skills],
+            "experiences":[e.serialize for e in self.experiences],
+            "projects":[p.serialize for p in self.projects],
+            "merits":[m.serialize for m in self.merits],
+            "publications":[p.serialize for p in self.publications]
         }
 
 class Project(db.Model):
@@ -282,7 +338,7 @@ class Language(db.Model):
             'idlanguage': self.idlanguage,
             'language': self.language,
             'listening': self.listening,
-            'writing' : self.writing,
+            'writing':self.writing,
             'reading': self.reading,
             'conversation': self.conversation,
             'verbal': self.verbal,
