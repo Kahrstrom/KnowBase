@@ -1850,6 +1850,7 @@ angular.module('knowBase').controller('competenceProfilesController',
       $scope.focused.skilltype = '';
       console.log($scope.focused)
     }
+
     function getData() {
 
       $http({method: 'GET', url: '/api/competenceprofiles', cache: $templateCache}).

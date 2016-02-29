@@ -4,7 +4,7 @@
 		<div layout="row">
 		  	<md-subheader  flex class="md-no-sticky">{{title}}</md-subheader>
 		  	<md-button class="md-fab md-accent" ng-click="newCompetenceProfile()" aria-label="New CompetenceProfile">
-		        <md-icon md-font-icon="fa-plus" class="fa fa-lg white" ></md-icon>
+		        <md-icon md-font-set="material-icons" class="white">add</md-icon>
 		    </md-button>
 		</div>
 	  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="competenceProfile in competenceProfiles" ng-click="editCompetenceProfile(competenceProfile)">
@@ -47,18 +47,22 @@
 		        md-highlight-flags="i"
 		        filter-selected="filter_skilltypes"
 		        placeholder="Add educations">
+
 		    </md-contact-chips>
+    		<md-tooltip>
+		    	Add relevant educations for this profile!
+		  	</md-tooltip>
 		    <div layout="column" ng-if="focused.skilltype == 'educations'">
 			    <md-list id="educationList" class="fixedRows">
 			      	<md-subheader class="md-no-sticky">Educations</md-subheader>
 			      	<md-list-item class="md-2-line contact-item" ng-repeat="(index, education) in allEducations"
-			          	ng-if="competenceProfile.educations.indexOf(education) < 0">
+			          	ng-if="competenceProfile.educations.indexOf(education) < 0" >
 			        	<md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
 			        	<div class="md-list-item-text compact">
 			          		<h3>{{education.title}} - {{education.education}}</h3>
 			          	
 			          		<p>{{education.school}}</p>
-			        	</div>
+			        	</div> 
 			      	</md-list-item>
 			      	<md-list-item class="md-2-line contact-item selected" ng-repeat="(index, education) in competenceProfile.educations">
 				        <md-icon md-font-icon="fa-graduation-cap" class="fa avatar md-avatar-icon"></md-icon>
@@ -82,6 +86,9 @@
 		        filter-selected="filter_skilltypes"
 		        placeholder="Add work experience">
 		    </md-contact-chips>
+		    <md-tooltip>
+		    	Add relevant work experience for this profile!
+		  	</md-tooltip>
 		    <div layout="column" ng-if="focused.skilltype == 'workExperience'">
 			    <md-list class="fixedRows">
 			      	<md-subheader class="md-no-sticky">Work experience</md-subheader>
@@ -115,6 +122,9 @@
 		        filter-selected="filter_skilltypes"
 		        placeholder="Add experience">
 		    </md-contact-chips>
+		    <md-tooltip>
+		    	Add relevant experience for this profile!
+		  	</md-tooltip>
 		    <div layout="column" ng-if="focused.skilltype == 'experience'">
 			    <md-list class="fixedRows">
 			      	<md-subheader class="md-no-sticky">Experience</md-subheader>
@@ -148,6 +158,9 @@
 		        filter-selected="filter_skilltypes"
 		        placeholder="Add publication">
 		    </md-contact-chips>
+		    <md-tooltip>
+		    	Add relevant publications for this profile!
+		  	</md-tooltip>
 		    <div layout="column" ng-if="focused.skilltype == 'publication'">
 			    <md-list class="fixedRows">
 			      	<md-subheader class="md-no-sticky">Publications</md-subheader>
@@ -181,6 +194,9 @@
 		        filter-selected="filter_skilltypes"
 		        placeholder="Add projects">
 		    </md-contact-chips>
+		    <md-tooltip>
+		    	Add relevant projects for this profile!
+		  	</md-tooltip>
 		    <div layout="column" ng-if="focused.skilltype == 'project'">
 			    <md-list class="fixedRows">
 			      	<md-subheader class="md-no-sticky">Projects</md-subheader>
@@ -214,6 +230,9 @@
 		        filter-selected="filter_skilltypes"
 		        placeholder="Add language skills">
 		    </md-contact-chips>
+		    <md-tooltip>
+		    	Add relevant language skills for this profile!
+		  	</md-tooltip>
 		    <div layout="column" ng-if="focused.skilltype == 'language'">
 			    <md-list class="fixedRows">
 			      	<md-subheader class="md-no-sticky">Language skills</md-subheader>
@@ -247,6 +266,9 @@
 		        filter-selected="filter_skilltypes"
 		        placeholder="Add merits">
 		    </md-contact-chips>
+		    <md-tooltip>
+		    	Add relevant merits for this profile!
+		  	</md-tooltip>
 		    <div layout="column" ng-if="focused.skilltype == 'merit'">
 			    <md-list class="fixedRows">
 			      	<md-subheader class="md-no-sticky">Merits</md-subheader>
@@ -280,6 +302,9 @@
 		        filter-selected="filter_skilltypes"
 		        placeholder="Add key skills">
 		    </md-contact-chips>
+		    <md-tooltip>
+		    	Add relevant key skills for this profile!
+		  	</md-tooltip>
 		    <div layout="column" ng-if="focused.skilltype == 'skill'">
 			    <md-list class="fixedRows">
 			      	<md-subheader class="md-no-sticky">Key skills</md-subheader>

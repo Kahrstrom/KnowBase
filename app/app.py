@@ -11,6 +11,8 @@ app = Flask(__name__)
 app.secret_key = 'qwertyasdfghzxcvb'
 app.config['SQLALCHEMY_DATABASE_URI'] = config.connection_string
 
+print(app.config['SQLALCHEMY_DATABASE_URI'])
+
 db = SQLAlchemy(app)
 
 from models import *
