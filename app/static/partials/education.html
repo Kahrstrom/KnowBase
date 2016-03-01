@@ -5,11 +5,11 @@
 		<div layout="row">
 		  	<md-subheader  flex class="md-no-sticky">{{title}}</md-subheader>
 		  	<md-button ng-if="!education" class="md-fab md-accent" ng-click="newEducation()" aria-label="New Education">
-		        <md-icon md-font-icon="fa-plus" class="fa fa-lg white" ></md-icon>
+		        <md-icon class="material-icons md-light">add</md-icon>
 		    </md-button>
 		</div>
 	  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="education in educations" ng-click="editEducation(education)">
-	    	<md-icon md-font-icon="fa-graduation-cap" class="fa fa-lg avatar md-avatar-icon"></md-icon>
+	    	<md-icon class="material-icons avatar">school</md-icon>
     		<div class="md-list-item-text" >
       			<h3> {{ education.title }} - {{ education.education }} </h3>
       			<p> {{ education.school }}</p>
@@ -23,14 +23,14 @@
 	<div flex layout="row" class="skill-header">
 		<span flex="33">
 			<md-button class="md-button-small" ng-click="cancelEducation()">
-				<md-icon md-font-icon="fa-arrow-right" class="fa"></md-icon>
+				<md-icon class="material-icons">arrow_front</md-icon>
 			</md-button>
 			<span flex/>
 		</span>
-		<md-icon flex="33" md-font-icon="fa-graduation-cap center" class="fa fa-3x"></md-icon>
+		<md-icon flex="33" class="material-icons md-72 center">school</md-icon>
 		<span flex/>
         <md-button class="md-button-small" ng-click="deleteRecord()">
-            <md-icon md-font-icon="fa-trash-o" class="fa fa-lg"></md-icon>
+            <md-icon class="material-icons">delete</md-icon>
         </md-button>
 	</div>
 	<form flex layout-margin layout-padding flex ng-submit="saveEducation()" name="educationForm">

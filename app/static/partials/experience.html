@@ -6,11 +6,11 @@
 		<div layout="row">
 		  	<md-subheader  flex class="md-no-sticky">{{title}}</md-subheader>
 		  	<md-button class="md-fab md-accent" ng-click="newExperience()" aria-label="New Experience">
-		        <md-icon md-font-icon="fa-plus" class="fa fa-lg white" ></md-icon>
+		        <md-icon class="material-icons md-light">add</md-icon>
 		    </md-button>
 		</div>
 	  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="experience in experiences" ng-click="editExperience(experience)">
-	    	<md-icon md-font-icon="fa-certificate" class="fa fa-lg avatar md-avatar-icon"></md-icon>
+	    	<md-icon class="material-icons avatar">star</md-icon>
     		<div class="md-list-item-text" >
       			<h3> {{ experience.name }} </h3>
       			<p> {{ experience.description }}</p>
@@ -24,14 +24,14 @@
 	<div flex layout="row" class="skill-header">
 		<span flex="33">
 			<md-button class="md-button-small" ng-click="cancelExperience()">
-				<md-icon md-font-icon="fa-arrow-right" class="fa"></md-icon>
+				<md-icon class="material-icons">arrow_front</md-icon>
 			</md-button>
 			<span flex/>
 		</span>
-		<md-icon flex="33" md-font-icon="fa-certificate center" class="fa fa-3x"></md-icon>
+		<md-icon flex="33" class="material-icons center md-72">star</md-icon>
 		<span flex/>
         <md-button class="md-button-small" ng-click="deleteRecord()">
-            <md-icon md-font-icon="fa-trash-o" class="fa fa-lg"></md-icon>
+            <md-icon class="material-icons">delete</md-icon>
         </md-button>
 	</div>
 	<form flex layout-margin layout-padding flex ng-submit="saveExperience()" name="ExperienceForm">

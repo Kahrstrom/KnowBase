@@ -1569,7 +1569,7 @@ angular.module('knowBase').controller('skillsController',
             .success(function (response) {
                 $scope.skillTypes = response.data;
                 $scope.tiles = buildGridModel({
-                  icon : "fa-",
+                  icon : "",
                   title: "",
                   background: ""
                 });
@@ -1592,26 +1592,26 @@ angular.module('knowBase').controller('skillsController',
         switch(s.name){
           case "education":
             it.background = "hue-2";
-            it.icon  = it.icon + "graduation-cap";
+            it.icon  = it.icon + "school";
             it.span.row = 2;
             break;
           case "workexperience": 
             it.background = "hue-3";  
-            it.icon  = it.icon + "suitcase";   
+            it.icon  = it.icon + "work";   
             it.span.row = 2;    
             break;
           case "experience": 
-            it.icon  = it.icon + "certificate";
+            it.icon  = it.icon + "star";
             it.background = "hue-1";      
             break;
           case "project":
-            it.icon  = it.icon + "tasks";
+            it.icon  = it.icon + "list";
             it.background = "hue-3";
             it.span.col = 2;
             break;
           case "language":
             it.background = "hue-2";
-            it.icon  = it.icon + "comment-o";
+            it.icon  = it.icon + "forum";
             break;
           case "publication": 
             it.background = "hue-2";
@@ -1619,12 +1619,12 @@ angular.module('knowBase').controller('skillsController',
             break;
           case "skill": 
             it.background = "hue-1";      
-            it.icon  = it.icon + "key";
+            it.icon  = it.icon + "vpn_key";
             it.span.col = 2;
             break;
           case "merit":
             it.background= "hue-3";
-            it.icon = it.icon + "star"
+            it.icon = it.icon + "local_activity"
             break;
           }
         results.push(it); 
@@ -1851,16 +1851,24 @@ angular.module('knowBase').controller('competenceProfilesController',
       console.log($scope.focused)
     }
 
+    $scope.filterResults = function(all, selected){
+      return all.filter(function(obj){
+        return !selected.some(function(obj2){
+          return obj.value==obj2.value;
+        });
+      });
+  
+    }
+
     function getData() {
 
       $http({method: 'GET', url: '/api/competenceprofiles', cache: $templateCache}).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,p){
-            console.log(p)
             $scope.competenceProfiles.push(new DataService.CompetenceProfile(p));
           });
-          
+          console.log($scope.competenceProfiles.length)
         }, function(response) {
           $scope.data = response.data || "Request failed";
           $scope.status = response.status;
@@ -1871,6 +1879,7 @@ angular.module('knowBase').controller('competenceProfilesController',
           $.each(response.data.data, function(i,e){
             $scope.allEducations.push(new DataService.Education(e));
           });
+          console.log($scope.allEducations)
           
         }, function(response) {
           $scope.data = response.data || "Request failed";

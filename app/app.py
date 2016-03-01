@@ -83,11 +83,11 @@ def upload_profile_picture():
 @app.route('/api/profilepicture', methods=['GET'])
 @require_login()
 def get_profile_picture():
-    try:
-        user = User.query.filter_by(email=session['email']).first()
-        img = user.rel_profile.rel_profilepicture
-    except Exception as err:
-        print(err)
+
+    user = User.query.filter_by(email=session['email']).first()
+    img = user.rel_profile.rel_profilepicture
+    if img is None:
+        return abort(404)
     return jsonify(img.serialize)
 
 @app.route('/api/profile', methods=['POST'])
@@ -460,7 +460,6 @@ def save_competenceprofiles():
     languages = request.json['languages']
     skills = request.json['skills']
     merits = request.json['merits']
-
     idcompetenceprofile = request.json['idcompetenceprofile']
     if idcompetenceprofile is None:
         competenceProfile = CompetenceProfile(request.json['name'],profile.idprofile)
@@ -468,6 +467,7 @@ def save_competenceprofiles():
         db.session.commit()
     else:
         competenceProfile = CompetenceProfile.query.get(idcompetenceprofile)
+        competenceProfile.name = request.json['name']
 
     competenceProfile.workexperiences = [WorkExperience.query.get(w['idworkexperience'])  for w in workExperiences]
     competenceProfile.educations = [Education.query.get(e['ideducation'])  for e in educations]

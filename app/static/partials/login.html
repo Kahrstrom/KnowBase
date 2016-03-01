@@ -30,7 +30,7 @@
               <input type="password" style="display:none">
               <md-input-container class="md-block md-icon-float">
                 <label>Email</label>
-                <md-icon md-font-icon="fa-envelope-o" class="fa fa-lg"></md-icon>
+                <md-icon class="material-icons">mail_outline</md-icon>
                 <input md-maxlength="72" type="email" name="email" ng-model="loginController.email" required>
                 <div ng-messages="loginForm.email.$error" ng-if="loginForm.email.$dirty">
                   <ng-message when="email" class="error">The email address is invalid</ng-message>
@@ -39,7 +39,7 @@
               </md-input-container>
               <md-input-container class="md-block md-icon-float">
                 <label>Password</label>
-                <md-icon md-font-icon="fa-key" class="fa fa-lg"></md-icon>
+                <md-icon class="material-icons">vpn_key</md-icon>
                 <input type="password" name="password" ng-model="loginController.password" required>
                 <div ng-messages="loginForm.password.$error" ng-if="loginForm.password.$dirty">
                   <div ng-message="required">This field is required</div>

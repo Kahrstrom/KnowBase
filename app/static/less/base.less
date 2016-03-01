@@ -313,3 +313,35 @@ figcaption{
 md-contact-chips{
     margin-bottom: 10px;
 }
+
+/* Rules for sizing the icon. */
+.material-icons.md-18 { font-size: 18px; }
+.material-icons.md-24 { font-size: 24px; }
+.material-icons.md-36 { font-size: 36px; min-width: 36px;}
+.material-icons.md-48 { font-size: 48px; min-width: 48px;}
+.material-icons.md-64 { font-size: 64px; min-width: 64px;}
+.material-icons.md-72 { font-size: 72px; min-width: 72px;}
+.material-icons.md-huge{ font-size: 120px; min-width: 120px;}
+
+/* Rules for using icons as black on a light background. */
+.material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
+.material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
+
+/* Rules for using icons as white on a dark background. */
+.material-icons.md-light { color: rgba(255, 255, 255, 1) !important; }
+.material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3) !important; }
+
+md-toolbar {
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-flex-direction: column;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    position: relative;
+    z-index: 2;
+    font-size: 1.3em;
+    min-height: 64px;
+    width: 100%;
+    box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+}

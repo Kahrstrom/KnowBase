@@ -7,11 +7,11 @@
 		<div layout="row">
 		  	<md-subheader  flex class="md-no-sticky">{{title}}</md-subheader>
 		  	<md-button ng-if="!publication" class="md-fab md-accent" ng-click="newPublication()" aria-label="New publication">
-		        <md-icon md-font-icon="fa-plus" class="fa fa-lg white" ></md-icon>
+		        <md-icon class="material-icons md-light">add</md-icon>
 		    </md-button>
 		</div>
 	  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="publication in publications" ng-click="editPublication(publication)">
-	    	<md-icon md-font-icon="fa-book" class="fa fa-lg avatar md-avatar-icon"></md-icon>
+	    	<md-icon class="material-icons avatar">book</md-icon>
     		<div class="md-list-item-text" >
       			<h3> {{ publication.title }} </h3>
       			<p> {{ publication.description }}</p>
@@ -23,19 +23,19 @@
 </div>
 
 <div class="full-height" layout="column" flex ng-if="publication">
-	<div flex layout="row" class="publication-header">
-		<span flex="33">
-			<md-button class="md-button-small" ng-click="cancelPublication()">
-				<md-icon md-font-icon="fa-arrow-right" class="fa"></md-icon>
-			</md-button>
-			<span flex/>
-		</span>
-		<md-icon flex="33" md-font-icon="fa-book center" class="fa fa-3x"></md-icon>
-		<span flex/>
-        <md-button ng-if="publication.idpublication" class="md-button-small" ng-click="deleteRecord()">
-            <md-icon md-font-icon="fa-trash-o" class="fa fa-lg"></md-icon>
+	<div flex layout="row" class="skill-header">
+        <span flex="33">
+            <md-button class="md-button-small" ng-click="cancelExperience()">
+                <md-icon class="material-icons">arrow_front</md-icon>
+            </md-button>
+            <span flex/>
+        </span>
+        <md-icon flex="33" class="material-icons center md-72">book</md-icon>
+        <span flex/>
+        <md-button class="md-button-small" ng-click="deleteRecord()">
+            <md-icon class="material-icons">delete</md-icon>
         </md-button>
-	</div>
+    </div>
 	<form flex layout-margin layout-padding flex ng-submit="savePublication()" name="PublicationForm">
 		
 		<md-autocomplete flex required

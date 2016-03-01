@@ -25,7 +25,7 @@
 			                  ng-class="tile.background" 
 			                  ng-click="setActiveSkill(tile)"
 			                  class="link-tile">
-			      <md-icon class="fa fa-3x" md-font-icon="{{tile.icon}}"></md-icon>
+			      <md-icon class="material-icons md-64">{{tile.icon}}</md-icon>
 			      <md-grid-tile-footer flex>
 			      	<div layout="row" flex>
 			      		<h3>{{tile.title}}</h3>
@@ -35,7 +35,6 @@
 			      </md-grid-tile-footer>
 			    </md-grid-tile>
 			  </md-grid-list>
-<!--  -->
 			  <md-grid-list
 			  		ng-if="activeSkill"
 			        md-cols="1" md-row-height="6:1"
@@ -46,7 +45,7 @@
 			                  ng-class="tile.background" 
 			                  ng-click="setActiveSkill(tile)"
 			                  class="link-tile">
-			    	<md-icon class="fa fa-2x" md-font-icon="{{tile.icon}}"></md-icon>
+			    	<md-icon class="material-icons md-48">{{tile.icon}}</md-icon>
 			     	<md-grid-tile-footer flex>
 				      	<div layout="row" flex>
 				      		<h3>{{tile.title}}</h3>

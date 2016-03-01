@@ -103,6 +103,7 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
       self.startdate = e ? (e.startdate ? new Date(e.startdate) : null) : null;
       self.enddate = e ? (e.enddate ? new Date(e.enddate) : null) : null;
       self.description = e ? e.description : '';
+      self.image = '../static/resources/icons/png/ic_school_black_24dp_1x.png';
     }
 
     dataservice.WorkExperience = function(w){

@@ -5,31 +5,31 @@
       
       <md-menu>
         <md-button class="md-icon-button" aria-label="menu" ng-click="openMenu($mdOpenMenu, $event)">
-          <md-icon md-font-icon="fa-bars" class="fa fa-lg white"></md-icon>
+          <md-icon class="material-icons md-light">menu</md-icon>
         </md-button>
         <md-menu-content width="4">
           <md-menu-item>
             <md-button ui-sref="home">
-              <md-icon md-font-icon="fa-home" class="fa fa-lg"></md-icon>
+              <md-icon class="material-icons">home</md-icon>
               Home
             </md-button>
           </md-menu-item>
           <md-menu-item>
             <md-button ui-sref="skills">
-              <md-icon md-font-icon="fa-flash" class="fa fa-lg"></md-icon>
-              Manage skills
+              <md-icon class="material-icons">flash_on</md-icon>
+              Manage competences
             </md-button>
           </md-menu-item>
           <md-menu-item>
             <md-button ui-sref="profile">
-              <md-icon md-font-icon="fa-user" class="fa fa-lg"></md-icon>
+              <md-icon class="material-icons">person_pin</md-icon>
               Profile
             </md-button>
           </md-menu-item>
           <md-menu-divider></md-menu-divider>
           <md-menu-item>
             <md-button>
-              <md-icon md-font-icon="fa-file-o" class="fa fa-lg"></md-icon>
+              <md-icon class="material-icons">insert_drive_file</md-icon>
               Generate CV
             </md-button>
           </md-menu-item>
@@ -44,7 +44,7 @@
     
     <span flex></span>
     <md-button class="md-icon-button" ng-click="toggleSearch(); focusInput=true" aria-label="menu">
-        <md-icon md-font-icon="fa-search" class="fa fa-lg white"></md-icon>
+        <md-icon class="material-icons md-light md-36">search</md-icon>
     </md-button>
     <!-- <div layout="row"> -->
     <md-fab-speed-dial ng-cloak md-open="languageMenuOpen" md-direction="left"
@@ -78,7 +78,7 @@
       <input type="text" focus-me="focusInput"/>
     </md-input-container>
     <md-button class="md-icon-button" ng-click="toggleSearch()" aria-label="menu">
-      <md-icon md-font-icon="fa-search" class="fa fa-lg"></md-icon>
+      <md-icon class="material-icons md-36">search</md-icon>
     </md-button>
     <md-button aria-label="login" ui-sref="logout">
       <span>Logout</span>
