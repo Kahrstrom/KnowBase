@@ -63,7 +63,8 @@ md-whiteframe{
 }
 
 .full-height{
-    min-height: calc(~'100vh - 145px');
+    min-height: calc(~'100vh - 64px');
+    height: auto;
 }
 
 .vertical-align-top{
@@ -345,3 +346,11 @@ md-toolbar {
     width: 100%;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
 }
+
+md-sidenav, 
+md-sidenav.md-locked-open, 
+md-sidenav.md-closed.md-locked-open-add-active {
+    min-width: 200px !important;
+    width: 85vw !important;
+    max-width: 900px !important;
+} 

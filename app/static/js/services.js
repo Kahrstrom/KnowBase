@@ -11,6 +11,24 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
       return $http.get(dataservice.urlBase + 'educations');
     };
 
+    dataservice.searchData = function(query){
+      var deferred = $q.defer();
+      $http.post(dataservice.urlBase + 'search', query)
+        .success(function (data, status) {
+          if(status === 200){
+            deferred.resolve(data);
+            data = null;
+          } else {
+            deferred.reject();
+          }
+        })
+        // handle error
+        .error(function (data) {
+          deferred.reject();
+        });
+      return deferred.promise;
+    }
+
     dataservice.updateProfile = function(profile){
       console.log(profile)
       var deferred = $q.defer();

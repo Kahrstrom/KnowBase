@@ -1,11 +1,12 @@
 from flask import Flask, request, jsonify, abort, session
 from flask_sqlalchemy import SQLAlchemy
 from functools import update_wrapper
+from collections import defaultdict
 import os
-import json
 import config
-import collections
-from base64 import *
+import json
+from elasticsearch import Elasticsearch
+
 
 app = Flask(__name__)
 app.secret_key = 'qwertyasdfghzxcvb'
@@ -484,35 +485,35 @@ def save_competenceprofiles():
 @app.route('/api/project', methods=['POST'])
 @require_login()
 def create_project():
+    try:
+        idproject = request.json['idproject']
+        profile = User.query.filter_by(email=session['email']).first().rel_profile
 
-    idproject = request.json['idproject']
-    profile = User.query.filter_by(email=session['email']).first().rel_profile
+        customer = request.json['customer']
 
-    customer = request.json['customer']
-
-    if customer is None:
-        print(request.json['customername'])
-        customer = Customer({'name' : request.json['customername']})
-        print(customer)
-        db.session.add(customer)
-        db.session.commit()
-        request.json['customer'] = customer.idcustomer
-    else:
-        request.json['customer'] = customer['idcustomer']
+        if customer is None:
+            customer = Customer({'name' : request.json['customername']})
+            db.session.add(customer)
+            db.session.commit()
+        else:
+            customer = Customer.query.get(customer['idcustomer'])
 
 
-    if idproject is None:
-        project = Project(request.json,profile.idprofile)
-        db.session.add(project)
-    else:
-        try:
+        if idproject is None:
+            project = Project(request.json,profile.idprofile)
+            project.customer = customer.idcustomer
+            db.session.add(project)
+
+            db.session.commit()
+
+
+        else:
             project = Project.query.get(idproject)
-            print(request.json)
             project.update(request.json)
-        except Exception as err:
-            print(err)
+            db.session.commit()
 
-    db.session.commit()
+    except Exception as err:
+        print(err)
 
     return jsonify(idrecord="{idrecord}".format(idrecord=idproject))
 
@@ -524,7 +525,55 @@ def delete_object():
     record = get_class_by_tablename(table)
     db.session.delete(record.query.get(idrecord))
     db.session.commit()
-    return jsonify(reponse='success')
+    return jsonify(response='success')
+
+@app.route('/api/search', methods=['POST'])
+def search():
+
+    res = SearchResult()
+    profiles = defaultdict(dict)
+    es = Elasticsearch()
+    data = request.json['query']
+    search_body = {
+        "query": {
+            "query_string": {
+                "query": "*" + data + "*"
+            }
+        }
+    }
+
+    for e in es.search(body=search_body).get('hits').get('hits'):
+        src = e.get('_source')
+        try:
+            if e.get('_type') == 'education':
+                education = Education.query.get(src['ideducation'])
+                #profiles[education.profile]['educations'].append(education.serialize)
+                res.educations.append(education.serialize)
+            if e.get('_type') == 'skill':
+                skill = Skill.query.get(src['idskill'])
+                res.skills.append(skill.serialize)
+            if e.get('_type') == 'language':
+                language = Language.query.get(src['idlanguage'])
+                res.languages.append(language.serialize)
+            if e.get('_type') == 'merit':
+                merit = Merit.query.get(src['idmerit'])
+                res.merits.append(merit.serialize)
+            if e.get('_type') == 'publication':
+                publication = Publication.query.get(src['idpublication'])
+                res.publications.append(publication.serialize)
+            if e.get('_type') == 'experience':
+                experience = Experience.query.get(src['idexperience'])
+                res.experiences.append(experience.serialize)
+            if e.get('_type') == 'workexperience':
+                workexperience = WorkExperience.query.get(src['idworkexperience'])
+                res.workexperiences.append(workexperience.serialize)
+            if e.get('_type') == 'project':
+                project = Project.query.get(src['idproject'])
+                res.projects.append(project.serialize)
+        except Exception as err:
+            print(err)
+   
+    return jsonify(res.serialize)
 
 
 if __name__ == '__main__':

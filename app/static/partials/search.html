@@ -1,0 +1,168 @@
+<md-toolbar md-theme="grey" class="md-primary">
+  <div class="md-toolbar-tools">
+   
+    <div flex="30">
+      <md-button>
+        <md-icon class="material-icons" ng-click="back()">arrow_back</md-icon>
+      </md-button> 
+    </div>
+    <div layout="row" flex="40">
+      <md-input-container class="search-input slide-right" ng-class="animation" flex>
+        <input type="text" ng-change="search()" ng-model="searchval">
+      </md-input-container>
+      <md-icon class="material-icons md-36">search</md-icon>
+    </div>
+    <div flex="30"></div>
+  </div>
+</md-toolbar>
+
+<md-content flex layout="row" layout-margin-layout-padding class="full-height">
+    <div flex="20"></div>
+    <div flex="60" layout="column" layout-margin-layout-padding class="vertical-nudge-top ">
+
+      <div ng-if="educations.length > 0">
+        <md-header>Educations</md-header>
+        <md-card>
+          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="education in educations" ng-click="toggleRight()">
+            <md-icon class="material-icons avatar">school</md-icon>
+            <div class="md-list-item-text" layout="row">
+              <div flex>
+                <h3> {{ education.title }} - {{ education.education }} </h3>
+                <p> {{ education.school }}</p>          
+              </div>  
+              <div >
+                <img ng-src="{{getImg(education.profile.profilepicture)}}" class="md-avatar">
+                  <md-tooltip>{{education.profile.firstname}} {{education.profile.lastname}}</md-tooltip>
+                </img>
+              </div>
+            </div>
+            <md-divider ng-if="!$last"></md-divider>
+          </md-list-item>
+        </md-card>
+      </div>
+      <div ng-if="workexperiences.length > 0">
+        <md-header>Work experience</md-header>
+        <md-card>
+          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="workExperience in workexperiences" ng-click="toggleRight()">
+            <md-icon class="material-icons avatar">work</md-icon>
+            <div class="md-list-item-text" layout="row">
+              <div flex>
+                <h3> {{ workExperience.title }} </h3>
+                <p> {{ workExperience.employer }}</p>
+              </div>
+              <div >
+                <img ng-src="{{getImg(workExperience.profile.profilepicture)}}" class="md-avatar">
+                  <md-tooltip>{{workExperience.profile.firstname}} {{workExperience.profile.lastname}}</md-tooltip>
+                </img>
+              </div>
+            </div>
+          </md-list-item>
+        </md-card>
+      </div>
+      <div ng-if="projects.length > 0">
+        <md-header>Projects</md-header>
+        <md-card>
+          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="project in projects" ng-click="toggleRight()">
+            <md-icon class="material-icons avatar">list</md-icon>
+            <div class="md-list-item-text" layout="row" >
+              <div flex>
+                <h3> {{ project.name }} </h3>
+                <p> {{ project.customername }}</p>
+              </div>
+              <div >
+                <img ng-src="{{getImg(project.profile.profilepicture)}}" class="md-avatar">
+                  <md-tooltip>{{project.profile.firstname}} {{project.profile.lastname}}</md-tooltip>
+                </img>
+              </div>
+            </div>
+            <md-divider ng-if="!$last"></md-divider>
+          </md-list-item>
+        </md-card>
+      </div>
+      <div ng-if="merits.length > 0">
+        <md-header>Merits</md-header>
+        <md-card>
+          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="merit in merits" ng-click="toggleRight()">
+            <md-icon class="material-icons avatar">local_activity</md-icon>
+            <div class="md-list-item-text" layout="row">
+              <div flex>
+                <h3> {{ merit.name }} </h3>
+                <p> {{ merit.description }}</p>
+              </div>
+              <div >
+                <img ng-src="{{getImg(merit.profile.profilepicture)}}" class="md-avatar">
+                  <md-tooltip>{{merit.profile.firstname}} {{merit.profile.lastname}}</md-tooltip>
+                </img>
+              </div>
+            </div>  
+            <md-divider ng-if="!$last"></md-divider>
+          </md-list-item>
+        </md-card>
+      </div>
+      <div ng-if="experiences.length > 0">
+        <md-header>Experience</md-header>
+        <md-card>
+          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="experience in experiences" ng-click="toggleRight()">
+            <md-icon class="material-icons avatar">star</md-icon>
+            <div class="md-list-item-text" layout="row" >
+              <div flex>
+                <h3> {{ experience.name }} </h3>
+                <p> {{ experience.description }}</p>
+              </div>
+              <div >
+                <img ng-src="{{getImg(experience.profile.profilepicture)}}" class="md-avatar">
+                  <md-tooltip>{{experience.profile.firstname}} {{experience.profile.lastname}}</md-tooltip>
+                </img>
+              </div>
+            </div>
+            <md-divider ng-if="!$last"></md-divider>
+          </md-list-item>
+        </md-card>
+      </div>
+      <div ng-if="skills.length > 0">
+        <md-header>Key skills</md-header>
+        <md-card>
+          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="skill in skills" ng-click="toggleRight()">
+            <md-icon class="material-icons avatar">vpn_key</md-icon>
+            <div class="md-list-item-text" layout="row">
+              <div flex>
+                <h3> {{ skill.name }} </h3>
+                <p> {{ skill.description }}</p>
+              </div>
+              <div >
+                <img ng-src="{{getImg(skill.profile.profilepicture)}}" class="md-avatar">
+                  <md-tooltip>{{skill.profile.firstname}} {{skill.profile.lastname}}</md-tooltip>
+                </img>
+              </div>
+            </div>
+            <md-divider ng-if="!$last"></md-divider>
+          </md-list-item>
+        </md-card>
+      </div>
+      <div ng-if="languages.length > 0">
+        <md-header>Languages</md-header>
+        <md-card>
+          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="language in languages" ng-click="toggleRight()">
+            <md-icon class="material-icons avatar">forum</md-icon>
+            <div class="md-list-item-text" layout="row">
+              <div flex>
+                <h3> {{ language.language }} </h3>
+              </div>
+              <div >
+                <img ng-src="{{getImg(language.profile.profilepicture)}}" class="md-avatar">
+                  <md-tooltip>{{language.profile.firstname}} {{language.profile.lastname}}</md-tooltip>
+                </img>
+              </div>
+            </div>
+            <md-divider ng-if="!$last"></md-divider>
+          </md-list-item>
+        </md-card>
+      </div>
+    </div>
+    <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
+      <md-toolbar>
+        <h1 class="md-toolbar-tools">Sidenav Right</h1>
+      </md-toolbar>
+      <div>test</div>
+    </md-sidenav>
+</md-content>

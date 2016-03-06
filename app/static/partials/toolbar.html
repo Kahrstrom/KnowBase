@@ -1,5 +1,5 @@
 
-<md-toolbar ng-show="!showSearch">
+<md-toolbar >
   <div class="md-toolbar-tools">
     <div flex-md-gt="10">
       
@@ -43,45 +43,32 @@
     </div>
     
     <span flex></span>
-    <md-button class="md-icon-button" ng-click="toggleSearch(); focusInput=true" aria-label="menu">
-        <md-icon class="material-icons md-light md-36">search</md-icon>
-    </md-button>
-    <!-- <div layout="row"> -->
-    <md-fab-speed-dial ng-cloak md-open="languageMenuOpen" md-direction="left"
-                         ng-class="'md-scale'">
-      <md-fab-trigger>
-        <md-button aria-label="menu" class="md-fab md-primary">
-          <h2>{{locale}}</h2>
-        </md-button>
-      </md-fab-trigger>
-      <md-fab-actions>
-        <md-button ng-repeat="item in locales" aria-label="{{item.display}}" ng-click="setLocale(item)" class="md-fab md-raised md-mini">
-          {{item.display}}
-        </md-button>
-      </md-fab-actions>
-    </md-fab-speed-dial>
-    <!-- </div> -->
-    
-    <md-button aria-label="login" ui-sref="logout">
-      <span class="white">Logout</span>
-    </md-button>
+    <div layout="row">
+      <md-button class="md-icon-button" ui-sref="search" aria-label="menu">
+          <md-icon class="material-icons md-light md-36">search</md-icon>
+      </md-button>
+    </div>
+
+    <div flex="30" layout="row">
+      <div flex></div>
+      <md-button aria-label="login" ui-sref="logout">
+        <span class="white">Logout</span>
+      </md-button>
+    </div>
   </div>
 </md-toolbar>
 
-<md-toolbar ng-show="showSearch" md-theme="grey" class="md-hue-1">
+<md-toolbar ng-show="showSearch" md-theme="grey" class="md-primary">
   <div class="md-toolbar-tools">
-
-    
-    <span flex-gt-md flex-md="10" flex-md="0"></span>
-    <md-input-container class="search-input slide-right" ng-class="animation" flex>
-      <!-- <label>Name</label> -->
-      <input type="text" focus-me="focusInput"/>
-    </md-input-container>
-    <md-button class="md-icon-button" ng-click="toggleSearch()" aria-label="menu">
-      <md-icon class="material-icons md-36">search</md-icon>
-    </md-button>
-    <md-button aria-label="login" ui-sref="logout">
-      <span>Logout</span>
-    </md-button>
+    <span flex-gt-md flex-md="30" flex-md="0"></span>
+    <div layout="row" flex="40">
+      <md-input-container class="search-input slide-right" ng-class="animation" flex>
+        <input type="text" focus-me="focusInput"/>
+      </md-input-container>
+      <md-button class="md-icon-button search-state" ng-click="toggleSearch()" aria-label="menu">
+        <md-icon class="material-icons md-36">search</md-icon>
+      </md-button>
+    </div>
+    <div flex="30"></div>
   </div>
 </md-toolbar>

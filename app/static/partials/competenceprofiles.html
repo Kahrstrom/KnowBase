@@ -22,6 +22,9 @@
 		<span flex="33">
 			<md-button class="md-button-small" ng-click="cancelCompetenceProfile()">
 				<md-icon class="material-icons">arrow_forward</md-icon>
+				<md-tooltip>
+	            	Back to profiles
+	            </md-tooltip>
 			</md-button>
 			<span flex/>
 		</span>
@@ -38,6 +41,9 @@
 		<md-input-container class="md-block md-icon-float">
 			<label>{{nameLabel}}</label>
 			<input md-maxlength="64" type="text" name="description" ng-model="competenceProfile.name">
+			<md-tooltip>
+            	Name this profile!
+            </md-tooltip>
 		</md-input-container>
 		<div class="autocomplete md-padding" layout="column">
 	        <md-contact-chips id="educationChips"

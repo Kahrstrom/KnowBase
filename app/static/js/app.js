@@ -19,14 +19,18 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
         }).accentPalette('amber', {
           'default': '700' // use shade 200 for default, and keep all other shades the same
     });
+   
 
     $mdThemingProvider.theme('grey')
         .primaryPalette('grey',{
-          'default': '200', // primary
+          'default': '50', // primary
           'hue-1': '400', // md-hue-1
           'hue-2': '500', // md-hue-2
           'hue-3': 'A200' // md-hue-3
+
     });
+
+    
 
     self.locale = $cookies.get('locale');
     self.locale = self.locale ? JSON.parse(self.locale).value : 'en';
@@ -85,6 +89,17 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
             	}
         	},
         	access : 'restricted'
+        })
+
+        .state('search', {
+            url: '/search',
+            views: {
+                '' : {
+                    templateUrl: 'static/partials/search.html',
+                    controller: 'searchController'
+                }
+            },
+            access : 'restricted'
         })
 
         .state('login', {
@@ -204,15 +219,24 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
 
 knowBase.run(function ($rootScope,$state, $cookies) {
 
-	
+	$rootScope.previousState;
+    $rootScope.currentState;
 
 	$rootScope.$on('$stateChangeStart', function (event, toState, toParams, fromState, fromParams) {
-        
+        var today = new Date();
+        var expired = new Date(today);
+        expired.setDate(today.getDate() + 1);
+        if(fromState.name != "" && fromState.name != "search"){
+            $cookies.put('previousState', fromState.name, {expires : expired});
+        }
 		if (toState.access == 'restricted' && !$cookies.get('user')) {
 			event.preventDefault();
 		  	$state.go('start');
+            
 		}
 	});
+ 
+
 
 });
 

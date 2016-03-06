@@ -46,6 +46,59 @@ angular.module('knowBase').controller('logoutController',
 
 }]);
 
+
+angular.module('knowBase').controller('searchController',
+  
+  function ($scope, $state, $http, $templateCache, DataService, $mdToast, $cookies, $mdSidenav) {
+    $scope.searchval = "";
+    
+    $scope.back = function(){
+      console.log($cookies.get('previousState'))
+      $state.go($cookies.get('previousState') ? $cookies.get('previousState') : 'home');
+    }
+    $scope.toggleRight = buildToggler('right');
+    $scope.isOpenRight = function(){
+      return $mdSidenav('right').isOpen();
+    };
+
+    function buildToggler(navID) {
+      
+      // return function() {
+      //   $mdSidenav(navID)
+      //     .toggle()
+      //     .then(function () {
+      //       console.log("toggle " + navID + " is done");
+      //     });
+      // }
+    }
+
+    $scope.search = function(){
+
+      DataService.searchData({query: $scope.searchval})
+        .then(function (data) {
+            $scope.educations = data.educations;
+            $scope.skills = data.skills;
+            $scope.workexperiences = data.workexperiences;
+            $scope.publications = data.publications;
+            $scope.experiences = data.experiences;
+            $scope.merits = data.merits;
+            $scope.languages = data.languages;
+            $scope.projects = data.projects;
+            console.log($scope.educations)
+        },
+        // handle error
+        function (reason) {
+            console.log(reason)
+        });
+    }
+
+    $scope.getImg = function(imgData){
+      console.log(imgData)
+      return 'data:image/' + imgData.extension + ';base64,' + imgData.data;
+    }
+
+});
+
 angular.module('knowBase').controller('signupController',
   ['$scope', '$state', 'AuthService',
 
