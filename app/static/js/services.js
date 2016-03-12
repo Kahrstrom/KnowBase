@@ -2,9 +2,18 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
     var dataservice = this;
     dataservice.urlBase = '/api/';
 
-    dataservice.getProfile = function () {
-      return $http.get(dataservice.urlBase + 'profile');
+    dataservice.getProfile = function (idprofile) {
+      var args = idprofile ? "?idprofile=" + idprofile : "";
+      return $http.get(dataservice.urlBase + 'profile' + args);
     };
+
+    dataservice.getCompetenceProfiles = function (idprofile) {
+      var args = idprofile ? "?idprofile=" + idprofile : "";
+      return $http.get(dataservice.urlBase + 'competenceprofiles' + args);
+    };
+
+
+
 
     dataservice.getEducations = function () {
   
@@ -95,6 +104,9 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
       self.city = p.city;
       self.zipcode = p.zipcode;
       self.country = p.country;
+      self.position = p.position;
+      self.email = p.email;
+      self.description = p.description;
       self.birthdate = p ? (p.birthdate ? new Date(p.birthdate) : null) : null;
     }
 

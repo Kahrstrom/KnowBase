@@ -68,7 +68,7 @@ md-whiteframe{
 }
 
 .vertical-align-top{
-    margin-top: 20%;
+    margin-top: 15%;
 }
 
 .vertical-align-bottom{
@@ -126,12 +126,20 @@ md-icon{
 }
 
 .circle {
-    position: relative;
+    background-repeat: no-repeat;
+    background-position: 50%;
     border-radius: 50%;
-    width: 100%;
-    height: auto;
-    padding-top: 100%;
-    background: white;
+    width: 160px;
+    height: 160px;
+}
+
+.circle.bordered {
+    border: 5px white solid;
+}
+
+.md-avatar.profile-avatar{
+    margin-left: -8px;
+    margin-top: -8px;
 }
 
 #profilepicture{
@@ -322,11 +330,13 @@ md-contact-chips{
 .material-icons.md-48 { font-size: 48px; min-width: 48px;}
 .material-icons.md-64 { font-size: 64px; min-width: 64px;}
 .material-icons.md-72 { font-size: 72px; min-width: 72px;}
-.material-icons.md-huge{ font-size: 120px; min-width: 120px;}
+.material-icons.md-huge{ font-size: 220px; min-width: 220px;}
+
 
 /* Rules for using icons as black on a light background. */
 .material-icons.md-dark { color: rgba(0, 0, 0, 0.54); }
 .material-icons.md-dark.md-inactive { color: rgba(0, 0, 0, 0.26); }
+.md-inactive { opacity: 0.36;}
 
 /* Rules for using icons as white on a dark background. */
 .material-icons.md-light { color: rgba(255, 255, 255, 1) !important; }
@@ -347,10 +357,20 @@ md-toolbar {
     box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
 }
 
-md-sidenav, 
-md-sidenav.md-locked-open, 
-md-sidenav.md-closed.md-locked-open-add-active {
+.md-sidenav-right {
     min-width: 200px !important;
     width: 85vw !important;
     max-width: 900px !important;
 } 
+
+.md-sidenav-left {
+    min-width: 200px !important;
+    width: 85vw !important;
+    max-width: 500px !important;
+} 
+
+.highlight{
+    font-weight: bold;
+    color: #121212;
+}
+

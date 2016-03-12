@@ -14,7 +14,7 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
         .primaryPalette('deep-purple', {
           'default': '700', // primary
           'hue-1': '200', // md-hue-1
-          'hue-2': '400', // md-hue-2
+          'hue-2': '600', // md-hue-2
           'hue-3': 'A200' // md-hue-3
         }).accentPalette('amber', {
           'default': '700' // use shade 200 for default, and keep all other shades the same
@@ -30,7 +30,8 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
 
     });
 
-    
+
+
 
     self.locale = $cookies.get('locale');
     self.locale = self.locale ? JSON.parse(self.locale).value : 'en';
@@ -83,6 +84,15 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
             		templateUrl: 'static/partials/home.html',
             		controller: 'homeController'
             	},
+                'dashboard@home' : {
+                    templateUrl: 'static/partials/dashboard.html',
+                    controller: 'dashboardController'
+                },
+                'details@home' : {
+                    templateUrl: 'static/partials/details.html',
+                    controller: 'detailsController'
+                },
+                
             	'toolbar@home' : {
             		controller: 'toolbarController',
             		templateUrl: 'static/partials/toolbar.html'
@@ -97,7 +107,11 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
                 '' : {
                     templateUrl: 'static/partials/search.html',
                     controller: 'searchController'
-                }
+                },
+                'details@search' : {
+                    templateUrl: 'static/partials/details.html',
+                    controller: 'detailsController'
+                },
             },
             access : 'restricted'
         })

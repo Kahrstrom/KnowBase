@@ -1,25 +1,31 @@
 <md-toolbar md-theme="grey" class="md-primary">
   <div class="md-toolbar-tools">
    
-    <div flex="30">
-      <md-button>
-        <md-icon class="material-icons" ng-click="back()">arrow_back</md-icon>
+    <div flex-gt-sm="30" flex="20">
+      <md-button ng-click="back()">
+        <md-icon class="material-icons" >arrow_back</md-icon>
       </md-button> 
     </div>
-    <div layout="row" flex="40">
+    <div layout="row" flex-gt-sm="40" flex="90">
       <md-input-container class="search-input slide-right" ng-class="animation" flex>
-        <input type="text" ng-change="search()" ng-model="searchval">
+        <input type="text" ng-change="search()" ng-model="searchval" autofocus>
       </md-input-container>
       <md-icon class="material-icons md-36">search</md-icon>
     </div>
-    <div flex="30"></div>
+
   </div>
 </md-toolbar>
 
-<md-content flex layout="row" layout-margin-layout-padding class="full-height">
-    <div flex="20"></div>
-    <div flex="60" layout="column" layout-margin-layout-padding class="vertical-nudge-top ">
-
+<md-content flex-gt-sm layout="row" layout-margin-layout-padding class="full-height">
+    <md-sidenav class="md-sidenav-left md-whiteframe-z2 full-height" md-component-id="left">
+      <div flex ui-view="details"/>
+    </md-sidenav>
+    <div flex-gt-sm="20" flex-sm="0"></div>
+    <div flex-gt-sm="60" flex layout="column" layout-margin-layout-padding class="vertical-nudge-top ">
+      <div ng-if="searchval == ''" class="vertical-align-top center" layout="column" layout-padding>
+        <md-icon class="material-icons md-huge md-inactive">search</md-icon>
+        <md-header class="md-inactive">Search for profiles and competences</md-header>
+      </div>
       <div ng-if="educations.length > 0">
         <md-header>Educations</md-header>
         <md-card>
@@ -27,14 +33,14 @@
             <md-icon class="material-icons avatar">school</md-icon>
             <div class="md-list-item-text" layout="row">
               <div flex>
-                <h3> {{ education.title }} - {{ education.education }} </h3>
-                <p> {{ education.school }}</p>          
+                <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ education.title }} - {{ education.education }} </h3>
+                <p md-highlight-flags="i" md-highlight-text="searchval"> {{ education.school }}</p>          
               </div>  
-              <div >
-                <img ng-src="{{getImg(education.profile.profilepicture)}}" class="md-avatar">
+              <md-button class="md-secondary md-icon-button" ng-click="showProfile(education.profile)">
+                <img ng-src="{{getImg(education.profile.profilepicture)}}" class="md-avatar profile-avatar">
                   <md-tooltip>{{education.profile.firstname}} {{education.profile.lastname}}</md-tooltip>
                 </img>
-              </div>
+              </md-button>
             </div>
             <md-divider ng-if="!$last"></md-divider>
           </md-list-item>
@@ -47,14 +53,14 @@
             <md-icon class="material-icons avatar">work</md-icon>
             <div class="md-list-item-text" layout="row">
               <div flex>
-                <h3> {{ workExperience.title }} </h3>
-                <p> {{ workExperience.employer }}</p>
+                <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ workExperience.title }} </h3>
+                <p md-highlight-flags="i" md-highlight-text="searchval"> {{ workExperience.employer }}</p>
               </div>
-              <div >
-                <img ng-src="{{getImg(workExperience.profile.profilepicture)}}" class="md-avatar">
+              <md-button class="md-secondary md-icon-button" ng-click="showProfile(workExperience.profile)">
+                <img ng-src="{{getImg(workExperience.profile.profilepicture)}}" class="md-avatar profile-avatar">
                   <md-tooltip>{{workExperience.profile.firstname}} {{workExperience.profile.lastname}}</md-tooltip>
                 </img>
-              </div>
+              </md-button>
             </div>
           </md-list-item>
         </md-card>
@@ -66,14 +72,14 @@
             <md-icon class="material-icons avatar">list</md-icon>
             <div class="md-list-item-text" layout="row" >
               <div flex>
-                <h3> {{ project.name }} </h3>
-                <p> {{ project.customername }}</p>
+                <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ project.name }} </h3>
+                <p md-highlight-flags="i" md-highlight-text="searchval"> {{ project.customername }}</p>
               </div>
-              <div >
-                <img ng-src="{{getImg(project.profile.profilepicture)}}" class="md-avatar">
+              <md-button class="md-secondary md-icon-button" ng-click="showProfile(project.profile)">
+                <img ng-src="{{getImg(project.profile.profilepicture)}}" class="md-avatar profile-avatar">
                   <md-tooltip>{{project.profile.firstname}} {{project.profile.lastname}}</md-tooltip>
                 </img>
-              </div>
+              </md-button>
             </div>
             <md-divider ng-if="!$last"></md-divider>
           </md-list-item>
@@ -86,14 +92,14 @@
             <md-icon class="material-icons avatar">local_activity</md-icon>
             <div class="md-list-item-text" layout="row">
               <div flex>
-                <h3> {{ merit.name }} </h3>
-                <p> {{ merit.description }}</p>
+                <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ merit.name }} </h3>
+                <p md-highlight-flags="i" md-highlight-text="searchval"> {{ merit.description }}</p>
               </div>
-              <div >
-                <img ng-src="{{getImg(merit.profile.profilepicture)}}" class="md-avatar">
+              <md-button class="md-secondary md-icon-button" ng-click="showProfile(merit.profile)">
+                <img ng-src="{{getImg(merit.profile.profilepicture)}}" class="md-avatar profile-avatar">
                   <md-tooltip>{{merit.profile.firstname}} {{merit.profile.lastname}}</md-tooltip>
                 </img>
-              </div>
+              </md-button>
             </div>  
             <md-divider ng-if="!$last"></md-divider>
           </md-list-item>
@@ -106,14 +112,34 @@
             <md-icon class="material-icons avatar">star</md-icon>
             <div class="md-list-item-text" layout="row" >
               <div flex>
-                <h3> {{ experience.name }} </h3>
-                <p> {{ experience.description }}</p>
+                <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ experience.name }} </h3>
+                <p md-highlight-flags="i" md-highlight-text="searchval"> {{ experience.description }}</p>
               </div>
-              <div >
-                <img ng-src="{{getImg(experience.profile.profilepicture)}}" class="md-avatar">
+              <md-button class="md-secondary md-icon-button" ng-click="showProfile(experience.profile)">
+                <img ng-src="{{getImg(experience.profile.profilepicture)}}" class="md-avatar profile-avatar">
                   <md-tooltip>{{experience.profile.firstname}} {{experience.profile.lastname}}</md-tooltip>
                 </img>
+              </md-button>
+            </div>
+            <md-divider ng-if="!$last"></md-divider>
+          </md-list-item>
+        </md-card>
+      </div>
+      <div ng-if="publications.length > 0">
+        <md-header>Publications</md-header>
+        <md-card>
+          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="publication in publications" ng-click="toggleRight()">
+            <md-icon class="material-icons avatar">book</md-icon>
+            <div class="md-list-item-text" layout="row" >
+              <div flex>
+                <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ publication.title }} </h3>
+                <p md-highlight-flags="i" md-highlight-text="searchval"> {{ publication.authors }}</p>
               </div>
+              <md-button class="md-secondary md-icon-button" ng-click="showProfile(publication.profile)">
+                <img ng-src="{{getImg(publication.profile.profilepicture)}}" class="md-avatar profile-avatar">
+                  <md-tooltip>{{publication.profile.firstname}} {{publication.profile.lastname}}</md-tooltip>
+                </img>
+              </md-button>
             </div>
             <md-divider ng-if="!$last"></md-divider>
           </md-list-item>
@@ -126,14 +152,14 @@
             <md-icon class="material-icons avatar">vpn_key</md-icon>
             <div class="md-list-item-text" layout="row">
               <div flex>
-                <h3> {{ skill.name }} </h3>
-                <p> {{ skill.description }}</p>
+                <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ skill.name }} </h3>
+                <p md-highlight-flags="i" md-highlight-text="searchval"> {{ skill.description }}</p>
               </div>
-              <div >
-                <img ng-src="{{getImg(skill.profile.profilepicture)}}" class="md-avatar">
+              <md-button class="md-secondary md-icon-button" ng-click="showProfile(skill.profile)">
+                <img ng-src="{{getImg(skill.profile.profilepicture)}}" class="md-avatar profile-avatar">
                   <md-tooltip>{{skill.profile.firstname}} {{skill.profile.lastname}}</md-tooltip>
                 </img>
-              </div>
+              </md-button>
             </div>
             <md-divider ng-if="!$last"></md-divider>
           </md-list-item>
@@ -146,13 +172,13 @@
             <md-icon class="material-icons avatar">forum</md-icon>
             <div class="md-list-item-text" layout="row">
               <div flex>
-                <h3> {{ language.language }} </h3>
+                <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ language.language }} </h3>
               </div>
-              <div >
-                <img ng-src="{{getImg(language.profile.profilepicture)}}" class="md-avatar">
+              <md-button class="md-secondary md-icon-button" ng-click="showProfile(language.profile)">
+                <img ng-src="{{getImg(language.profile.profilepicture)}}" class="md-avatar profile-avatar">
                   <md-tooltip>{{language.profile.firstname}} {{language.profile.lastname}}</md-tooltip>
                 </img>
-              </div>
+              </md-button>
             </div>
             <md-divider ng-if="!$last"></md-divider>
           </md-list-item>

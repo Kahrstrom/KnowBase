@@ -1,10 +1,7 @@
 
 <header ui-view="toolbar"></header>
 <md-content class="full-height">
-	<am-date-picker ng-model="date"
-                am-input-date-format="L"
-                am-input-label="Pick a Date"
-                am-today-button="Today"
-                am-show-input-icon="true">
-	</am-date-picker>
+	<md-sidenav class="md-sidenav-left md-whiteframe-z2 full-height" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
+		<div flex ui-view="details"/>
+    </md-sidenav>
 </md-content>

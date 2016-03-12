@@ -33,7 +33,7 @@ def rebuild_all():
         work = w.serialize
         work['profile'] = work['profile']['idprofile']
 
-        t = es.index(index="knowbase", doc_type="workexperience", id=w.idworkexperience,
+        es.index(index="knowbase", doc_type="workexperience", id=w.idworkexperience,
              body=work)
 
     for p in Project.query.all():
@@ -79,5 +79,5 @@ def rebuild_all():
              body=language)
 
 if __name__ == '__main__':
-    #delete_all()
+    delete_all()
     rebuild_all()

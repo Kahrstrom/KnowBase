@@ -51,49 +51,67 @@ angular.module('knowBase').controller('searchController',
   
   function ($scope, $state, $http, $templateCache, DataService, $mdToast, $cookies, $mdSidenav) {
     $scope.searchval = "";
-    
+  
     $scope.back = function(){
       console.log($cookies.get('previousState'))
       $state.go($cookies.get('previousState') ? $cookies.get('previousState') : 'home');
     }
     $scope.toggleRight = buildToggler('right');
+    $scope.toggleLeft = buildToggler('left');
+
+
     $scope.isOpenRight = function(){
       return $mdSidenav('right').isOpen();
     };
 
     function buildToggler(navID) {
-      
-      // return function() {
-      //   $mdSidenav(navID)
-      //     .toggle()
-      //     .then(function () {
-      //       console.log("toggle " + navID + " is done");
-      //     });
-      // }
+
+      return function() {
+        $mdSidenav(navID)
+          .toggle()
+          .then(function () {
+            console.log("toggle " + navID + " is done");
+          });
+      }
     }
 
     $scope.search = function(){
+      if($scope.searchval != ""){
+        DataService.searchData({query: $scope.searchval})
+          .then(function (data) {
+              $scope.educations = data.educations;
+              $scope.skills = data.skills;
+              $scope.workexperiences = data.workexperiences;
+              $scope.publications = data.publications;
+              $scope.experiences = data.experiences;
+              $scope.merits = data.merits;
+              $scope.languages = data.languages;
+              $scope.projects = data.projects;
+              console.log($scope.educations.length)
+          },
+          // handle error
+          function (reason) {
+              console.log(reason)
+          });
+        }
+        else{
+          $scope.educations = [];
+          $scope.skills = [];
+          $scope.workexperiences = [];
+          $scope.publications = [];
+          $scope.experiences = [];
+          $scope.merits = [];
+          $scope.languages = [];
+          $scope.projects = [];
+        }
+    }
 
-      DataService.searchData({query: $scope.searchval})
-        .then(function (data) {
-            $scope.educations = data.educations;
-            $scope.skills = data.skills;
-            $scope.workexperiences = data.workexperiences;
-            $scope.publications = data.publications;
-            $scope.experiences = data.experiences;
-            $scope.merits = data.merits;
-            $scope.languages = data.languages;
-            $scope.projects = data.projects;
-            console.log($scope.educations)
-        },
-        // handle error
-        function (reason) {
-            console.log(reason)
-        });
+    $scope.showProfile = function(profile){
+      $scope.idprofile = profile.idprofile;
+      $scope.toggleLeft();
     }
 
     $scope.getImg = function(imgData){
-      console.log(imgData)
       return 'data:image/' + imgData.extension + ';base64,' + imgData.data;
     }
 
@@ -199,37 +217,73 @@ angular.module('knowBase').controller('toolbarController',
         });
     }
 
-    
-
     $scope.openMenu = function($mdOpenMenu, ev) {
       originatorEv = ev;
       $mdOpenMenu(ev);
     };
-
-    $('md-content').click(function(e){
-      $scope.showSearch = false;
-      $scope.$apply();
-      
-    });
 });
 
-
-angular.module('knowBase').controller('homeController',
-  ['$scope', '$state', 'DataService',
-  function ($scope, $state, DataService) {
+angular.module('knowBase').controller('detailsController',
+  function ($scope, $state, DataService, $window, $http, $templateCache) {
     getProfile();
-    $scope.date = null;//new Date();
-
+    $scope.competenceProfiles = [];
+    $scope.idprofile = $scope.$parent.idprofile;
     function getProfile() {
-        DataService.getProfile()
+        DataService.getProfile($scope.idprofile)
           .success(function (response) {
-              $scope.data = response.data;
+              $scope.profile = response.data;
+              DataService.getCompetenceProfiles($scope.idprofile)
+                .success(function (response) {
+                  $.each(response.data, function(i,p){
+                    $scope.competenceProfiles.push(new DataService.CompetenceProfile(p));
+                  });
+                })
+                .error(function (error) {
+                  $scope.status = 'Unable to load profile data: ' + error.message;
+                });
           })
           .error(function (error) {
               $scope.status = 'Unable to load profile data: ' + error.message;
           });
     }
-}]);
+
+
+    $scope.getImg = function(imgData){
+      return 'data:image/' + imgData.extension + ';base64,' + imgData.data;
+    }
+    $scope.openGoogleMaps = function() { 
+      var queryParameter = encodeURIComponent($scope.profile.address + '+' + $scope.profile.zipcode + '+' + $scope.profile.city + '+' + $scope.profile.country);
+      $window.open('http://maps.google.com/?q='+queryParameter , '_blank');
+    }
+    $scope.phoneCall = function(number) { 
+      var link = 'tel:' + number;
+      window.location.href = link;
+    }
+    $scope.email = function() { 
+      var link = 'mailto:' + $scope.profile.email;
+      window.location.href = link;
+    }
+
+  
+});
+
+
+angular.module('knowBase').controller('homeController',
+  function ($scope, $state, DataService) {
+    
+    function buildToggler(navID) {
+      return function() {
+        $mdSidenav(navID)
+          .toggle()
+          .then(function () {
+            $log.debug("toggle " + navID + " is done");
+          });
+      }
+    }
+
+    $scope.test = "testar";
+    $scope.toggleLeft = buildToggler('left');
+});
 
 angular.module('knowBase').controller('aboutController',
   ['$scope', '$state',

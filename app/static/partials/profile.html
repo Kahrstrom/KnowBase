@@ -38,6 +38,13 @@
 						<input md-maxlength="32" type="text" name="lastname" ng-model="profile.lastname" required>
 					</md-input-container>
 				</div>
+
+				<md-input-container class="md-block">
+					<label>Position</label>
+					<!-- <md-icon md-font-icon="fa-map-signs" class="fa fa-lg"></md-icon> -->
+					<input md-maxlength="128" type="text" name="position" ng-model="profile.position">
+				</md-input-container>
+
 				<am-date-picker ng-model="profile.birthdate"
 			                am-input-date-format="L"
 			                am-input-label="Birthdate"

@@ -1,0 +1,57 @@
+<md-toolbar class="md-hue-2" layout="column">
+	<div layout="row" layout-align="center center" flex ng-if="profile" layout-padding class="vertical-nudge-top">
+		<img back-img="{{getImg(profile.profilepicture)}}" class="circle bordered"></img>
+	</div>
+	<md-list-item class="md-3-line">
+      <div class="md-list-item-text">
+      	
+	        <h3 layout="row" layout-align="center center">{{profile.firstname}} {{profile.lastname}}</h3>
+	        <p layout="row" layout-align="center center">{{profile.position}}</p>
+      </div>
+    </md-list-item>
+</md-toolbar>
+<md-tabs md-dynamic-height md-border-bottom>
+	<md-tab label="Contact">
+		
+		<md-list class="md-dense vertical-nudge-top" flex>
+			<md-list-item ng-click="openGoogleMaps()">
+				<md-icon class="material-icons md-24">place</md-icon>
+				<p >{{profile.address}}, {{ profile.zipcode }} {{ profile.city }}. {{ profile.country }}</p>
+		    </md-list-item>
+		    <md-list-item ng-click="phoneCall(profile.mobilephone)">
+		    	<md-icon class="material-icons md-24">phone_iphone</md-icon>
+		        <p >{{ profile.mobilephone }}</p>	
+			</md-list-item>
+			<md-list-item ng-click="phoneCall(profile.phone)">
+		    	<md-icon class="material-icons md-24">phone</md-icon>
+		        <p >{{ profile.phone }}</p>	
+			</md-list-item>
+			<md-list-item ng-click="email()">
+		    	<md-icon class="material-icons md-24">email</md-icon>
+		        <p >{{ profile.email }}</p>	
+			</md-list-item>
+		</md-list>
+
+	</md-tab>
+	<md-tab label="About">
+		<md-list class="md-dense vertical-nudge-top" flex>
+			<md-list-item class="md-3-line ">
+				
+		    	
+		    	<div class="md-list-item-text">
+			        <h3 >About me</h3>	
+			        
+			        <p>{{profile.description}}</p>
+		    	</div>
+			</md-list-item>
+		</md-list>
+	</md-tab>
+	<md-tab label="Profiles">
+		<md-list-item  class="md-3-line secondary-button-padding vertical-nudge-top" ng-repeat="competenceProfile in competenceProfiles" ng-click="showProfile(competenceProfile)">
+	    	<md-icon class="material-icons avatar">public</md-icon>
+    		<div class="md-list-item-text" >
+      			<h3> {{ competenceProfile.name }}</h3>
+    		</div>
+	  	</md-list-item>
+	</md-tab>
+</md-tabs>

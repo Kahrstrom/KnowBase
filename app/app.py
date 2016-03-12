@@ -95,9 +95,12 @@ def get_profile_picture():
 @require_login()
 def update_profile():
 
-    profile = User.query.filter_by(email=session['email']).first().rel_profile
-    profile.update(request.json)
-    db.session.commit()
+    try:
+        profile = User.query.filter_by(email=session['email']).first().rel_profile
+        profile.update(request.json)
+        db.session.commit()
+    except Exception as err:
+        print(err)
     return jsonify(response='success')
 
 
@@ -154,13 +157,16 @@ def signup():
 @app.route('/api/profile', methods=['GET'])
 @require_login()
 def profile():
+    idprofile = request.args.get('idprofile')
+    if idprofile is None:
+        profile = User.query.filter_by(email=session['email']).first().rel_profile
+    else:
+        profile = Profile.query.get(idprofile)
 
-    user = User.query.filter_by(email=session['email']).first()
-
-    if user is None:
+    if profile is None:
         return abort(404)
 
-    return jsonify(data=user.rel_profile.serialize)
+    return jsonify(data=profile.serialize)
 
 
 @app.route('/api/options', methods=['GET'])
@@ -428,8 +434,12 @@ def get_customeroptions():
 @app.route('/api/competenceprofiles',methods=['GET'])
 @require_login()
 def get_competenceprofiles():
-
-    profile = User.query.filter_by(email=session['email']).first().rel_profile
+    #TODO: kontrollera admin
+    idprofile = request.args.get('idprofile')
+    if idprofile is None:
+        profile = User.query.filter_by(email=session['email']).first().rel_profile
+    else:
+        profile = Profile.query.get(idprofile)
 
     if profile is None:
 
@@ -535,6 +545,8 @@ def search():
     es = Elasticsearch()
     data = request.json['query']
     search_body = {
+        "from": 0,
+        "size": 10,
         "query": {
             "query_string": {
                 "query": "*" + data + "*"
@@ -572,7 +584,7 @@ def search():
                 res.projects.append(project.serialize)
         except Exception as err:
             print(err)
-   
+
     return jsonify(res.serialize)
 
 

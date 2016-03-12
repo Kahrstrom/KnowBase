@@ -1,12 +1,21 @@
-from werkzeug import generate_password_hash, check_password_hash
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+import config
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
 from datetime import *
-from app import db
-from sqlalchemy import event
-from elasticsearch import Elasticsearch
-import base64
 
-######## DATABASE MODEL #########
+app = Flask(__name__)
 
+
+app.config['SQLALCHEMY_DATABASE_URI'] = config.connection_string
+print(app.config['SQLALCHEMY_DATABASE_URI'])
+
+db = SQLAlchemy(app)
+migrate = Migrate(app,db)
+
+manager = Manager(app)
+manager.add_command('db', MigrateCommand)
 
 workExperienceProfiles = db.Table('workexperienceprofiles',
       db.Column('idworkexperience',db.Integer,db.ForeignKey('workexperience.idworkexperience')),
@@ -48,8 +57,6 @@ publicationProfiles = db.Table('publicationprofiles',
       db.Column('idcompetenceprofile',db.Integer,db.ForeignKey('competenceprofile.idcompetenceprofile'))
 )
 
-
-# Create our database model
 class Education(db.Model):
     __tablename__ = "education"
     ideducation = db.Column(db.Integer, primary_key=True)
@@ -499,8 +506,7 @@ class Profile(db.Model):
     birthdate = db.Column(db.DateTime)
 
     def __init__(self, firstname=None, lastname=None, address=None, zipcode=None,
-                 city=None, country=None, birthdate=None, phone=None, mobilephone=None, email=None, position=None,
-                  description=None):
+                 city=None, country=None, birthdate=None, phone=None, mobilephone=None, email=None, position=None):
         self.firstname = firstname
         self.lastname = lastname
         self.address = address
@@ -512,7 +518,6 @@ class Profile(db.Model):
         self.mobilephone = mobilephone
         self.email = email
         self.position = position
-        self.description = description
 
     def update(self, json_data):
         self.firstname = json_data['firstname']
@@ -525,7 +530,6 @@ class Profile(db.Model):
         self.zipcode = json_data['zipcode']
         self.birthdate = json_data['birthdate']
         self.position= json_data['position']
-        self.description= json_data['description']
 
     @property
     def serialize(self):
@@ -541,11 +545,9 @@ class Profile(db.Model):
             'phone': self.phone,
             'birthdate': self.birthdate,
             'profilepicture' : self.rel_profilepicture.serialize,
-            'email' : self.email,
-            'position' : self.position,
-            'description' : self.description
+            #'email' : self.email,
+            'position' : self.position
         }
-
 
 class File(db.Model):
     __tablename__ = "file"
@@ -599,391 +601,5 @@ class User(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password, password)
 
-
-######## DATABASE MODEL #########
-
-def count_educations(idprofile):
-    return Education.query.filter_by(profile=idprofile).count()
-
-def get_class_by_tablename(tablename):
-  for c in db.Model._decl_class_registry.values():
-    if hasattr(c, '__tablename__') and c.__tablename__ == tablename:
-      return c
-
-def count_table(idprofile, table):
-    c = get_class_by_tablename(table)
-    return c.query.filter_by(profile=idprofile).count()
-
-
-def count_workexperience(idprofile):
-    return WorkExperience.query.filter_by(profile=idprofile).count()
-
-def count_language(idprofile):
-    return Language.query.filter_by(profile=idprofile).count()
-
-def count_skill(idprofile):
-    return Skill.query.filter_by(profile=idprofile).count()
-
-def count_publication(idprofile):
-    return Publication.query.filter_by(profile=idprofile).count()
-
-def count_experience(idprofile):
-    return Experience.query.filter_by(profile=idprofile).count()
-
-def count_merit(idprofile):
-    return Merit.query.filter_by(profile=idprofile).count()
-
-def get_skilltypes(idprofile):
-    return [{
-                'locale':'Educations',
-                'name':'education',
-                'order': 1,
-                'count': count_table(idprofile, "education")
-            },{
-                'locale':'Work experience',
-                'name':'workexperience',
-                'order': 2,
-                'count': count_table(idprofile, "workexperience")
-            },{
-                'locale':'Experience',
-                'name':'experience',
-                'order': 3,
-                'count': count_table(idprofile, "experience")
-            },{
-                'locale':'Publications',
-                'name':'publication',
-                'order': 4,
-                'count': count_table(idprofile, "publication")
-            },{
-                'locale':'Projects',
-                'name':'project',
-                'order': 5,
-                'count': count_table(idprofile, "project")
-            },{
-                'locale':'Language',
-                'name':'language',
-                'order': 6,
-                'count': count_table(idprofile, "language")
-            },{
-                'locale':'Merits',
-                'name':'merit',
-                'order': 7,
-                'count': count_table(idprofile, "merit")
-            },{
-                'locale':'Skills',
-                'name':'skill',
-                'order': 8,
-                'count': count_table(idprofile, "skill")
-            }]
-
-
-
-
-
-class SearchResult():
-    educations = []
-    publications = []
-    skills = []
-    projects = []
-    workexperiences = []
-    languages = []
-    merits = []
-    experiences = []
-
-    def __init__(self):
-        self.educations = []
-        self.publications = []
-        self.skills = []
-        self.projects = []
-        self.workexperiences = []
-        self.languages = []
-        self.merits = []
-        self.experiences = []
-
-    @property
-    def serialize(self):
-        return {
-            "workexperiences":[w for w in self.workexperiences],
-            "educations":[e for e in self.educations],
-            "languages":[l for l in self.languages],
-            "skills":[s for s in self.skills],
-            "experiences":[e for e in self.experiences],
-            "projects":[p for p in self.projects],
-            "merits":[m for m in self.merits],
-            "publications":[p for p in self.publications]
-        }
-
-
-########## ELASTIC SEARCH #########
-def after_education_insert(mapper, connection, target):
-    es = Elasticsearch()
-    es.index(index="knowbase", doc_type="education", id=target.ideducation,
-             body={
-                    'ideducation': target.ideducation,
-                    'title': target.title,
-                    'education': target.education,
-                    'school': target.school,
-                    'startdate': target.startdate,
-                    'enddate': target.enddate,
-                    'description': target.description,
-                    'profile': target.profile,
-                    'timestamp': target.timestamp
-             })
-
-def after_education_update(mapper, connection, target):
-    es = Elasticsearch()
-    es.update(index='knowbase',doc_type='education',id=target.ideducation,
-                body={"doc": {
-                    'ideducation': target.ideducation,
-                    'title': target.title,
-                    'education': target.education,
-                    'school': target.school,
-                    'startdate': target.startdate,
-                    'enddate': target.enddate,
-                    'description': target.description,
-                    'profile': target.profile,
-                    'timestamp': target.timestamp
-                }})
-def after_education_delete(mapper, connection, target):
-    es = Elasticsearch()
-    es.delete(index='knowbase', doc_type='education', id=target.ideducation)
-
-
-def after_workexperience_insert(mapper, connection, target):
-    es = Elasticsearch()
-    es.index(index="knowbase", doc_type="workexperience", id=target.idworkexperience,
-             body={
-                'idworkexperience': target.idworkexperience,
-                'title': target.title,
-                'employer': target.employer,
-                'startdate': target.startdate,
-                'enddate': target.enddate,
-                'description': target.description,
-                'profile': target.profile
-            })
-
-def after_workexperience_update(mapper, connection, target):
-    es = Elasticsearch()
-    es.update(index='knowbase',doc_type='workexperience',id=target.idworkexperience,
-                body={"doc": {
-                'idworkexperience': target.idworkexperience,
-                'title': target.title,
-                'employer': target.employer,
-                'startdate': target.startdate,
-                'enddate': target.enddate,
-                'description': target.description,
-                'profile': target.profile
-            }})
-def after_workexperience_delete(mapper, connection, target):
-    es = Elasticsearch()
-    es.delete(index='knowbase',doc_type='workexperience',id=target.idworkexperience)
-
-def after_project_insert(mapper, connection, target):
-    es = Elasticsearch()
-
-    es.index(index='knowbase',doc_type='project',id=target.idproject,
-             body={
-                'idproject': target.idproject,
-                'name': target.name,
-                'hours': target.hours,
-                #'customer': target.rel_customer.serialize,
-                'startdate': target.startdate,
-                'enddate': target.enddate,
-                'description': target.description,
-                'profile': target.profile
-            })
-
-
-def after_project_update(mapper, connection, target):
-    es = Elasticsearch()
-    try:
-        es.update(index='knowbase',doc_type='project',id=target.idproject,
-                    body={"doc": {
-                    'idproject': target.idproject,
-                    'name': target.name,
-                    'hours': target.hours,
-                    'customer': target.rel_customer.serialize,
-                    'startdate': target.startdate,
-                    'enddate': target.enddate,
-                    'description': target.description,
-                    'profile': target.profile
-                }})
-    except Exception as err:
-        print(err)
-
-def after_project_delete(mapper, connection, target):
-    es = Elasticsearch()
-    es.delete(index='knowbase',doc_type='project',id=target.idproject)
-
-def after_experience_insert(mapper, connection, target):
-    es = Elasticsearch()
-    es.index(index='knowbase',doc_type='experience',id=target.idexperience,
-             body={
-                'idexperience': target.idexperience,
-                'name': target.name,
-                'startdate': target.startdate,
-                'enddate': target.enddate,
-                'description': target.description,
-                'profile': target.profile
-            })
-
-def after_experience_update(mapper, connection, target):
-    es = Elasticsearch()
-    es.update(index='knowbase',doc_type='experience',id=target.idexperience,
-                body={"doc": {
-                'idexperience': target.idexperience,
-                'name': target.name,
-                'startdate': target.startdate,
-                'enddate': target.enddate,
-                'description': target.description,
-                'profile': target.profile
-            }})
-def after_experience_delete(mapper, connection, target):
-    es = Elasticsearch()
-    es.delete(index='knowbase',doc_type='experience',id=target.idexperience)
-
-
-def after_language_insert(mapper, connection, target):
-    es = Elasticsearch()
-    es.index(index='knowbase',doc_type='language',id=target.idlanguage,
-             body={
-            'idlanguage': target.idlanguage,
-            'language': target.language,
-            'listening': target.listening,
-            'writing':target.writing,
-            'reading': target.reading,
-            'conversation': target.conversation,
-            'verbal': target.verbal,
-            'profile': target.profile
-        })
-
-def after_language_update(mapper, connection, target):
-    es = Elasticsearch()
-    es.update(index='knowbase',doc_type='language',id=target.idlanguage,
-                body={"doc": {
-                'idlanguage': target.idlanguage,
-                'language': target.language,
-                'listening': target.listening,
-                'writing':target.writing,
-                'reading': target.reading,
-                'conversation': target.conversation,
-                'verbal': target.verbal,
-                'profile': target.profile
-            }})
-def after_language_delete(mapper, connection, target):
-    es = Elasticsearch()
-    es.delete(index='knowbase',doc_type='language',id=target.idlanguage)
-
-def after_publication_insert(mapper, connection, target):
-    es = Elasticsearch()
-    es.index(index='knowbase',doc_type='publication',id=target.idpublication,
-             body={
-                'idpublication': target.idpublication,
-                'title': target.title,
-                'authors': target.authors,
-                'publication': target.publication,
-                'date': target.date,
-                'description': target.description,
-                'profile': target.profile
-            })
-
-def after_publication_update(mapper, connection, target):
-    es = Elasticsearch()
-    es.update(index='knowbase',doc_type='publication',id=target.idpublication,
-                body={"doc": {
-                'idpublication': target.idpublication,
-                'title': target.title,
-                'authors': target.authors,
-                'publication': target.publication,
-                'date': target.date,
-                'description': target.description,
-                'profile': target.profile
-            }})
-def after_publication_delete(mapper, connection, target):
-    es = Elasticsearch()
-    es.delete(index='knowbase',doc_type='publication',id=target.idpublication)
-
-def after_skill_insert(mapper, connection, target):
-    es = Elasticsearch()
-    es.index(index='knowbase',doc_type='skill',id=target.idskill,
-             body={
-                'idskill': target.idskill,
-                'name': target.name,
-                'level': target.level,
-                'description': target.description,
-                'profile': target.profile
-            })
-
-def after_skill_update(mapper, connection, target):
-    es = Elasticsearch()
-    es.update(index='knowbase',doc_type='skill',id=target.idskill,
-                body={"doc": {
-                'idskill': target.idskill,
-                'name': target.name,
-                'level': target.level,
-                'description': target.description,
-                'profile': target.profile
-            }})
-
-def after_skill_delete(mapper, connection, target):
-    es = Elasticsearch()
-    es.delete(index='knowbase',doc_type='skill',id=target.idskill)
-
-def after_merit_insert(mapper, connection, target):
-    es = Elasticsearch()
-    es.index(index='knowbase',doc_type='merit',id=target.idmerit,
-             body={
-                'idmerit': target.idmerit,
-                'name': target.name,
-                'date': target.date,
-                'description': target.description,
-                'profile': target.profile
-            })
-
-def after_merit_update(mapper, connection, target):
-    es = Elasticsearch()
-    es.update(index='knowbase',doc_type='merit',id=target.idmerit,
-                body={"doc": {
-                'idmerit': target.idmerit,
-                'name': target.name,
-                'date': target.date,
-                'description': target.description,
-                'profile': target.profile
-            }})
-
-def after_merit_delete(mapper, connection, target):
-    es = Elasticsearch()
-    es.delete(index='knowbase',doc_type='merit',id=target.idmerit)
-
-
-event.listen(Education, 'after_insert', after_education_insert)
-event.listen(Education, 'after_update', after_education_update)
-event.listen(Education, 'after_delete', after_education_delete)
-
-event.listen(WorkExperience, 'after_insert', after_workexperience_insert)
-event.listen(WorkExperience, 'after_update', after_workexperience_update)
-event.listen(WorkExperience, 'after_delete', after_workexperience_delete)
-
-event.listen(Project, 'after_insert', after_project_insert)
-event.listen(Project, 'after_update', after_project_update)
-event.listen(Project, 'after_delete', after_project_delete)
-
-event.listen(Experience, 'after_insert', after_experience_insert)
-event.listen(Experience, 'after_update', after_experience_update)
-event.listen(Experience, 'after_delete', after_experience_delete)
-
-event.listen(Language, 'after_insert', after_language_insert)
-event.listen(Language, 'after_update', after_language_update)
-event.listen(Language, 'after_delete', after_language_delete)
-
-event.listen(Publication, 'after_insert', after_publication_insert)
-event.listen(Publication, 'after_update', after_publication_update)
-event.listen(Publication, 'after_delete', after_publication_delete)
-
-event.listen(Merit, 'after_insert', after_merit_insert)
-event.listen(Merit, 'after_update', after_merit_update)
-event.listen(Merit, 'after_delete', after_merit_delete)
-
-event.listen(Skill, 'after_insert', after_skill_insert)
-event.listen(Skill, 'after_update', after_skill_update)
-event.listen(Skill, 'after_delete', after_skill_delete)
+if __name__ == '__main__':
+    manager.run()
