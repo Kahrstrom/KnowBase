@@ -53,10 +53,9 @@ def home():
 def skill_types():
 
     user = User.query.filter_by(email=session['email']).first()
-    try:
-        retval = get_skilltypes(user.profile)
-    except Exception as err:
-        print(err)
+
+    retval = get_skilltypes(user.profile)
+
     return jsonify(data=retval)
 
 @app.route('/api/profilepicture', methods=['POST'])
@@ -95,12 +94,11 @@ def get_profile_picture():
 @require_login()
 def update_profile():
 
-    try:
-        profile = User.query.filter_by(email=session['email']).first().rel_profile
-        profile.update(request.json)
-        db.session.commit()
-    except Exception as err:
-        print(err)
+
+    profile = User.query.filter_by(email=session['email']).first().rel_profile
+    profile.update(request.json)
+    db.session.commit()
+
     return jsonify(response='success')
 
 
@@ -145,7 +143,7 @@ def signup():
     if user is not None:
         return jsonify(response='user already exists')
 
-    profile = Profile(firstname=firstname, lastname=lastname)
+    profile = Profile(firstname=firstname, lastname=lastname, email=email)
     db.session.add(profile)
     db.session.commit()
 
@@ -160,6 +158,7 @@ def profile():
     idprofile = request.args.get('idprofile')
     if idprofile is None:
         profile = User.query.filter_by(email=session['email']).first().rel_profile
+
     else:
         profile = Profile.query.get(idprofile)
 
@@ -270,7 +269,6 @@ def update_education():
     else:
         education = Education.query.get(ideducation)
         education.update(request.json)
-        print(education.serialize)
 
     db.session.commit()
 
@@ -312,7 +310,6 @@ def update_skill():
 @app.route('/api/experiences', methods=['GET'])
 @require_login()
 def get_user_experiences():
-    print("hej")
     user = User.query.filter_by(email=session['email']).first()
     experiences = Experience.query.filter_by(profile=user.profile).all()
 
@@ -364,11 +361,9 @@ def update_language():
     profile = User.query.filter_by(email=session['email']).first().rel_profile
 
     if idlanguage is None:
-        try:
-            language = Language(request.json, profile.idprofile)
-            db.session.add(language)
-        except Exception as err:
-            print(err)
+        language = Language(request.json, profile.idprofile)
+        db.session.add(language)
+
     else:
         language = Language.query.get(idlanguage)
         language.update(request.json)
@@ -428,7 +423,6 @@ def get_customeroptions():
     retval = []
     for c in customers:
         retval.append(c.serialize)
-    print(retval)
     return jsonify(data=retval)
 
 @app.route('/api/competenceprofiles',methods=['GET'])
@@ -444,18 +438,15 @@ def get_competenceprofiles():
     if profile is None:
 
         return abort(401)
-    try:
-        profiles = CompetenceProfile.query.filter_by(profile=profile.idprofile).all()
-    except Exception as err:
-        print(err)
+
+    profiles = CompetenceProfile.query.filter_by(profile=profile.idprofile).all()
+
     retval = []
-    print(profiles)
     for p in profiles:
-        try:
-            retval.append(p.serialize)
-        except Exception as err:
-            print(err)
-    print(retval)
+
+        retval.append(p.serialize)
+
+
     return jsonify(data=retval)
 
 @app.route('/api/competenceProfile',methods=['POST'])
@@ -495,35 +486,34 @@ def save_competenceprofiles():
 @app.route('/api/project', methods=['POST'])
 @require_login()
 def create_project():
-    try:
-        idproject = request.json['idproject']
-        profile = User.query.filter_by(email=session['email']).first().rel_profile
 
-        customer = request.json['customer']
+    idproject = request.json['idproject']
+    profile = User.query.filter_by(email=session['email']).first().rel_profile
 
-        if customer is None:
-            customer = Customer({'name' : request.json['customername']})
-            db.session.add(customer)
-            db.session.commit()
-        else:
-            customer = Customer.query.get(customer['idcustomer'])
+    customer = request.json['customer']
 
-
-        if idproject is None:
-            project = Project(request.json,profile.idprofile)
-            project.customer = customer.idcustomer
-            db.session.add(project)
-
-            db.session.commit()
+    if customer is None:
+        customer = Customer({'name' : request.json['customername']})
+        db.session.add(customer)
+        db.session.commit()
+    else:
+        customer = Customer.query.get(customer['idcustomer'])
 
 
-        else:
-            project = Project.query.get(idproject)
-            project.update(request.json)
-            db.session.commit()
+    if idproject is None:
+        project = Project(request.json,profile.idprofile)
+        project.customer = customer.idcustomer
+        db.session.add(project)
 
-    except Exception as err:
-        print(err)
+        db.session.commit()
+
+
+    else:
+        project = Project.query.get(idproject)
+        project.update(request.json)
+        db.session.commit()
+
+
 
     return jsonify(idrecord="{idrecord}".format(idrecord=idproject))
 
@@ -539,11 +529,15 @@ def delete_object():
 
 @app.route('/api/search', methods=['POST'])
 def search():
+    data = request.json['query']
+
+    if len(data) < 2:
+        print("fsdfsd")
+        return jsonify({})
 
     res = SearchResult()
     profiles = defaultdict(dict)
     es = Elasticsearch()
-    data = request.json['query']
     search_body = {
         "from": 0,
         "size": 10,
@@ -556,38 +550,36 @@ def search():
 
     for e in es.search(body=search_body).get('hits').get('hits'):
         src = e.get('_source')
-        try:
-            if e.get('_type') == 'education':
-                education = Education.query.get(src['ideducation'])
-                #profiles[education.profile]['educations'].append(education.serialize)
-                res.educations.append(education.serialize)
-            if e.get('_type') == 'skill':
-                skill = Skill.query.get(src['idskill'])
-                res.skills.append(skill.serialize)
-            if e.get('_type') == 'language':
-                language = Language.query.get(src['idlanguage'])
-                res.languages.append(language.serialize)
-            if e.get('_type') == 'merit':
-                merit = Merit.query.get(src['idmerit'])
-                res.merits.append(merit.serialize)
-            if e.get('_type') == 'publication':
-                publication = Publication.query.get(src['idpublication'])
-                res.publications.append(publication.serialize)
-            if e.get('_type') == 'experience':
-                experience = Experience.query.get(src['idexperience'])
-                res.experiences.append(experience.serialize)
-            if e.get('_type') == 'workexperience':
-                workexperience = WorkExperience.query.get(src['idworkexperience'])
-                res.workexperiences.append(workexperience.serialize)
-            if e.get('_type') == 'project':
-                project = Project.query.get(src['idproject'])
-                res.projects.append(project.serialize)
-        except Exception as err:
-            print(err)
+
+        if e.get('_type') == 'education':
+            education = Education.query.get(src['ideducation'])
+            #profiles[education.profile]['educations'].append(education.serialize)
+            res.educations.append(education.serialize)
+        if e.get('_type') == 'skill':
+            skill = Skill.query.get(src['idskill'])
+            res.skills.append(skill.serialize)
+        if e.get('_type') == 'language':
+            language = Language.query.get(src['idlanguage'])
+            res.languages.append(language.serialize)
+        if e.get('_type') == 'merit':
+            merit = Merit.query.get(src['idmerit'])
+            res.merits.append(merit.serialize)
+        if e.get('_type') == 'publication':
+            publication = Publication.query.get(src['idpublication'])
+            res.publications.append(publication.serialize)
+        if e.get('_type') == 'experience':
+            experience = Experience.query.get(src['idexperience'])
+            res.experiences.append(experience.serialize)
+        if e.get('_type') == 'workexperience':
+            workexperience = WorkExperience.query.get(src['idworkexperience'])
+            res.workexperiences.append(workexperience.serialize)
+        if e.get('_type') == 'project':
+            project = Project.query.get(src['idproject'])
+            res.projects.append(project.serialize)
 
     return jsonify(res.serialize)
 
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 8080))
-    app.run(host=config.host_ip, port=port)
+    app.run(host=config.host_ip, port=port, debug=False)

@@ -61,7 +61,7 @@ def rebuild_all():
         merit = m.serialize
         merit['profile'] = merit['profile']['idprofile']
 
-        es.index(index="knowbase", doc_type="merit", id=e.idmerit,
+        es.index(index="knowbase", doc_type="merit", id=m.idmerit,
              body=merit)
 
     for e in Experience.query.all():
@@ -75,7 +75,7 @@ def rebuild_all():
         language = l.serialize
         language['profile'] = language['profile']['idprofile']
 
-        es.index(index="knowbase", doc_type="language", id=e.idlanguage,
+        es.index(index="knowbase", doc_type="language", id=l.idlanguage,
              body=language)
 
 if __name__ == '__main__':

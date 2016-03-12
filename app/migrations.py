@@ -155,6 +155,7 @@ class Customer(db.Model):
     __tablename__ = "customer"
     idcustomer = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(72))
+    timestamp = db.Column(db.DateTime, default=datetime.now())
 
     def __init__(self, json_data):
         self.name = json_data['name']
@@ -555,6 +556,7 @@ class File(db.Model):
     data = db.Column(db.VARBINARY(None))
     extension = db.Column(db.String(72))
     filename = db.Column(db.String(72))
+    timestamp = db.Column(db.DateTime, default=datetime.now())
 
     @property
     def get_data(self):

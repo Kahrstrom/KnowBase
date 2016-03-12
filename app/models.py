@@ -528,6 +528,12 @@ class Profile(db.Model):
         self.description= json_data['description']
 
     @property
+    def serialize_profilepicture(self):
+        if self.rel_profilepicture is not None:
+            return self.rel_profilepicture.serialize
+        else:
+            return ""
+    @property
     def serialize(self):
         return {
             'idprofile': self.idprofile,
@@ -540,7 +546,7 @@ class Profile(db.Model):
             'mobilephone': self.mobilephone,
             'phone': self.phone,
             'birthdate': self.birthdate,
-            'profilepicture' : self.rel_profilepicture.serialize,
+            'profilepicture' : self.serialize_profilepicture,
             'email' : self.email,
             'position' : self.position,
             'description' : self.description

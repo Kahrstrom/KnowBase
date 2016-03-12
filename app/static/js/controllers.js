@@ -77,6 +77,7 @@ angular.module('knowBase').controller('searchController',
 
     $scope.search = function(){
       if($scope.searchval != ""){
+        console.log("dsfsd")
         DataService.searchData({query: $scope.searchval})
           .then(function (data) {
               $scope.educations = data.educations;
