@@ -112,6 +112,10 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
                     templateUrl: 'static/partials/details.html',
                     controller: 'detailsController'
                 },
+                'editEducation@search' : {
+                    controller: 'educationFormController',
+                    templateUrl: 'static/partials/education.form.html'
+                }
             },
             access : 'restricted'
         })
@@ -182,22 +186,22 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
             }
         })
 
-        .state('publications',{
+        .state('publication',{
             url: '/publications',
             views: {
                 '' : {
                     controller: 'publicationController',
                     templateUrl: 'static/partials/publication.html'
                 },
-                'toolbar@publications' : {
+                'toolbar@publication' : {
                     controller: 'toolbarController',
                     templateUrl: 'static/partials/toolbar.html'
                 },
-                'edit@publications' : {
+                'edit@publication' : {
                     controller: 'publicationFormController',
                     templateUrl: 'static/partials/publication.form.html'
                 },
-                'skills@publications' : {
+                'skills@publication' : {
                     controller: 'skillsController',
                     templateUrl: 'static/partials/skills.list.html'
                 }
@@ -292,7 +296,7 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
         })
 
         .state('skill',{
-            url: '/skills',
+            url: '/skill',
             views: {
                 '' : {
                     controller: 'skillController',

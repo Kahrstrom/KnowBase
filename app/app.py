@@ -550,20 +550,24 @@ def search():
 
     for e in es.search(body=search_body).get('hits').get('hits'):
         src = e.get('_source')
-
-        if e.get('_type') == 'education':
-            education = Education.query.get(src['ideducation'])
-            #profiles[education.profile]['educations'].append(education.serialize)
-            res.educations.append(education.serialize)
+        try:
+            if e.get('_type') == 'education':
+                print(src['ideducation'])
+                education = Education.query.get(src['ideducation'])
+                res.educations.append(education.serialize)
+        except Exception as err:
+            print(err)
         if e.get('_type') == 'skill':
             skill = Skill.query.get(src['idskill'])
             res.skills.append(skill.serialize)
+
         if e.get('_type') == 'language':
             language = Language.query.get(src['idlanguage'])
             res.languages.append(language.serialize)
         if e.get('_type') == 'merit':
             merit = Merit.query.get(src['idmerit'])
             res.merits.append(merit.serialize)
+
         if e.get('_type') == 'publication':
             publication = Publication.query.get(src['idpublication'])
             res.publications.append(publication.serialize)
@@ -576,6 +580,7 @@ def search():
         if e.get('_type') == 'project':
             project = Project.query.get(src['idproject'])
             res.projects.append(project.serialize)
+
 
     return jsonify(res.serialize)
 

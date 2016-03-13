@@ -29,7 +29,7 @@
       <div ng-if="educations.length > 0">
         <md-header>Educations</md-header>
         <md-card>
-          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="education in educations" ng-click="toggleRight()">
+          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="education in educations" ng-click="edit(education)">
             <md-icon class="material-icons avatar">school</md-icon>
             <div class="md-list-item-text" layout="row">
               <div flex>
@@ -186,9 +186,6 @@
       </div>
     </div>
     <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
-      <md-toolbar>
-        <h1 class="md-toolbar-tools">Sidenav Right</h1>
-      </md-toolbar>
-      <div>test</div>
+      <div ng-if="selected.ideducation" ui-view="editEducation"/>
     </md-sidenav>
 </md-content>

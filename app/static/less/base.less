@@ -136,10 +136,19 @@ md-icon.md-icons-empty-state{
     border-radius: 50%;
     width: 160px;
     height: 160px;
+    &.profilepicture{
+        background-size : cover;            
+        background-repeat:   no-repeat;
+        background-position: center center; 
+    }
 }
 
 .circle.bordered {
     border: 5px white solid;
+    padding: 0px;
+}
+.circle.profilepicture{
+    background-size : cover !important;            
 }
 
 .md-avatar.profile-avatar{
@@ -352,6 +361,17 @@ md-contact-chips{
 button.md-button-small > md-icon.material-icons{
     margin-top: -16px;
     margin-left: -2px;
+}
+
+.circle.img-placeholder{
+    background-color: #cbcbcb;
+}
+
+md-icon.img-placeholder{
+    width: 134px;
+    height: 134px;
+    line-height: 134px;
+    text-align: center;
 }
 
 md-toolbar:not(.md-toolbar-flat) {

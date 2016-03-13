@@ -5,7 +5,7 @@
         <div ui-view="skills" />
     </md-sidenav>
 
-    <div layout="row" layout-padding layout-margin flex>
+    <div ng-if="educations" layout="row" layout-padding layout-margin flex>
         <div flex-gt-md="10" />
         <div ng-if="educations.length == 0" flex-gt-md="70" class="center" layout="column" layout-padding>
             <md-icon class="material-icons md-icons-empty-state md-huge md-inactive">school</md-icon>
@@ -34,7 +34,7 @@
 	
 
 <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
-    <div ng-if="education" ui-view="edit"/>
+    <div ng-if="selected" ui-view="edit"/>
 </md-sidenav>
 	
 </md-content>

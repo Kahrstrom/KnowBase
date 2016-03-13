@@ -11,13 +11,18 @@ db.session.commit()
 def delete_all():
     es = Elasticsearch()
     search_body = {
+        "from": 0,
+        "size": 10000,
         "query": {
+
             "query_string": {
                 "query": "*"
             }
         }
     }
     for e in es.search(body=search_body).get('hits').get('hits'):
+        print(e['_type'])
+        print(e['_id'])
         es.delete(index=config.db_name,doc_type=e['_type'],id=e['_id'])
 
 def rebuild_all():
