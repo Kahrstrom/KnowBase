@@ -1,83 +1,40 @@
+<header ui-view="toolbar"></header>
+<md-content flex-gt-sm layout="row" layout-margin-layout-padding>
+   <md-sidenav class="md-sidenav-left md-whiteframe-z2 full-height" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
 
-<div class=" full-height" layout="column" flex ng-if="!experience">
-	
-	
-	<md-list ng-cloak>
-		<div layout="row">
-		  	<md-subheader  flex class="md-no-sticky">{{title}}</md-subheader>
-		  	<md-button class="md-fab md-accent" ng-click="newExperience()" aria-label="New Experience">
-		        <md-icon class="material-icons md-light">add</md-icon>
-		    </md-button>
-		</div>
-	  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="experience in experiences" ng-click="editExperience(experience)">
-	    	<md-icon class="material-icons avatar">star</md-icon>
-    		<div class="md-list-item-text" >
-      			<h3> {{ experience.name }} </h3>
-      			<p> {{ experience.description }}</p>
-      			<p ng-if="experience.startdate || experience.enddate"> {{ experience.startdate | date : 'yyyy-MM'}} - {{experience.enddate | date : 'yyyy-MM'}} </p>
-    		</div>
-	  	</md-list-item>
+        <div ui-view="skills" />
+    </md-sidenav>
 
-	</md-list>
-</div>
-<div layout="column" class="full-height" flex ng-if="experience" >
-	<div flex layout="row" class="skill-header">
-		<span flex="33">
-			<md-button class="md-button-small" ng-click="cancelExperience()">
-				<md-icon class="material-icons">arrow_front</md-icon>
-			</md-button>
-			<span flex/>
-		</span>
-		<md-icon flex="33" class="material-icons center md-72">star</md-icon>
-		<span flex/>
-        <md-button class="md-button-small" ng-click="deleteRecord()">
-            <md-icon class="material-icons">delete</md-icon>
-        </md-button>
-	</div>
-	<form flex layout-margin layout-padding flex ng-submit="saveExperience()" name="ExperienceForm">
-		
-		<md-autocomplete flex required
-            md-input-name="nameAutoComplete"
-            md-min-length="0"
-            md-input-maxlength="64"
-            md-input-minlength="0"
-            md-no-cache="false"
-            md-selected-item="selectedName"
-            md-search-text="nameSearchText"
-            md-items="item in nameQueryFilter(nameSearchText)"
-            md-item-text="item.display"
-            md-floating-label="{{nameLabel}}"
-            md-selected-item-change="nameSelectChanged(item)"
-            md-search-text-change="nameSearchTextChanged(nameSearchText)"
-            md-select-on-match="true">
-          <md-item-template>
-            <span md-highlight-text="nameSearchText" md-highlight-flags="^i">{{item.display}}</span>
-          </md-item-template>
-        </md-autocomplete>	
-		
-		<md-input-container class="md-block md-icon-float">
-			<label>{{descriptionLabel}}</label>
-			<textarea rows="6" md-maxlength="512" type="text" name="description" ng-model="experience.description"></textarea>
-		</md-input-container>
-		
-		<div layout="row">
-
-    		<am-date-picker flex ng-model="experience.startdate"
-                    am-input-date-format="L"
-                    am-input-label="{{startdateLabel}}"
-                    am-today-button="Today"
-                    am-show-input-icon="true">
-            </am-date-picker>
-            <am-date-picker flex ng-model="experience.enddate"
-                am-input-date-format="L"
-                am-input-label="{{enddateLabel}}"
-                am-today-button="Today"
-                am-show-input-icon="true">
-            </am-date-picker>
+    <div layout="row" layout-padding layout-margin flex>
+        <div flex-gt-md="10" />
+        <div ng-if="experiences.length == 0" flex-gt-md="70" class="center" layout="column" layout-padding>
+            <md-icon class="material-icons md-icons-empty-state md-huge md-inactive">star</md-icon>
+            <md-header class="md-inactive">No experience here...</md-header>
         </div>
-		<div layout="row" class="vertical-nudge-top">
-            <div flex="33" flex="20"></div>
-            <md-button  flex-gt-md="33" flex="60" type="submit" class="md-raised md-primary" flex>Save</md-button>
+        <div ng-if="experiences.length > 0" class="vertical-nudge-top" flex-gt-md="70">
+            <md-header>Experiences</md-header>
+            <md-card>
+                <md-list-item class="md-3-line secondary-button-padding" ng-repeat="experience in experiences" ng-click="editExperience(experience)">
+                    <md-icon class="material-icons avatar">star</md-icon>
+                    <div class="md-list-item-text" >
+                        <h3> {{ experience.name }}</h3>
+                        <p> {{ experience.description }}</p>
+                        <p ng-if="experience.startdate || experience.enddate"> {{experience.startdate | date : 'yyyy-MM'}} - {{experience.enddate | date : 'yyyy-MM'}} </p>
+                    </div>
+                </md-list-item>
+            </md-card>
         </div>
-	</form>
-</div>
+
+        <div flex layout="row" layout-align="end">
+            <md-button class="md-fab md-accent" ng-click="newExperience()" aria-label="New Experience">
+                <md-icon class="material-icons md-light">add</md-icon>
+            </md-button>
+        </div>
+    </div>
+    
+
+    <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
+        <div ng-if="experience" ui-view="edit"/>
+    </md-sidenav>
+    
+</md-content>

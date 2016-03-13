@@ -251,7 +251,7 @@ def get_user_educations():
     retval = []
     for edu in educations:
             retval.append(edu.serialize)
-
+    print(retval)
     return jsonify(data=retval)
 
 

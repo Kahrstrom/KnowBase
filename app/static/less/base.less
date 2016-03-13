@@ -6,7 +6,7 @@
 
 @color-accent-primary: #FFA000;
 @color-accent-hue-1: #FFE082;
-@color-accent-hue-2: #FFCA28;
+@color-accent-hue-: #FFCA28;
 @color-accent-hue-3: #FFB300;
 @color-accent-hue-4: #FF8F00;
 
@@ -123,6 +123,11 @@ md-card-title{
 
 md-icon{
     height: auto;
+}
+
+md-icon.md-icons-empty-state{
+    margin-top: 25%;
+    margin-bottom: 8px;
 }
 
 .circle {
@@ -266,10 +271,12 @@ md-autocomplete[md-floating-label]{
 
 md-badge{
   margin: 0 0 0 8px;
+  text-align: center;
   background-color: rgba(0,0,0,0.35);
   color: white;
   padding: 2px 4px;
   border-radius: 4px;
+  min-width: 16px;
   &.md-primary{
     background-color: @color-primary;
   }
@@ -342,19 +349,28 @@ md-contact-chips{
 .material-icons.md-light { color: rgba(255, 255, 255, 1) !important; }
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3) !important; }
 
-md-toolbar {
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-flex-direction: column;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    position: relative;
-    z-index: 2;
-    font-size: 1.3em;
-    min-height: 64px;
-    width: 100%;
+button.md-button-small > md-icon.material-icons{
+    margin-top: -16px;
+    margin-left: -2px;
+}
+
+md-toolbar:not(.md-toolbar-flat) {
+    // display: -webkit-flex;
+    // display: -ms-flexbox;
+    // display: flex;
+    // -webkit-flex-direction: column;
+    // -ms-flex-direction: column;
+    // flex-direction: column;
+    // position: relative;
+    // z-index: 2;
+    // font-size: 1.3em;
+    // min-height: 64px;
+    // width: 100%;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
+}
+
+md-toolbar.md-toolbar-grande{
+    height: 220px;
 }
 
 .md-sidenav-right {

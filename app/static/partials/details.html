@@ -47,11 +47,13 @@
 		</md-list>
 	</md-tab>
 	<md-tab label="Profiles">
-		<md-list-item  class="md-3-line secondary-button-padding vertical-nudge-top" ng-repeat="competenceProfile in competenceProfiles" ng-click="showProfile(competenceProfile)">
-	    	<md-icon class="material-icons avatar">public</md-icon>
-    		<div class="md-list-item-text" >
-      			<h3> {{ competenceProfile.name }}</h3>
-    		</div>
-	  	</md-list-item>
+		<md-list class="md-dense vertical-nudge-top" flex>
+			<md-list-item  class="md-3-line secondary-button-padding vertical-nudge-top" ng-repeat="competenceProfile in competenceProfiles" ng-click="showProfile(competenceProfile)">
+		    	<md-icon class="material-icons avatar">public</md-icon>
+	    		<div class="md-list-item-text" >
+	      			<h3> {{ competenceProfile.name }}</h3>
+	    		</div>
+		  	</md-list-item>
+	  	</md-list>
 	</md-tab>
 </md-tabs>

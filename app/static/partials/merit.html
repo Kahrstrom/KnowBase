@@ -1,76 +1,40 @@
+<header ui-view="toolbar"></header>
+<md-content flex-gt-sm layout="row" layout-margin-layout-padding>
+   <md-sidenav class="md-sidenav-left md-whiteframe-z2 full-height" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
 
-<div class="full-height" layout="column" flex ng-if="!merit">
-	
-	
-	<md-list ng-cloak>
-		<div layout="row">
-		  	<md-subheader  flex class="md-no-sticky">{{title}}</md-subheader>
-		  	<md-button ng-if="!Merit" class="md-fab md-accent" ng-click="newMerit()" aria-label="New Merit">
-		        <md-icon class="material-icons md-light">add</md-icon>
-		    </md-button>
-		</div>
-	  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="merit in merits" ng-click="editMerit(merit)">
-	    	<md-icon class="material-icons avatar">local_activity</md-icon>
-    		<div class="md-list-item-text" >
-      			<h3> {{ merit.name }} </h3>
-      			<p> {{ merit.description }}</p>
-                <p> {{merit.date | date : 'yyyy-MM'}} </p>
-    		</div>
-	  	</md-list-item>
+        <div ui-view="skills" />
+    </md-sidenav>
 
-	</md-list>
-</div>
-<div class="full-height" layout="column" flex ng-if="merit">
-	<div flex layout="row" class="skill-header">
-		<span flex="33">
-			<md-button class="md-button-small" ng-click="cancelExperience()">
-				<md-icon class="material-icons">arrow_front</md-icon>
-			</md-button>
-			<span flex/>
-		</span>
-		<md-icon flex="33" class="material-icons center md-72">local_activity</md-icon>
-		<span flex/>
-        <md-button class="md-button-small" ng-click="deleteRecord()">
-            <md-icon class="material-icons">delete</md-icon>
-        </md-button>
-	</div>
-	<form flex layout-margin layout-padding flex ng-submit="saveMerit()" name="MeritForm">
-		
-		<md-autocomplete flex required
-            md-input-name="nameAutoComplete"
-            md-min-length="0"
-            md-input-maxlength="64"
-            md-input-minlength="0"
-            md-no-cache="false"
-            md-selected-item="selectedName"
-            md-search-text="nameSearchText"
-            md-items="item in nameQueryFilter(nameSearchText)"
-            md-item-text="item.display"
-            md-floating-label="{{nameLabel}}"
-            md-selected-item-change="nameSelectChanged(item)"
-            md-search-text-change="nameSearchTextChanged(nameSearchText)"
-            md-select-on-match="true">
-          <md-item-template>
-            <span md-highlight-text="nameSearchText" md-highlight-flags="^i">{{item.display}}</span>
-          </md-item-template>
-        </md-autocomplete>	
-		
-		<md-input-container class="md-block md-icon-float">
-			<label>{{descriptionLabel}}</label>
-			<textarea rows="6" md-maxlength="512" type="text" name="description" ng-model="merit.description"></textarea>
-		</md-input-container>
+    <div layout="row" layout-padding layout-margin flex>
+        <div flex-gt-md="10" />
+        <div ng-if="merits.length == 0" flex-gt-md="70" class="center" layout="column" layout-padding>
+            <md-icon class="material-icons md-icons-empty-state md-huge md-inactive">local_activity</md-icon>
+            <md-header class="md-inactive">No merits here...</md-header>
+        </div>
+        <div ng-if="merits.length > 0" class="vertical-nudge-top" flex-gt-md="70">
+            <md-header>Merits</md-header>
+            <md-card>
+                <md-list-item class="md-3-line secondary-button-padding" ng-repeat="merit in merits" ng-click="editMerit(merit)">
+			    	<md-icon class="material-icons avatar">local_activity</md-icon>
+		    		<div class="md-list-item-text" >
+		      			<h3> {{ merit.name }} </h3>
+		      			<p> {{ merit.description }}</p>
+		                <p> {{merit.date | date : 'yyyy-MM'}} </p>
+		    		</div>
+			  	</md-list-item>
+            </md-card>
+        </div>
 
-		<am-date-picker flex ng-model="merit.date"
-            am-input-date-format="L"
-            am-input-label="{{dateLabel}}"
-            am-today-button="Today"
-            am-show-input-icon="true">
-        </am-date-picker>
-		
-		<div layout="row" class="vertical-nudge-top">
-        	<div flex="33" flex="20"></div>
-            <md-button  flex-gt-md="33" flex="60" type="submit" class="md-raised md-primary" flex>Save</md-button>
-      	</div>
-	</form>
-	
-</div>
+        <div flex layout="row" layout-align="end">
+            <md-button class="md-fab md-accent" ng-click="newMerit()" aria-label="New Merit">
+                <md-icon class="material-icons md-light">add</md-icon>
+            </md-button>
+        </div>
+    </div>
+    
+
+    <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
+        <div ng-if="merit" ui-view="edit"/>
+    </md-sidenav>
+    
+</md-content>

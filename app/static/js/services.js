@@ -238,6 +238,59 @@ angular.module('knowBase').service('SkillService', ['$q', '$timeout','$http',
     self.getSkillTypes = function(){
       return $http.get('/api/skilltypes')
     }
+
+    self.buildGridModel = function($scope, tileTmpl){
+      var it, results = [ ];
+
+      $.each($scope.skillTypes,function(i,s){
+        it = angular.extend({},tileTmpl);
+        
+        it.title = s.locale;
+        it.span  = { row : 1, col : 1 };
+        it.name = s.name;
+        it.count = s.count;
+        switch(s.name){
+          case "education":
+            it.background = "hue-2";
+            it.icon  = it.icon + "school";
+            it.span.row = 2;
+            break;
+          case "workexperience": 
+            it.background = "hue-3";  
+            it.icon  = it.icon + "work";   
+            it.span.row = 2;    
+            break;
+          case "experience": 
+            it.icon  = it.icon + "star";
+            it.background = "hue-1";      
+            break;
+          case "project":
+            it.icon  = it.icon + "list";
+            it.background = "hue-3";
+            it.span.col = 2;
+            break;
+          case "language":
+            it.background = "hue-2";
+            it.icon  = it.icon + "forum";
+            break;
+          case "publication": 
+            it.background = "hue-2";
+            it.icon  = it.icon + "book";         
+            break;
+          case "skill": 
+            it.background = "hue-1";      
+            it.icon  = it.icon + "vpn_key";
+            it.span.col = 2;
+            break;
+          case "merit":
+            it.background= "hue-3";
+            it.icon = it.icon + "local_activity"
+            break;
+          }
+        results.push(it); 
+      });
+      return results;
+    }
    
 }]);
 

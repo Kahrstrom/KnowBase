@@ -139,6 +139,180 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
             access: 'open'
         })
 
+        .state('education',{
+            url: '/educations',
+            views: {
+                '' : {
+                    controller: 'educationController',
+                    templateUrl: 'static/partials/education.html'
+                },
+                'toolbar@education' : {
+                    controller: 'toolbarController',
+                    templateUrl: 'static/partials/toolbar.html'
+                },
+                'edit@education' : {
+                    controller: 'educationFormController',
+                    templateUrl: 'static/partials/education.form.html'
+                },
+                'skills@education' : {
+                    controller: 'skillsController',
+                    templateUrl: 'static/partials/skills.list.html'
+                }
+            }
+        })
+        .state('experience',{
+            url: '/experiences',
+            views: {
+                '' : {
+                    controller: 'experienceController',
+                    templateUrl: 'static/partials/experience.html'
+                },
+                'toolbar@experience' : {
+                    controller: 'toolbarController',
+                    templateUrl: 'static/partials/toolbar.html'
+                },
+                'edit@experience' : {
+                    controller: 'experienceFormController',
+                    templateUrl: 'static/partials/experience.form.html'
+                },
+                'skills@experience' : {
+                    controller: 'skillsController',
+                    templateUrl: 'static/partials/skills.list.html'
+                }
+            }
+        })
+
+        .state('publications',{
+            url: '/publications',
+            views: {
+                '' : {
+                    controller: 'publicationController',
+                    templateUrl: 'static/partials/publication.html'
+                },
+                'toolbar@publications' : {
+                    controller: 'toolbarController',
+                    templateUrl: 'static/partials/toolbar.html'
+                },
+                'edit@publications' : {
+                    controller: 'publicationFormController',
+                    templateUrl: 'static/partials/publication.form.html'
+                },
+                'skills@publications' : {
+                    controller: 'skillsController',
+                    templateUrl: 'static/partials/skills.list.html'
+                }
+            }
+        })
+        .state('workexperience',{
+            url: '/workexperience',
+            views: {
+                '' : {
+                    controller: 'workExperienceController',
+                    templateUrl: 'static/partials/workexperience.html'
+                },
+                'toolbar@workexperience' : {
+                    controller: 'toolbarController',
+                    templateUrl: 'static/partials/toolbar.html'
+                },
+                'edit@workexperience' : {
+                    controller: 'workExperienceFormController',
+                    templateUrl: 'static/partials/workexperience.form.html'
+                },
+                'skills@workexperience' : {
+                    controller: 'skillsController',
+                    templateUrl: 'static/partials/skills.list.html'
+                }
+            }
+        })
+
+        .state('projects',{
+            url: '/projects',
+            views: {
+                '' : {
+                    controller: 'projectController',
+                    templateUrl: 'static/partials/project.html'
+                },
+                'toolbar@projects' : {
+                    controller: 'toolbarController',
+                    templateUrl: 'static/partials/toolbar.html'
+                },
+                'edit@projects' : {
+                    controller: 'projectFormController',
+                    templateUrl: 'static/partials/project.form.html'
+                },
+                'skills@projects' : {
+                    controller: 'skillsController',
+                    templateUrl: 'static/partials/skills.list.html'
+                }
+            }
+        })
+
+        .state('merit',{
+            url: '/merits',
+            views: {
+                '' : {
+                    controller: 'meritController',
+                    templateUrl: 'static/partials/merit.html'
+                },
+                'toolbar@merit' : {
+                    controller: 'toolbarController',
+                    templateUrl: 'static/partials/toolbar.html'
+                },
+                'edit@merit' : {
+                    controller: 'meritFormController',
+                    templateUrl: 'static/partials/merit.form.html'
+                },
+                'skills@merit' : {
+                    controller: 'skillsController',
+                    templateUrl: 'static/partials/skills.list.html'
+                }
+            }
+        })
+
+        .state('language',{
+            url: '/languages',
+            views: {
+                '' : {
+                    controller: 'languageController',
+                    templateUrl: 'static/partials/language.html'
+                },
+                'toolbar@language' : {
+                    controller: 'toolbarController',
+                    templateUrl: 'static/partials/toolbar.html'
+                },
+                'edit@language' : {
+                    controller: 'languageFormController',
+                    templateUrl: 'static/partials/language.form.html'
+                },
+                'skills@language' : {
+                    controller: 'skillsController',
+                    templateUrl: 'static/partials/skills.list.html'
+                }
+            }
+        })
+
+        .state('skill',{
+            url: '/skills',
+            views: {
+                '' : {
+                    controller: 'skillController',
+                    templateUrl: 'static/partials/skill.html'
+                },
+                'toolbar@skill' : {
+                    controller: 'toolbarController',
+                    templateUrl: 'static/partials/toolbar.html'
+                },
+                'edit@skill' : {
+                    controller: 'skillFormController',
+                    templateUrl: 'static/partials/skill.form.html'
+                },
+                'skills@skill' : {
+                    controller: 'skillsController',
+                    templateUrl: 'static/partials/skills.list.html'
+                }
+            }
+        })
+
         .state('skills', {
             url: '/skills',
             views: {
@@ -147,53 +321,6 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
             		controller: 'skillsController'
         		},
                 'toolbar@skills' : {
-                    controller: 'toolbarController',
-                    templateUrl: 'static/partials/toolbar.html'
-                },
-                'education@skills':{
-                    controller: 'educationController',
-                    templateUrl: 'static/partials/education.html'
-                },
-                'workexperience@skills':{
-                    controller: 'workExperienceController',
-                    templateUrl: 'static/partials/workexperience.html'
-                },
-                'project@skills':{
-                    controller: 'projectController',
-                    templateUrl: 'static/partials/project.html'
-                },
-                'language@skills':{
-                    controller: 'languageController',
-                    templateUrl: 'static/partials/language.html'
-                },
-                'experience@skills':{
-                    controller: 'experienceController',
-                    templateUrl: 'static/partials/experience.html'
-                },
-                'skill@skills':{
-                    controller: 'skillController',
-                    templateUrl: 'static/partials/skill.html'
-                },
-                'merit@skills':{
-                    controller: 'meritController',
-                    templateUrl: 'static/partials/merit.html'
-                },
-                'publication@skills':{
-                    controller: 'publicationController',
-                    templateUrl: 'static/partials/publication.html'
-                }
-            },
-            access: 'restricted'
-        })
-
-        .state('education', {
-            url: '/education',
-            views: {
-                '' : {
-                    templateUrl: 'static/partials/education.html',
-                    controller: 'educationController'
-                },
-                'toolbar@education' : {
                     controller: 'toolbarController',
                     templateUrl: 'static/partials/toolbar.html'
                 }

@@ -1,109 +1,40 @@
+<header ui-view="toolbar"></header>
+<md-content flex-gt-sm layout="row" layout-margin-layout-padding>
+   <md-sidenav class="md-sidenav-left md-whiteframe-z2 full-height" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
 
-<div class="full-height" layout="column" flex ng-if="!project">
-	
-	
-	<md-list ng-cloak>
-		<div layout="row">
-		  	<md-subheader  flex class="md-no-sticky">{{title}}</md-subheader>
-		  	<md-button ng-if="!project" class="md-fab md-accent" ng-click="newProject()" aria-label="New Project">
-		        <md-icon class="material-icons md-light">add</md-icon>
-		    </md-button>
-		</div>
-	  	<md-list-item class="md-3-line secondary-button-padding" ng-repeat="project in projects" ng-click="editProject(project)">
-	    	<md-icon class="material-icons avatar">list</md-icon>
-    		<div class="md-list-item-text" >
-      			<h3> {{ project.name }} </h3>
-      			<p> {{ project.customername }}</p>
-      			<p ng-if="project.startdate || project.enddate"> {{project.startdate | date : 'yyyy-MM'}} - {{project.enddate | date : 'yyyy-MM'}} </p>
-    		</div>
-	  	</md-list-item>
+        <div ui-view="skills" />
+    </md-sidenav>
 
-	</md-list>
-</div>
+    <div layout="row" layout-padding layout-margin flex>
+        <div flex-gt-md="10" />
+        <div ng-if="projects.length == 0" flex-gt-md="70" class="center" layout="column" layout-padding>
+            <md-icon class="material-icons md-icons-empty-state md-huge md-inactive">list</md-icon>
+            <md-header class="md-inactive">No projects here...</md-header>
+        </div>
+        <div ng-if="projects.length > 0" class="vertical-nudge-top" flex-gt-md="70">
+            <md-header>Projects</md-header>
+            <md-card>
+                <md-list-item class="md-3-line secondary-button-padding" ng-repeat="project in projects" ng-click="editProject(project)">
+                    <md-icon class="material-icons avatar">list</md-icon>
+                    <div class="md-list-item-text" >
+                        <h3> {{ project.name }} </h3>
+                        <p> {{ project.customername }}</p>
+                        <p ng-if="project.startdate || project.enddate"> {{project.startdate | date : 'yyyy-MM'}} - {{project.enddate | date : 'yyyy-MM'}} </p>
+                    </div>
+                </md-list-item>
+            </md-card>
+        </div>
 
-<div class="full-height" layout="column" flex ng-if="project">
-	<div flex layout="row" class="skill-header">
-        <span flex="33">
-            <md-button class="md-button-small" ng-click="cancelExperience()">
-                <md-icon class="material-icons">arrow_front</md-icon>
+        <div flex layout="row" layout-align="end">
+            <md-button class="md-fab md-accent" ng-click="newProject()" aria-label="New Project">
+                <md-icon class="material-icons md-light">add</md-icon>
             </md-button>
-            <span flex/>
-        </span>
-        <md-icon flex="33" class="material-icons center md-72">list</md-icon>
-        <span flex/>
-        <md-button class="md-button-small" ng-click="deleteRecord()">
-            <md-icon class="material-icons">delete</md-icon>
-        </md-button>
+        </div>
     </div>
-	<form flex layout-margin layout-padding flex ng-submit="saveProject()" name="projectForm">
-		
-		<md-autocomplete flex required
-            md-input-name="nameAutoComplete"
-            md-min-length="0"
-            md-input-maxlength="64"
-            md-input-minlength="0"
-            md-no-cache="false"
-            md-selected-item="selectedName"
-            md-search-text="nameSearchText"
-            md-items="item in nameQueryFilter(nameSearchText)"
-            md-item-text="item.display"
-            md-floating-label="{{nameLabel}}"
-            md-selected-item-change="nameSelectChanged(item)"
-            md-search-text-change="nameSearchTextChanged(nameSearchText)"
-            md-select-on-match="true">
-          <md-item-template>
-            <span md-highlight-text="nameSearchText" md-highlight-flags="^i">{{item.display}}</span>
-          </md-item-template>
-        </md-autocomplete>	
-        <md-autocomplete flex required
-            md-input-name="customerAutoComplete"
-            md-min-length="0"
-            md-input-maxlength="64"
-            md-input-minlength="0"
-            md-no-cache="false"
-            md-selected-item="selectedCustomer"
-            md-search-text="customerSearchText"
-            md-items="item in customerQueryFilter(customerSearchText)"
-            md-item-text="item.display"
-            md-floating-label="{{customerLabel}}"
-            md-selected-item-change="customerSelectChanged(item)"
-            md-search-text-change="customerSearchTextChanged(customerSearchText)"
-            md-select-on-match="true">
-          <md-item-template>
-            <span md-highlight-text="customerSearchText" md-highlight-flags="^i">{{item.display}}</span>
-          </md-item-template>
-        </md-autocomplete>
-		
-		<md-input-container class="md-block md-icon-float">
-			<label>{{descriptionLabel}}</label>
-			<textarea rows="6" md-maxlength="512" type="text" name="description" ng-model="project.description"></textarea>
-		</md-input-container>
+    
 
-        <md-input-container class="md-block md-icon-float">
-            <label>{{hoursLabel}}</label>
-            <input type="number" name="hours" ng-model="project.hours">
-        </md-input-container>
-		
-		<div layout="row">
-
-            <am-date-picker flex ng-model="project.startdate"
-                    am-input-date-format="L"
-                    am-input-label="{{startdateLabel}}"
-                    am-today-button="Today"
-                    am-show-input-icon="true">
-            </am-date-picker>
-            <am-date-picker flex ng-model="project.enddate"
-                am-input-date-format="L"
-                am-input-label="{{enddateLabel}}"
-                am-today-button="Today"
-                am-show-input-icon="true">
-            </am-date-picker>
-        </div>
-
-		<div layout="row" class="vertical-nudge-top">
-            <div flex="33" flex="20"></div>
-            <md-button  flex-gt-md="33" flex="60" type="submit" class="md-raised md-primary" flex>Save</md-button>
-        </div>
-	</form>
-
-</div>
+    <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
+        <div ng-if="project" ui-view="edit"/>
+    </md-sidenav>
+    
+</md-content>

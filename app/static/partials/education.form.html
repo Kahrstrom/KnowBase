@@ -1,0 +1,109 @@
+<md-toolbar class="md-hue-2 md-toolbar-grande" layout="column">
+    <div layout="row" flex layout-padding >
+        <div flex="20">
+            <md-button class="md-button-small" ng-click="cancel()">
+                <md-icon class="material-icons md-light md-24">arrow_forward</md-icon>
+            </md-button>
+        </div>
+        <div flex="60" layout="row" layout-align="center center">
+            <md-icon class="material-icons md-light md-72 center vertical-nudge-top">school</md-icon>
+        </div>
+        <div flex layout="row" layout-align="end">
+            <md-button ng-if="education.ideducation" class="md-button-small" ng-click="deleteRecord()">
+                <md-iconclass="material-icons md-light">delete</md-icon>
+            </md-button>
+        </div>
+  
+    </div>
+    
+    <md-list-item class="md-2-line">
+      <div class="md-list-item-text">
+            <h3 layout="row" ng-if="education.ideducation" layout-align="center center">{{education.education}}</h3>
+            <h3 layout="row" ng-if="!education.ideducation" layout-align="center center">Add education</h3>
+      </div>
+    </md-list-item> 
+</md-toolbar>
+<form flex class="vertical-nudge-top" layout-margin layout-padding flex ng-submit="saveEducation()" name="educationForm">
+		
+	<md-autocomplete flex required
+        md-input-name="titleAutoComplete"
+        md-min-length="0"
+        md-input-maxlength="64"
+        md-input-minlength="0"
+        md-no-cache="false"
+        md-selected-item="selectedTitle"
+        md-search-text="titleSearchText"
+        md-items="item in titleQueryFilter(titleSearchText)"
+        md-item-text="item.display"
+        md-floating-label="{{titleLabel}}"
+        md-selected-item-change="titleSelectChanged(item)"
+        md-search-text-change="titleSearchTextChanged(titleSearchText)"
+        md-select-on-match="true">
+      <md-item-template>
+        <span md-highlight-text="titleSearchText" md-highlight-flags="^i">{{item.display}}</span>
+      </md-item-template>
+    </md-autocomplete>
+    <md-autocomplete flex required
+        md-input-name="educationAutoComplete"
+        md-min-length="0"
+        md-input-maxlength="64"
+        md-input-minlength="0"
+        md-no-cache="false"
+        md-selected-item="selectedEducation"
+        md-search-text="educationSearchText"
+        md-items="item in educationQueryFilter(educationSearchText)"
+        md-item-text="item.display"
+        md-floating-label="{{educationLabel}}"
+        md-selected-item-change="educationSelectChanged(item)"
+        md-search-text-change="educationSearchTextChanged(educationSearchText)"
+        md-select-on-match="true">
+      <md-item-template>
+        <span md-highlight-text="educationSearchText" md-highlight-flags="^i">{{item.display}}</span>
+      </md-item-template>
+    </md-autocomplete>	
+    <md-autocomplete flex required
+        md-input-name="schoolAutoComplete"
+        md-min-length="0"
+        md-input-maxlength="64"
+        md-input-minlength="0"
+        md-no-cache="false"
+        md-selected-item="selectedSchool"
+        md-search-text="schoolSearchText"
+        md-items="item in schoolQueryFilter(schoolSearchText)"
+        md-item-text="item.display"
+        md-floating-label="{{schoolLabel}}"
+        md-selected-item-change="schoolSelectChanged(item)"
+        md-search-text-change="schoolSearchTextChanged(schoolSearchText)"
+        md-select-on-match="true">
+      <md-item-template>
+        <span md-highlight-text="schoolSearchText" md-highlight-flags="^i">{{item.display}}</span>
+      </md-item-template>
+    </md-autocomplete>
+	
+	<md-input-container class="md-block md-icon-float">
+		<label>{{descriptionLabel}}</label>
+		<textarea rows="6" md-maxlength="512" type="text" name="description" ng-model="education.description"></textarea>
+	</md-input-container>
+    <div layout="row">
+
+		<am-date-picker flex ng-model="education.startdate"
+                am-input-date-format="L"
+                am-input-label="{{startdateLabel}}"
+                am-today-button="Today"
+                am-show-input-icon="true">
+        </am-date-picker>
+        <am-date-picker flex ng-model="education.enddate"
+            am-input-date-format="L"
+            am-input-label="{{enddateLabel}}"
+            am-today-button="Today"
+            am-show-input-icon="true">
+        </am-date-picker>
+    </div>
+	<div layout="row" class="vertical-nudge-top">
+        <div flex="33" flex="20"></div>
+        <md-button  flex-gt-md="33" flex="60" type="submit" class="md-raised md-primary" flex>Save</md-button>
+    </div>
+</form>
+
+
+

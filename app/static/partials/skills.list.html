@@ -1,0 +1,20 @@
+<md-toolbar class="md-hue-2 md-toolbar-grande" layout="column">
+	<div class="vertical-nudge-top" />
+	<md-icon layout-align="center center" class="material-icons md-light md-72 center vertical-nudge-top">flash_on</md-icon>
+    <md-list-item class="md-2-line">
+      <div class="md-list-item-text">
+	        <h3 layout="row" layout-align="center center">Competences</h3>
+      </div>
+    </md-list-item>
+</md-toolbar>
+<md-list class="vertical-nudge-top">
+    <md-list-item class="md-2-line" ng-repeat="tile in tiles" ng-click="skillView(tile.name)" layout="row">
+        <md-icon class="material-icons md-24">{{tile.icon}}</md-icon>
+        <div class="md-list-item-text" flex >
+            <h4>{{tile.title}}</h4>
+        </div>
+        <p flex="10">{{tile.count}}</p>
+    </md-list-item>
+
+
+</md-list>

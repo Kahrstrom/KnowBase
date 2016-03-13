@@ -23,7 +23,7 @@
 			                  md-colspan="{{tile.span.col}}"
 			                  md-colspan-sm="1"
 			                  ng-class="tile.background" 
-			                  ng-click="setActiveSkill(tile)"
+			              	  ui-sref="{{tile.name}}"
 			                  class="link-tile">
 			      <md-icon class="material-icons md-64">{{tile.icon}}</md-icon>
 			      <md-grid-tile-footer flex>
@@ -60,7 +60,7 @@
 	</div>
  <!--   -->
  	<!-- <div  flex> -->
- 	<div hide="true" id="skill-column" show-gt-md layout-padding layout-margin layout="column" ng-if="activeSkill == skill" ng-repeat="skill in tiles" flex flex-gt-md="60">
+ <!-- 	<div hide="true" id="skill-column" show-gt-md layout-padding layout-margin layout="column" ng-if="activeSkill == skill" ng-repeat="skill in tiles" flex flex-gt-md="60">
  		<md-toolbar md-theme="grey" id="tab-control" hide-gt-md flex>
 			<div class="md-toolbar-tools">
 				<span flex="10"/>
@@ -68,6 +68,6 @@
 				<span class="tab-selector" flex="30" ng-click="togglePage()">{{ activeSkill.title }}</span>
 			</div>
 		</md-toolbar>
-		<md-whiteframe class="md-whiteframe-2dp"  ui-view="{{skill.name}}" layout="row" layout-padding layout-margin></md-whiteframe>	
-	</div>
+		<md-content ui-view="{{skill.name}}" layout="row" layout-padding layout-margin></md-content>	
+	</div> -->
 </md-content>
