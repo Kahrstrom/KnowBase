@@ -1174,7 +1174,7 @@ angular.module('knowBase').controller('meritFormController',
     $scope.saveMerit = function(){
       DataService.saveSkill($scope.merit,'merit')
         .then(function (data) {
-            $state.go('merits',{},{reload:true});
+            $state.go('merit',{},{reload:true});
         },
         // handle error
         function (reason) {

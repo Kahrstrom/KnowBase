@@ -225,22 +225,22 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
             }
         })
 
-        .state('projects',{
+        .state('project',{
             url: '/projects',
             views: {
                 '' : {
                     controller: 'projectController',
                     templateUrl: 'static/partials/project.html'
                 },
-                'toolbar@projects' : {
+                'toolbar@project' : {
                     controller: 'toolbarController',
                     templateUrl: 'static/partials/toolbar.html'
                 },
-                'edit@projects' : {
+                'edit@project' : {
                     controller: 'projectFormController',
                     templateUrl: 'static/partials/project.form.html'
                 },
-                'skills@projects' : {
+                'skills@project' : {
                     controller: 'skillsController',
                     templateUrl: 'static/partials/skills.list.html'
                 }
