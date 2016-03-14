@@ -16,176 +16,26 @@
   </div>
 </md-toolbar>
 
-<md-content flex-gt-sm layout="row" layout-margin-layout-padding class="full-height">
-    <md-sidenav class="md-sidenav-left md-whiteframe-z2 full-height" md-component-id="left">
-      <div flex ui-view="details"/>
-    </md-sidenav>
-    <div flex-gt-sm="20" flex-sm="0"></div>
-    <div flex-gt-sm="60" flex layout="column" layout-margin-layout-padding class="vertical-nudge-top ">
-      <div ng-if="searchval == ''" class="vertical-align-top center" layout="column" layout-padding>
-        <md-icon class="material-icons md-huge md-inactive">search</md-icon>
-        <md-header class="md-inactive">Search for profiles and competences</md-header>
-      </div>
-      <div ng-if="educations.length > 0">
-        <md-header>Educations</md-header>
-        <md-card>
-          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="education in educations" ng-click="edit(education)">
-            <md-icon class="material-icons avatar">school</md-icon>
-            <div class="md-list-item-text" layout="row">
-              <div flex>
-                <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ education.title }} - {{ education.education }} </h3>
-                <p md-highlight-flags="i" md-highlight-text="searchval"> {{ education.school }}</p>          
-              </div>  
-              <md-button class="md-secondary md-icon-button" ng-click="showProfile(education.profile)">
-                <img ng-src="{{getImg(education.profile.profilepicture)}}" class="md-avatar profile-avatar">
-                  <md-tooltip>{{education.profile.firstname}} {{education.profile.lastname}}</md-tooltip>
-                </img>
-              </md-button>
-            </div>
-            <md-divider ng-if="!$last"></md-divider>
-          </md-list-item>
-        </md-card>
-      </div>
-      <div ng-if="workexperiences.length > 0">
-        <md-header>Work experience</md-header>
-        <md-card>
-          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="workExperience in workexperiences" ng-click="toggleRight()">
-            <md-icon class="material-icons avatar">work</md-icon>
-            <div class="md-list-item-text" layout="row">
-              <div flex>
-                <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ workExperience.title }} </h3>
-                <p md-highlight-flags="i" md-highlight-text="searchval"> {{ workExperience.employer }}</p>
-              </div>
-              <md-button class="md-secondary md-icon-button" ng-click="showProfile(workExperience.profile)">
-                <img ng-src="{{getImg(workExperience.profile.profilepicture)}}" class="md-avatar profile-avatar">
-                  <md-tooltip>{{workExperience.profile.firstname}} {{workExperience.profile.lastname}}</md-tooltip>
-                </img>
-              </md-button>
-            </div>
-          </md-list-item>
-        </md-card>
-      </div>
-      <div ng-if="projects.length > 0">
-        <md-header>Projects</md-header>
-        <md-card>
-          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="project in projects" ng-click="toggleRight()">
-            <md-icon class="material-icons avatar">list</md-icon>
-            <div class="md-list-item-text" layout="row" >
-              <div flex>
-                <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ project.name }} </h3>
-                <p md-highlight-flags="i" md-highlight-text="searchval"> {{ project.customername }}</p>
-              </div>
-              <md-button class="md-secondary md-icon-button" ng-click="showProfile(project.profile)">
-                <img ng-src="{{getImg(project.profile.profilepicture)}}" class="md-avatar profile-avatar">
-                  <md-tooltip>{{project.profile.firstname}} {{project.profile.lastname}}</md-tooltip>
-                </img>
-              </md-button>
-            </div>
-            <md-divider ng-if="!$last"></md-divider>
-          </md-list-item>
-        </md-card>
-      </div>
-      <div ng-if="merits.length > 0">
-        <md-header>Merits</md-header>
-        <md-card>
-          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="merit in merits" ng-click="toggleRight()">
-            <md-icon class="material-icons avatar">local_activity</md-icon>
-            <div class="md-list-item-text" layout="row">
-              <div flex="90">
-                <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ merit.name }} </h3>
-                <p md-highlight-flags="i" md-highlight-text="searchval"> {{ merit.description }}</p>
-              </div>
-              <md-button class="md-secondary md-icon-button" ng-click="showProfile(merit.profile)">
-                <img ng-src="{{getImg(merit.profile.profilepicture)}}" class="md-avatar profile-avatar">
-                  <md-tooltip>{{merit.profile.firstname}} {{merit.profile.lastname}}</md-tooltip>
-                </img>
-              </md-button>
-            </div>  
-            <md-divider ng-if="!$last"></md-divider>
-          </md-list-item>
-        </md-card>
-      </div>
-      <div ng-if="experiences.length > 0">
-        <md-header>Experience</md-header>
-        <md-card>
-          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="experience in experiences" ng-click="toggleRight()">
-            <md-icon class="material-icons avatar">star</md-icon>
-            <div class="md-list-item-text" layout="row" >
-              <div flex>
-                <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ experience.name }} </h3>
-                <p md-highlight-flags="i" md-highlight-text="searchval"> {{ experience.description }}</p>
-              </div>
-              <md-button class="md-secondary md-icon-button" ng-click="showProfile(experience.profile)">
-                <img ng-src="{{getImg(experience.profile.profilepicture)}}" class="md-avatar profile-avatar">
-                  <md-tooltip>{{experience.profile.firstname}} {{experience.profile.lastname}}</md-tooltip>
-                </img>
-              </md-button>
-            </div>
-            <md-divider ng-if="!$last"></md-divider>
-          </md-list-item>
-        </md-card>
-      </div>
-      <div ng-if="publications.length > 0">
-        <md-header>Publications</md-header>
-        <md-card>
-          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="publication in publications" ng-click="toggleRight()">
-            <md-icon class="material-icons avatar">book</md-icon>
-            <div class="md-list-item-text" layout="row" >
-              <div flex>
-                <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ publication.title }} </h3>
-                <p md-highlight-flags="i" md-highlight-text="searchval"> {{ publication.authors }}</p>
-              </div>
-              <md-button class="md-secondary md-icon-button" ng-click="showProfile(publication.profile)">
-                <img ng-src="{{getImg(publication.profile.profilepicture)}}" class="md-avatar profile-avatar">
-                  <md-tooltip>{{publication.profile.firstname}} {{publication.profile.lastname}}</md-tooltip>
-                </img>
-              </md-button>
-            </div>
-            <md-divider ng-if="!$last"></md-divider>
-          </md-list-item>
-        </md-card>
-      </div>
-      <div ng-if="skills.length > 0">
-        <md-header>Key skills</md-header>
-        <md-card>
-          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="skill in skills" ng-click="toggleRight()">
-            <md-icon class="material-icons avatar">vpn_key</md-icon>
-            <div class="md-list-item-text" layout="row">
-              <div flex>
-                <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ skill.name }} </h3>
-                <p md-highlight-flags="i" md-highlight-text="searchval"> {{ skill.description }}</p>
-              </div>
-              <md-button class="md-secondary md-icon-button" ng-click="showProfile(skill.profile)">
-                <img ng-src="{{getImg(skill.profile.profilepicture)}}" class="md-avatar profile-avatar">
-                  <md-tooltip>{{skill.profile.firstname}} {{skill.profile.lastname}}</md-tooltip>
-                </img>
-              </md-button>
-            </div>
-            <md-divider ng-if="!$last"></md-divider>
-          </md-list-item>
-        </md-card>
-      </div>
-      <div ng-if="languages.length > 0">
-        <md-header>Languages</md-header>
-        <md-card>
-          <md-list-item class="md-2-line secondary-button-padding" ng-repeat="language in languages" ng-click="toggleRight()">
-            <md-icon class="material-icons avatar">forum</md-icon>
-            <div class="md-list-item-text" layout="row">
-              <div flex>
-                <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ language.language }} </h3>
-              </div>
-              <md-button class="md-secondary md-icon-button" ng-click="showProfile(language.profile)">
-                <img ng-src="{{getImg(language.profile.profilepicture)}}" class="md-avatar profile-avatar">
-                  <md-tooltip>{{language.profile.firstname}} {{language.profile.lastname}}</md-tooltip>
-                </img>
-              </md-button>
-            </div>
-            <md-divider ng-if="!$last"></md-divider>
-          </md-list-item>
-        </md-card>
-      </div>
+<md-content flex-gt-sm layout="column" layout-margin-layout-padding class="full-height">
+    <div layout="row">
+      <div flex-gt-sm="20"/>
+      <md-switch ng-model="groupProfiles" aria-label="groupSwitch">
+        Group by profiles
+      </md-switch>
     </div>
-    <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right">
-      <div ng-if="selected.ideducation" ui-view="editEducation"/>
-    </md-sidenav>
+    <div layout="row">
+      <md-sidenav class="md-sidenav-left md-whiteframe-z2 full-height" md-component-id="left" set-class-when-at-top="fix-to-top">
+        <div flex ui-view="details" />
+      </md-sidenav>
+      <div flex-gt-sm="20" flex-sm="0"></div>
+      <div flex-gt-sm="60" flex layout="column" layout-margin-layout-padding class="vertical-nudge-top ">
+        <div ng-if="!groupProfiles" ui-view="competences" />
+        <div ng-if="groupProfiles" ui-view="profiles" />
+      </div>
+      <md-sidenav class="md-sidenav-right md-sidenav-right-small md-whiteframe-z2" md-component-id="right" set-class-when-at-top="fix-to-top">
+        <div ng-if="selected.ideducation" ui-view="listEducation"/>
+        <div ng-if="selected.idworkexperience" ui-view="listWorkExperience"/>
+        <div ng-if="selected.idexperience" ui-view="listExperience"/>
+      </md-sidenav>
+    </div>
 </md-content>

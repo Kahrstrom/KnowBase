@@ -695,6 +695,7 @@ class SearchResult():
     languages = []
     merits = []
     experiences = []
+    profiles = []
 
     def __init__(self):
         self.educations = []
@@ -705,6 +706,7 @@ class SearchResult():
         self.languages = []
         self.merits = []
         self.experiences = []
+        self.profiles = []
 
     @property
     def serialize(self):
@@ -716,7 +718,8 @@ class SearchResult():
             "experiences":[e for e in self.experiences],
             "projects":[p for p in self.projects],
             "merits":[m for m in self.merits],
-            "publications":[p for p in self.publications]
+            "publications":[p for p in self.publications],
+            "profiles" : [p for p in self.profiles]
         }
 
 

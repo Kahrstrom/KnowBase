@@ -1,7 +1,8 @@
 
 <header ui-view="toolbar"></header>
-<md-content class="full-height">
+<md-content class="full-height" layout="row">
 	<md-sidenav class="md-sidenav-left md-whiteframe-z2 full-height" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
 		<div flex ui-view="details"/>
     </md-sidenav>
+    <div layout="column" flex ui-view="dashboard"/>
 </md-content>

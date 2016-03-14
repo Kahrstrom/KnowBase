@@ -47,8 +47,9 @@ angular.module('knowBase').controller('logoutController',
 }]);
 
 
+
+
 angular.module('knowBase').controller('searchController',
-  
   function ($scope, $state, $http, $templateCache, DataService, $mdToast, $cookies, $mdSidenav) {
     $scope.searchval = "";
   
@@ -57,7 +58,7 @@ angular.module('knowBase').controller('searchController',
     }
     $scope.toggleRight = buildToggler('right');
     $scope.toggleLeft = buildToggler('left');
-
+    $scope.groupProfiles = true;
     function buildToggler(navID) {
 
       return function() {
@@ -73,9 +74,15 @@ angular.module('knowBase').controller('searchController',
       return $mdSidenav('right').isOpen();
     };
 
-    
+    $scope.filterResults = function(items, idprofile){
+      
+      return items.filter(function(obj){
+        return obj.profile.idprofile == idprofile;
+      });
+    }
 
     $scope.search = function(){
+
       if($scope.searchval != ""){
         DataService.searchData({query: $scope.searchval})
           .then(function (data) {
@@ -87,6 +94,8 @@ angular.module('knowBase').controller('searchController',
               $scope.merits = data.merits;
               $scope.languages = data.languages;
               $scope.projects = data.projects;
+              $scope.profiles = data.profiles;
+              console.log($scope.profiles)
           },
           // handle error
           function (reason) {
@@ -102,12 +111,13 @@ angular.module('knowBase').controller('searchController',
           $scope.merits = [];
           $scope.languages = [];
           $scope.projects = [];
+          $scope.profiles = [];
         }
     }
 
     $scope.edit = function(item){
-      console.log(item)
       $scope.selected = item;
+      console.log(item)
       $scope.toggleRight();
     }
 
@@ -231,14 +241,11 @@ angular.module('knowBase').controller('toolbarController',
 angular.module('knowBase').controller('detailsController',
   function ($scope, $state, DataService, $window, $http, $templateCache) {
     
-    $scope.competenceProfiles = [];
     $scope.$parent.$watch('idprofile', function(newValue, oldValue){
       $scope.idprofile = newValue;
       $scope.imgData = null;
       getProfile();
     });
-    
-
     
     function getProfile() {
         DataService.getProfile($scope.idprofile)
@@ -247,7 +254,7 @@ angular.module('knowBase').controller('detailsController',
               var response = response.data;
         
               $scope.imgData = 'data:image/' + $scope.profile.profilepicture.extension + ';base64,' + $scope.profile.profilepicture.data;
-
+              $scope.competenceProfiles = [];
               DataService.getCompetenceProfiles($scope.idprofile)
                 .success(function (response) {
                   $.each(response.data, function(i,p){
@@ -322,6 +329,10 @@ angular.module('knowBase').controller('contactController',
     $scope.title = 'Contact us';
 }]);
 
+angular.module('knowBase').controller('dashboardController',
+  function ($scope, $state) {
+    
+});
 
 
 angular.module('knowBase').controller('educationFormController',
@@ -1012,15 +1023,16 @@ angular.module('knowBase').controller('projectFormController',
 
     $scope.$parent.$watch('project',function(newVal,oldVal){
       $scope.project = newVal;
-      $scope.nameSearchTextChanged = newVal ? newVal.name : null;
-      $scope.customerSearchTextChanged = newVal ? newVal.customername : null;
+      $scope.nameSearchText = newVal ? newVal.name : null;
+
+      $scope.customerSearchText = newVal ? newVal.customername : null;
       getOptions();
     });
 
     $scope.saveProject = function(){
       DataService.saveSkill($scope.project,'project')
         .then(function (data) {
-            $state.go('projects',{},{reload:true});
+            $state.go('project',{},{reload:true});
         },
         // handle error
         function (reason) {
@@ -1033,6 +1045,7 @@ angular.module('knowBase').controller('projectFormController',
             }); 
         });
     }
+
     $scope.cancel = function(){
       $scope.$parent.toggleRight();
     }
@@ -1182,7 +1195,7 @@ angular.module('knowBase').controller('meritFormController',
 
     $scope.$parent.$watch('merit',function(newVal,oldVal){
       $scope.merit = newVal;
-      $scope.nameSearchTextChanged = newVal ? newVal.name : null;
+      $scope.nameSearchText = newVal ? newVal.name : null;
       getOptions();
     });
 
@@ -1333,7 +1346,7 @@ angular.module('knowBase').controller('languageFormController',
 
     $scope.$parent.$watch('language',function(newVal,oldVal){
       $scope.language = newVal;
-      $scope.languageSearchTextChanged = newVal ? newVal.language : null;
+      $scope.languageSearchText = newVal ? newVal.language : null;
       getOptions();
     });
 
@@ -1482,7 +1495,7 @@ angular.module('knowBase').controller('skillFormController',
     
     $scope.$parent.$watch('skill',function(newVal,oldVal){
       $scope.skill = newVal;
-      $scope.nameSearchTextChanged = newVal ? newVal.name : null;
+      $scope.nameSearchText = newVal ? newVal.name : null;
       getOptions();
     });
 
@@ -1840,7 +1853,6 @@ angular.module('knowBase').controller('competenceProfilesController',
           return obj.value==obj2.value;
         });
       });
-  
     }
 
     function getData() {

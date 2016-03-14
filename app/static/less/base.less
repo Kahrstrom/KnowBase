@@ -18,6 +18,11 @@
     src: url('../fonts/GidoleFont/Gidole-Regular.ttf');
 }
 
+.fix-to-top {
+    position: fixed;
+    top: 0;
+}
+
 body {
     font-family: Gidole;
     background-color: #F5F5F5;
@@ -42,10 +47,6 @@ md-whiteframe{
     overflow:hidden;
     background-color: @color-primary;
 }
-
-/*.info-tile{
-    height: 350px;
-}*/
 
 .page-tile{
     min-height: 50vh;
@@ -136,11 +137,11 @@ md-icon.md-icons-empty-state{
     border-radius: 50%;
     width: 160px;
     height: 160px;
-    &.profilepicture{
-        background-size : cover;            
-        background-repeat:   no-repeat;
-        background-position: center center; 
-    }
+}
+
+.circle.circle-small{
+    width: 110px;
+    height: 110px;
 }
 
 .circle.bordered {
@@ -359,7 +360,7 @@ md-contact-chips{
 .material-icons.md-light.md-inactive { color: rgba(255, 255, 255, 0.3) !important; }
 
 button.md-button-small > md-icon.material-icons{
-    margin-top: -16px;
+    margin-top: -8px;
     margin-left: -2px;
 }
 
@@ -375,17 +376,6 @@ md-icon.img-placeholder{
 }
 
 md-toolbar:not(.md-toolbar-flat) {
-    // display: -webkit-flex;
-    // display: -ms-flexbox;
-    // display: flex;
-    // -webkit-flex-direction: column;
-    // -ms-flex-direction: column;
-    // flex-direction: column;
-    // position: relative;
-    // z-index: 2;
-    // font-size: 1.3em;
-    // min-height: 64px;
-    // width: 100%;
     box-shadow: 0 2px 5px 0 rgba(0,0,0,.26);
 }
 
@@ -398,6 +388,12 @@ md-toolbar.md-toolbar-grande{
     width: 85vw !important;
     max-width: 900px !important;
 } 
+
+.md-sidenav-right-small{
+    min-width: 200px !important;
+    width: 85vw !important;
+    max-width: 500px !important;
+}
 
 .md-sidenav-left {
     min-width: 200px !important;

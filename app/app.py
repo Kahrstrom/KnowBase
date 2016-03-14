@@ -536,7 +536,7 @@ def search():
         return jsonify({})
 
     res = SearchResult()
-    profiles = defaultdict(dict)
+    profiles = []
     es = Elasticsearch()
     search_body = {
         "from": 0,
@@ -550,13 +550,11 @@ def search():
 
     for e in es.search(body=search_body).get('hits').get('hits'):
         src = e.get('_source')
-        try:
-            if e.get('_type') == 'education':
-                print(src['ideducation'])
-                education = Education.query.get(src['ideducation'])
-                res.educations.append(education.serialize)
-        except Exception as err:
-            print(err)
+        profiles.append(src['profile'])
+        if e.get('_type') == 'education':
+            education = Education.query.get(src['ideducation'])
+            res.educations.append(education.serialize)
+
         if e.get('_type') == 'skill':
             skill = Skill.query.get(src['idskill'])
             res.skills.append(skill.serialize)
@@ -581,7 +579,10 @@ def search():
             project = Project.query.get(src['idproject'])
             res.projects.append(project.serialize)
 
+    for p in set(profiles):
+        res.profiles.append(Profile.query.get(p).serialize)
 
+    print(res.serialize)
     return jsonify(res.serialize)
 
 

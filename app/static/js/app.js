@@ -112,9 +112,27 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
                     templateUrl: 'static/partials/details.html',
                     controller: 'detailsController'
                 },
-                'editEducation@search' : {
+                'listEducation@search' : {
                     controller: 'educationFormController',
-                    templateUrl: 'static/partials/education.form.html'
+                    templateUrl: 'static/partials/education.list.html'
+                }
+                ,
+                'listWorkExperience@search' : {
+                    controller: 'workExperienceFormController',
+                    templateUrl: 'static/partials/workexperience.list.html'
+                }
+                ,
+                'listExperience@search' : {
+                    controller: 'experienceFormController',
+                    templateUrl: 'static/partials/experience.list.html'
+                },
+                
+              
+                'competences@search' : {
+                    templateUrl: 'static/partials/search.competences.html'
+                },
+                'profiles@search' : {
+                    templateUrl: 'static/partials/search.profiles.html'
                 }
             },
             access : 'restricted'

@@ -1,0 +1,156 @@
+<div ng-repeat="prof in profiles">
+  <md-card layout="column" class="vertical-nudge-top">
+    <md-toolbar class="md-hue-2 md-toolbar-flat">
+      <div layout="row" layout-padding layout-margin>
+        
+        <md-button ng-click="showProfile(prof)">
+          <img ng-if="prof.profilepicture" ng-style="{'background':'url(' + getImg(prof.profilepicture) + ')'}" class="circle circle-small bordered profilepicture"></img>
+          <div ng-if="!prof.profilepicture" class="circle circle-small bordered profilepicture img-placeholder">
+            <md-icon class="material-icons md-72 img-placeholder">image</md-icon>
+          </div>
+        </md-button>
+        <md-list-item flex class="md-3-line" >
+          <div class="md-list-item-text">
+              <h3>{{prof.firstname}} {{prof.lastname}}</h3>
+              <p>{{prof.position}}</p>
+          </div>
+        </md-list-item>
+      </div>
+    </md-toolbar>
+    <div ng-if="filterResults(educations, prof.idprofile).length > 0">
+      <md-list-item class="md-2-line secondary-button-padding" ng-repeat="education in filterResults(educations, prof.idprofile)" ng-click="edit(education)">
+        <md-icon class="material-icons avatar">school</md-icon>
+        <div class="md-list-item-text" layout="row">
+          <div flex>
+            <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ education.title }} - {{ education.education }} </h3>
+            <p md-highlight-flags="i" md-highlight-text="searchval"> {{ education.school }}</p>          
+          </div>  
+          <!-- <md-button class="md-secondary md-icon-button" ng-click="showProfile(education.profile)">
+            <img ng-src="{{getImg(education.profile.profilepicture)}}" class="md-avatar profile-avatar">
+              <md-tooltip>{{education.profile.firstname}} {{education.profile.lastname}}</md-tooltip>
+            </img>
+          </md-button> -->
+        </div>
+        
+      </md-list-item>
+    </div>
+    <div ng-if="filterResults(workexperiences, prof.idprofile).length > 0">
+      <md-list-item class="md-2-line secondary-button-padding" ng-repeat="workExperience in filterResults(workexperiences, prof.idprofile)" ng-click="edit(workExperience)">
+        <md-icon class="material-icons avatar">work</md-icon>
+        <div class="md-list-item-text" layout="row">
+          <div flex>
+            <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ workExperience.title }} </h3>
+            <p md-highlight-flags="i" md-highlight-text="searchval"> {{ workExperience.employer }}</p>
+          </div>
+          <!-- <md-button class="md-secondary md-icon-button" ng-click="showProfile(workExperience.profile)">
+            <img ng-src="{{getImg(workExperience.profile.profilepicture)}}" class="md-avatar profile-avatar">
+              <md-tooltip>{{workExperience.profile.firstname}} {{workExperience.profile.lastname}}</md-tooltip>
+            </img>
+          </md-button> -->
+        </div>
+        <md-divider ></md-divider>
+      </md-list-item>
+    </div>
+    <div ng-if="filterResults(projects, prof.idprofile).length > 0">
+      <md-list-item class="md-2-line secondary-button-padding" ng-repeat="project in filterResults(projects, prof.idprofile)" ng-click="toggleRight()">
+        <md-icon class="material-icons avatar">list</md-icon>
+        <div class="md-list-item-text" layout="row" >
+          <div flex>
+            <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ project.name }} </h3>
+            <p md-highlight-flags="i" md-highlight-text="searchval"> {{ project.customername }}</p>
+          </div>
+          <!-- <md-button class="md-secondary md-icon-button" ng-click="showProfile(project.profile)">
+            <img ng-src="{{getImg(project.profile.profilepicture)}}" class="md-avatar profile-avatar">
+              <md-tooltip>{{project.profile.firstname}} {{project.profile.lastname}}</md-tooltip>
+            </img>
+          </md-button> -->
+        </div>
+        <md-divider ></md-divider>
+      </md-list-item>
+    </div>
+    <div ng-if="filterResults(merits, prof.idprofile).length > 0">
+      <md-list-item class="md-2-line secondary-button-padding" ng-repeat="merit in filterResults(merits, prof.idprofile)" ng-click="toggleRight()">
+        <md-icon class="material-icons avatar">local_activity</md-icon>
+        <div class="md-list-item-text" layout="row">
+          <div flex="90">
+            <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ merit.name }} </h3>
+            <p md-highlight-flags="i" md-highlight-text="searchval"> {{ merit.description }}</p>
+          </div>
+          <!-- <md-button class="md-secondary md-icon-button" ng-click="showProfile(merit.profile)">
+            <img ng-src="{{getImg(merit.profile.profilepicture)}}" class="md-avatar profile-avatar">
+              <md-tooltip>{{merit.profile.firstname}} {{merit.profile.lastname}}</md-tooltip>
+            </img>
+          </md-button> -->
+        </div>  
+        <md-divider ></md-divider>
+      </md-list-item>
+    </div>
+    <div ng-if="filterResults(experiences, prof.idprofile).length > 0">
+      <md-list-item class="md-2-line secondary-button-padding" ng-repeat="experience in filterResults(experiences, prof.idprofile)" ng-click="edit(experience)">
+        <md-icon class="material-icons avatar">star</md-icon>
+        <div class="md-list-item-text" layout="row" >
+          <div flex>
+            <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ experience.name }} </h3>
+            <p md-highlight-flags="i" md-highlight-text="searchval"> {{ experience.description }}</p>
+          </div>
+         <!--  <md-button class="md-secondary md-icon-button" ng-click="showProfile(experience.profile)">
+            <img ng-src="{{getImg(experience.profile.profilepicture)}}" class="md-avatar profile-avatar">
+              <md-tooltip>{{experience.profile.firstname}} {{experience.profile.lastname}}</md-tooltip>
+            </img>
+          </md-button> -->
+        </div>
+        <md-divider ></md-divider>
+      </md-list-item>
+    </div>
+    <div ng-if="filterResults(publications, prof.idprofile).length > 0">
+      <md-list-item class="md-2-line secondary-button-padding" ng-repeat="publication in filterResults(publications, prof.idprofile)" ng-click="toggleRight()">
+        <md-icon class="material-icons avatar">book</md-icon>
+        <div class="md-list-item-text" layout="row" >
+          <div flex>
+            <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ publication.title }} </h3>
+            <p md-highlight-flags="i" md-highlight-text="searchval"> {{ publication.authors }}</p>
+          </div>
+          <!-- <md-button class="md-secondary md-icon-button" ng-click="showProfile(publication.profile)">
+            <img ng-src="{{getImg(publication.profile.profilepicture)}}" class="md-avatar profile-avatar">
+              <md-tooltip>{{publication.profile.firstname}} {{publication.profile.lastname}}</md-tooltip>
+            </img>
+          </md-button> -->
+        </div>
+        <md-divider ></md-divider>
+      </md-list-item>
+    </div>
+    <div ng-if="filterResults(skills, prof.idprofile).length > 0">
+      <md-list-item class="md-2-line secondary-button-padding" ng-repeat="skill in filterResults(skills, prof.idprofile)" ng-click="toggleRight()">
+        <md-icon class="material-icons avatar">vpn_key</md-icon>
+        <div class="md-list-item-text" layout="row">
+          <div flex>
+            <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ skill.name }} </h3>
+            <p md-highlight-flags="i" md-highlight-text="searchval"> {{ skill.description }}</p>
+          </div>
+          <!-- <md-button class="md-secondary md-icon-button" ng-click="showProfile(skill.profile)">
+            <img ng-src="{{getImg(skill.profile.profilepicture)}}" class="md-avatar profile-avatar">
+              <md-tooltip>{{skill.profile.firstname}} {{skill.profile.lastname}}</md-tooltip>
+            </img>
+          </md-button> -->
+        </div>
+        <md-divider ></md-divider>
+      </md-list-item>
+    </div>
+    <div ng-if="filterResults(languages, prof.idprofile).length > 0">
+      <md-list-item class="md-2-line secondary-button-padding" ng-repeat="language in filterResults(languages, prof.idprofile)" ng-click="toggleRight()">
+        <md-icon class="material-icons avatar">forum</md-icon>
+        <div class="md-list-item-text" layout="row">
+          <div flex>
+            <h3 md-highlight-flags="i" md-highlight-text="searchval"> {{ language.language }} </h3>
+          </div>
+          <!-- <md-button class="md-secondary md-icon-button" ng-click="showProfile(language.profile)">
+            <img ng-src="{{getImg(language.profile.profilepicture)}}" class="md-avatar profile-avatar">
+              <md-tooltip>{{language.profile.firstname}} {{language.profile.lastname}}</md-tooltip>
+            </img>
+          </md-button> -->
+        </div>
+        <md-divider ></md-divider>
+      </md-list-item>
+    </div>
+  </md-card>
+</div>
