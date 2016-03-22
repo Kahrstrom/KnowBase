@@ -12,9 +12,9 @@
                 <md-list-item class="md-3-line secondary-button-padding" ng-repeat="resourceRequest in resourceRequests" ng-click="edit(resourceRequest)">
                     <md-icon class="material-icons avatar">group_add</md-icon>
                     <div class="md-list-item-text" >
-                        <h3> {{ resourceRequest.title }}</h3>
-                        <p> {{ resourceRequest.description }}</p>
-                        <p ng-if="resourceRequest.startdate || resourceRequest.enddate"> {{resourceRequest.startdate | date : 'yyyy-MM'}} - {{resourceRequest.enddate | date : 'yyyy-MM'}} </p>
+                        <h3> {{ resourceRequest.descriptive_header }}</h3>
+                        <p> {{ resourceRequest.descriptive_subheader }}</p>
+                        <p ng-if="resourceRequest.startdate || resourceRequest.enddate"> {{resourceRequest.startdate | date : 'yyyy-MM-dd'}} - {{resourceRequest.enddate | date : 'yyyy-MM-dd'}} </p>
                     </div>
                 </md-list-item>
             </md-card>

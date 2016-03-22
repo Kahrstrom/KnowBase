@@ -87,6 +87,14 @@ class ResourceRequest(db.Model):
         self.externallink = json_data['externallink']
         self.contactname = json_data['contactname']
         self.contactemail = json_data['contactemail']
+        self.customer = json_data['customer']['idcustomer']
+
+    @property
+    def serialize_customer(self):
+        if self.rel_customer is not None:
+            return self.rel_customer.serialize
+        else:
+            return ''
 
     @property
     def serialize(self):
@@ -97,8 +105,11 @@ class ResourceRequest(db.Model):
             'enddate' : self.enddate,
             'description' : self.description,
             'externallink' : self.externallink,
+            'customer' : self.serialize_customer,
             'contactname' : self.contactname,
-            'contactemail' : self.contactemail
+            'contactemail' : self.contactemail,
+            'descriptive_header': self.serialize_customer['descriptive_header'] + ' - ' + self.title,
+            'descriptive_subheader': self.description
         }
 
 
@@ -148,7 +159,9 @@ class Education(db.Model):
             'enddate': self.enddate,
             'description': self.description,
             'profile': self.rel_profile.serialize,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'descriptive_header': self.title + ' - ' + self.education,
+            'descriptive_subheader': self.school
         }
 
 class WorkExperience(db.Model):
@@ -193,7 +206,9 @@ class WorkExperience(db.Model):
             'enddate': self.enddate,
             'description': self.description,
             'profile': self.rel_profile.serialize,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'descriptive_header': self.title,
+            'descriptive_subheader': self.employer
         }
 
 
@@ -201,6 +216,8 @@ class Customer(db.Model):
     __tablename__ = "customer"
     idcustomer = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(72))
+    customerno = db.Column(db.String(32))
+    #TODO: Relation to request
 
     def __init__(self, json_data):
         self.name = json_data['name']
@@ -215,14 +232,19 @@ class Customer(db.Model):
     def serialize(self):
         return {
             'idcustomer':self.idcustomer,
-            'name':self.name
+            'name':self.name,
+            'descriptive_header': self.name,
+            'descriptive_subheader': ''
         }
 
 class CompetenceProfile(db.Model):
     __tablename__ = "competenceprofile"
 
     idcompetenceprofile = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String(128))
+    description = db.Column(db.String(4000))
+    #TODO: Tags!
+
     workexperiences = db.relationship('WorkExperience',secondary=workExperienceProfiles,
                                       backref=db.backref('competenceprofile',lazy='dynamic'))
     educations = db.relationship('Education',secondary=educationProfiles,
@@ -242,15 +264,17 @@ class CompetenceProfile(db.Model):
     profile = db.Column(db.Integer, db.ForeignKey('profile.idprofile'))
     rel_profile = db.relationship('Profile', primaryjoin='CompetenceProfile.profile == Profile.idprofile',
                                   backref=db.backref('competenceprofile',lazy='dynamic'))
-    def __init__(self, name=None, profile=None):
+    def __init__(self, json_data=None, profile=None):
         self.profile=profile
-        self.name = name
+        self.name = json_data['name']
+        self.description = json_data['description']
 
     def __repr__(self):
         return '<Experience %r>' % (self.name)
 
     def update(self, json_data=None):
         self.name = json_data['name']
+        self.description = json_data['description']
 
     @property
     def serialize(self):
@@ -264,7 +288,10 @@ class CompetenceProfile(db.Model):
             "experiences":[e.serialize for e in self.experiences],
             "projects":[p.serialize for p in self.projects],
             "merits":[m.serialize for m in self.merits],
-            "publications":[p.serialize for p in self.publications]
+            "publications":[p.serialize for p in self.publications],
+            'description' : self.description,
+            'descriptive_header': self.name,
+            'descriptive_subheader': self.description
         }
 
 class Project(db.Model):
@@ -305,17 +332,26 @@ class Project(db.Model):
         self.hours = json_data['hours']
 
     @property
+    def serialize_customer(self):
+        if self.rel_customer is not None:
+            return self.rel_customer.serialize
+        else:
+            return ''
+
+    @property
     def serialize(self):
         return {
             'idproject': self.idproject,
             'name': self.name,
             'hours': self.hours,
-            'customer': self.rel_customer.serialize,
+            'customer': self.serialize_customer,
             'startdate': self.startdate,
             'enddate': self.enddate,
             'description': self.description,
             'profile': self.rel_profile.serialize,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'descriptive_header': self.name,
+            'descriptive_subheader': self.serialize_customer['name']
         }
 
 
@@ -357,7 +393,9 @@ class Experience(db.Model):
             'enddate': self.enddate,
             'description': self.description,
             'profile': self.rel_profile.serialize,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'descriptive_header': self.name,
+            'descriptive_subheader': self.description
         }
 
 
@@ -407,7 +445,9 @@ class Language(db.Model):
             'conversation': self.conversation,
             'verbal': self.verbal,
             'profile': self.rel_profile.serialize,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'descriptive_header': self.language,
+            'descriptive_subheader': ''
         }
 
 # Create our database model
@@ -453,7 +493,9 @@ class Publication(db.Model):
             'date': self.date,
             'description': self.description,
             'profile': self.rel_profile.serialize,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'descriptive_header': self.title,
+            'descriptive_subheader': self.description
         }
 
 class Skill(db.Model):
@@ -490,7 +532,9 @@ class Skill(db.Model):
             'level': self.level,
             'description': self.description,
             'profile': self.rel_profile.serialize,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'descriptive_header': self.name,
+            'descriptive_subheader': self.description
         }
 
 class Merit(db.Model):
@@ -527,7 +571,9 @@ class Merit(db.Model):
             'date': self.date,
             'description': self.description,
             'profile': self.rel_profile.serialize,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'descriptive_header': self.name,
+            'descriptive_subheader': self.description
         }
 
 
@@ -602,7 +648,9 @@ class Profile(db.Model):
             'profilepicture' : self.serialize_profilepicture,
             'email' : self.email,
             'position' : self.position,
-            'description' : self.description
+            'description' : self.description,
+            'descriptive_header': self.firstname + ' ' + self.lastname,
+            'descriptive_subheader': self.position
         }
 
 
@@ -677,8 +725,46 @@ class User(db.Model):
         user = User.query.get(data['iduser'])
         return user
 
-
 ######## DATABASE MODEL #########
+
+
+class SearchResult():
+    educations = []
+    publications = []
+    skills = []
+    projects = []
+    workexperiences = []
+    languages = []
+    merits = []
+    experiences = []
+    profiles = []
+
+    def __init__(self):
+        self.educations = []
+        self.publications = []
+        self.skills = []
+        self.projects = []
+        self.workexperiences = []
+        self.languages = []
+        self.merits = []
+        self.experiences = []
+        self.profiles = []
+
+    @property
+    def serialize(self):
+        return {
+            "workexperiences":[w for w in self.workexperiences],
+            "educations":[e for e in self.educations],
+            "languages":[l for l in self.languages],
+            "skills":[s for s in self.skills],
+            "experiences":[e for e in self.experiences],
+            "projects":[p for p in self.projects],
+            "merits":[m for m in self.merits],
+            "publications":[p for p in self.publications],
+            "profiles" : [p for p in self.profiles]
+        }
+
+
 
 def count_educations(idprofile):
     return Education.query.filter_by(profile=idprofile).count()
@@ -753,46 +839,6 @@ def get_skilltypes(idprofile):
                 'order': 8,
                 'count': count_table(idprofile, "skill")
             }]
-
-
-
-
-
-class SearchResult():
-    educations = []
-    publications = []
-    skills = []
-    projects = []
-    workexperiences = []
-    languages = []
-    merits = []
-    experiences = []
-    profiles = []
-
-    def __init__(self):
-        self.educations = []
-        self.publications = []
-        self.skills = []
-        self.projects = []
-        self.workexperiences = []
-        self.languages = []
-        self.merits = []
-        self.experiences = []
-        self.profiles = []
-
-    @property
-    def serialize(self):
-        return {
-            "workexperiences":[w for w in self.workexperiences],
-            "educations":[e for e in self.educations],
-            "languages":[l for l in self.languages],
-            "skills":[s for s in self.skills],
-            "experiences":[e for e in self.experiences],
-            "projects":[p for p in self.projects],
-            "merits":[m for m in self.merits],
-            "publications":[p for p in self.publications],
-            "profiles" : [p for p in self.profiles]
-        }
 
 
 ########## ELASTIC SEARCH #########

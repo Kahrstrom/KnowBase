@@ -1,6 +1,6 @@
 angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$cookies', function ($q,$timeout,$http, $cookies) {
     var dataservice = this;
-    dataservice.host = 'http://localhost:8080';
+    dataservice.host = 'http://213.112.209.12:8080';
     dataservice.urlBase = dataservice.host + '/api/';
 
     dataservice.getProfile = function (idprofile) {
@@ -134,6 +134,8 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$co
       self.projects = p ? p.projects : [];
       self.merits = p ? p.merits : [];
       self.languages = p ? p.languages : [];
+      self.descriptive_header = p ? p.descriptive_header : '';
+      self.descriptive_subheader = p ? p.descriptive_subheader : '';
     }
 
     dataservice.ResourceRequest = function(r){
@@ -146,6 +148,10 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$co
       self.enddate = r ? (r.enddate ? new Date(r.enddate) : null) : null;
       self.externallink = r ? r.externallink : '';
       self.description = r ? r.description : '';
+      self.descriptive_header = r ? r.descriptive_header : '';
+      self.descriptive_subheader = r ? r.descriptive_subheader : '';
+      console.log(self.descriptive_header)
+      console.log(self.descriptive_subheader)
     }
 
     dataservice.Education = function(e){
@@ -157,6 +163,8 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$co
       self.startdate = e ? (e.startdate ? new Date(e.startdate) : null) : null;
       self.enddate = e ? (e.enddate ? new Date(e.enddate) : null) : null;
       self.description = e ? e.description : '';
+      self.descriptive_header = e ? e.descriptive_header : '';
+      self.descriptive_subheader = e ? e.descriptive_subheader : '';
     }
 
     dataservice.WorkExperience = function(w){
@@ -167,6 +175,8 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$co
       self.startdate = w ? (w.startdate ? new Date(w.startdate) : null) : null;
       self.enddate = w ? (w.enddate ? new Date(w.enddate) : null) : null;
       self.description = w ? w.description : '';
+      self.descriptive_header = w ? w.descriptive_header : '';
+      self.descriptive_subheader = w ? w.descriptive_subheader : '';
     }
 
     dataservice.Publication = function(e){
@@ -177,6 +187,8 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$co
       self.date = e ? (e.date ? new Date(e.date) : null) : null;
       self.description = e ? e.description : '';
       self.publication = e ? e.publication : '';
+      self.descriptive_header = e ? e.descriptive_header : '';
+      self.descriptive_subheader = e ? e.descriptive_subheader : '';
     }
 
     dataservice.Language = function(o){
@@ -188,6 +200,8 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$co
       self.reading = o ? o.reading : '';
       self.conversation = o ? o.conversation : '';
       self.verbal = o ? o.verbal : '';
+      self.descriptive_header = o ? o.descriptive_header : '';
+      self.descriptive_subheader = o ? o.descriptive_subheader : '';
     }
    
     dataservice.Skill = function(o){
@@ -196,6 +210,8 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$co
       self.name = o ? o.name : '';
       self.level = o ? o.level : null;
       self.description = o ? o.description : '';
+      self.descriptive_header = o ? o.descriptive_header : '';
+      self.descriptive_subheader = o ? o.descriptive_subheader : '';
     }
 
     dataservice.Merit = function(m){
@@ -204,6 +220,8 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$co
       self.name = m ? m.name : '';
       self.date = m ? (m.date ? new Date(m.date) : null) : null;
       self.description = m ? m.description : '';
+      self.descriptive_header = m ? m.descriptive_header : '';
+      self.descriptive_subheader = m ? m.descriptive_subheader : '';
     }
 
     dataservice.Experience = function(o){
@@ -213,6 +231,8 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$co
       self.startdate = o ? (o.startdate ? new Date(o.startdate) : null) : null;
       self.enddate = o ? (o.enddate ? new Date(o.enddate) : null) : null;
       self.description = o ? o.description : '';
+      self.descriptive_header = o ? o.descriptive_header : '';
+      self.descriptive_subheader = o ? o.descriptive_subheader : '';
     }
 
     dataservice.Project = function(o){
@@ -225,6 +245,8 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$co
       self.enddate = o ? (o.enddate ? new Date(o.enddate) : null) : null;
       self.hours = o ? o.hours : 0;
       self.description = o ? o.description : '';
+      self.descriptive_header = o ? o.descriptive_header : '';
+      self.descriptive_subheader = o ? o.descriptive_subheader : '';
     }
 }]);
 
@@ -257,7 +279,7 @@ angular.module('knowBase').service('LocaleService', ['$q', '$timeout','$http', '
 angular.module('knowBase').service('SkillService', ['$q', '$timeout','$http','$cookies', 
   function ($q,$timeout,$http, $cookies) {
     var self = this;
-    self.host = 'http://localhost:8080';
+    self.host = 'http://213.112.209.12:8080';
     self.urlBase = self.host + '/api/';
 
     self.buildGridModel = function($scope, tileTmpl){
@@ -321,7 +343,7 @@ angular.module('knowBase').factory('AuthService',
   function ($q, $timeout, $http, $cookies) {
     var self = this;
 
-    self.server = 'http://localhost:8080';
+    self.server = 'http://213.112.209.12:8080';
     self.urlBase = self.server + '/api';
     // create user variable
     var user = null;

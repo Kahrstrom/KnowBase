@@ -17,6 +17,7 @@ migrate = Migrate(app,db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
+
 workExperienceProfiles = db.Table('workexperienceprofiles',
       db.Column('idworkexperience',db.Integer,db.ForeignKey('workexperience.idworkexperience')),
       db.Column('idcompetenceprofile',db.Integer,db.ForeignKey('competenceprofile.idcompetenceprofile'))
@@ -57,6 +58,67 @@ publicationProfiles = db.Table('publicationprofiles',
       db.Column('idcompetenceprofile',db.Integer,db.ForeignKey('competenceprofile.idcompetenceprofile'))
 )
 
+class ResourceRequest(db.Model):
+    __tablename__ = "resourcerequest"
+    idresourcerequest = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(72))
+    startdate = db.Column(db.DateTime)
+    enddate = db.Column(db.DateTime)
+    description = db.Column(db.String(4000))
+    externallink = db.Column(db.String(72))
+    customer = db.Column(db.Integer, db.ForeignKey('customer.idcustomer'))
+    rel_customer = db.relationship('Customer', primaryjoin='ResourceRequest.customer == Customer.idcustomer',
+                                  backref=db.backref('resourcerequest', lazy='dynamic'))
+    contactname = db.Column(db.String(128))
+    contactemail = db.Column(db.String(128))
+
+    def __init__(self, json_data=None):
+        self.title = json_data['title']
+        self.title = json_data['title']
+        self.startdate = json_data['startdate']
+        self.enddate = json_data['enddate']
+        self.description = json_data['description']
+        self.externallink = json_data['externallink']
+        self.contactname = json_data['contactname']
+        self.contactemail = json_data['contactemail']
+
+    def __repr__(self):
+        return '<ResourceRequest %r>' % (self.title)
+
+    def update(self, json_data):
+        self.title = json_data['title']
+        self.title = json_data['title']
+        self.startdate = json_data['startdate']
+        self.enddate = json_data['enddate']
+        self.description = json_data['description']
+        self.externallink = json_data['externallink']
+        self.contactname = json_data['contactname']
+        self.contactemail = json_data['contactemail']
+    @property
+    def serialize_customer(self):
+        if self.rel_customer is not None:
+            return self.rel_customer.serialize
+        else:
+            return ''
+
+    @property
+    def serialize(self):
+        return {
+            'idresourcerequest' : self.idresourcerequest,
+            'title' : self.title,
+            'startdate' : self.startdate,
+            'enddate' : self.enddate,
+            'description' : self.description,
+            'externallink' : self.externallink,
+            'customer' : self.serialize_customer,
+            'contactname' : self.contactname,
+            'contactemail' : self.contactemail,
+            'descriptive_header': self.title,
+            'descriptive_subheader': self.description
+        }
+
+
+# Create our database model
 class Education(db.Model):
     __tablename__ = "education"
     ideducation = db.Column(db.Integer, primary_key=True)
@@ -102,7 +164,9 @@ class Education(db.Model):
             'enddate': self.enddate,
             'description': self.description,
             'profile': self.rel_profile.serialize,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'descriptive_header': self.title + ' - ' + self.education,
+            'descriptive_subheader': self.school
         }
 
 class WorkExperience(db.Model):
@@ -147,7 +211,9 @@ class WorkExperience(db.Model):
             'enddate': self.enddate,
             'description': self.description,
             'profile': self.rel_profile.serialize,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'descriptive_header': self.title,
+            'descriptive_subheader': self.employer
         }
 
 
@@ -155,7 +221,8 @@ class Customer(db.Model):
     __tablename__ = "customer"
     idcustomer = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(72))
-    timestamp = db.Column(db.DateTime, default=datetime.now())
+    customerno = db.Column(db.String(32))
+    #TODO: Relation to request
 
     def __init__(self, json_data):
         self.name = json_data['name']
@@ -170,14 +237,19 @@ class Customer(db.Model):
     def serialize(self):
         return {
             'idcustomer':self.idcustomer,
-            'name':self.name
+            'name':self.name,
+            'descriptive_header': self.name,
+            'descriptive_subheader': ''
         }
 
 class CompetenceProfile(db.Model):
     __tablename__ = "competenceprofile"
 
     idcompetenceprofile = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String)
+    name = db.Column(db.String(128))
+    description = db.Column(db.String(4000))
+    #TODO: Tags!
+
     workexperiences = db.relationship('WorkExperience',secondary=workExperienceProfiles,
                                       backref=db.backref('competenceprofile',lazy='dynamic'))
     educations = db.relationship('Education',secondary=educationProfiles,
@@ -197,15 +269,17 @@ class CompetenceProfile(db.Model):
     profile = db.Column(db.Integer, db.ForeignKey('profile.idprofile'))
     rel_profile = db.relationship('Profile', primaryjoin='CompetenceProfile.profile == Profile.idprofile',
                                   backref=db.backref('competenceprofile',lazy='dynamic'))
-    def __init__(self, name=None, profile=None):
+    def __init__(self, json_data=None, profile=None):
         self.profile=profile
-        self.name = name
+        self.name = json_data['name']
+        self.description = json_data['description']
 
     def __repr__(self):
         return '<Experience %r>' % (self.name)
 
     def update(self, json_data=None):
         self.name = json_data['name']
+        self.description = json_data['description']
 
     @property
     def serialize(self):
@@ -219,7 +293,10 @@ class CompetenceProfile(db.Model):
             "experiences":[e.serialize for e in self.experiences],
             "projects":[p.serialize for p in self.projects],
             "merits":[m.serialize for m in self.merits],
-            "publications":[p.serialize for p in self.publications]
+            "publications":[p.serialize for p in self.publications],
+            'description' : self.description,
+            'descriptive_header': self.name,
+            'descriptive_subheader': self.description
         }
 
 class Project(db.Model):
@@ -260,17 +337,26 @@ class Project(db.Model):
         self.hours = json_data['hours']
 
     @property
+    def serialize_customer(self):
+        if self.rel_customer is not None:
+            return self.rel_customer.serialize
+        else:
+            return ''
+
+    @property
     def serialize(self):
         return {
             'idproject': self.idproject,
             'name': self.name,
             'hours': self.hours,
-            'customer': self.rel_customer.serialize,
+            'customer': self.serialize_customer,
             'startdate': self.startdate,
             'enddate': self.enddate,
             'description': self.description,
             'profile': self.rel_profile.serialize,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'descriptive_header': self.name,
+            'descriptive_subheader': self.serialize_customer['name']
         }
 
 
@@ -312,7 +398,9 @@ class Experience(db.Model):
             'enddate': self.enddate,
             'description': self.description,
             'profile': self.rel_profile.serialize,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'descriptive_header': self.name,
+            'descriptive_subheader': self.description
         }
 
 
@@ -362,7 +450,9 @@ class Language(db.Model):
             'conversation': self.conversation,
             'verbal': self.verbal,
             'profile': self.rel_profile.serialize,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'descriptive_header': self.language,
+            'descriptive_subheader': ''
         }
 
 # Create our database model
@@ -408,7 +498,9 @@ class Publication(db.Model):
             'date': self.date,
             'description': self.description,
             'profile': self.rel_profile.serialize,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'descriptive_header': self.title,
+            'descriptive_subheader': self.description
         }
 
 class Skill(db.Model):
@@ -445,7 +537,9 @@ class Skill(db.Model):
             'level': self.level,
             'description': self.description,
             'profile': self.rel_profile.serialize,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'descriptive_header': self.name,
+            'descriptive_subheader': self.description
         }
 
 class Merit(db.Model):
@@ -482,7 +576,9 @@ class Merit(db.Model):
             'date': self.date,
             'description': self.description,
             'profile': self.rel_profile.serialize,
-            'timestamp': self.timestamp
+            'timestamp': self.timestamp,
+            'descriptive_header': self.name,
+            'descriptive_subheader': self.description
         }
 
 
@@ -507,7 +603,8 @@ class Profile(db.Model):
     birthdate = db.Column(db.DateTime)
 
     def __init__(self, firstname=None, lastname=None, address=None, zipcode=None,
-                 city=None, country=None, birthdate=None, phone=None, mobilephone=None, email=None, position=None):
+                 city=None, country=None, birthdate=None, phone=None, mobilephone=None, email=None, position=None,
+                  description=None):
         self.firstname = firstname
         self.lastname = lastname
         self.address = address
@@ -519,6 +616,7 @@ class Profile(db.Model):
         self.mobilephone = mobilephone
         self.email = email
         self.position = position
+        self.description = description
 
     def update(self, json_data):
         self.firstname = json_data['firstname']
@@ -531,7 +629,14 @@ class Profile(db.Model):
         self.zipcode = json_data['zipcode']
         self.birthdate = json_data['birthdate']
         self.position= json_data['position']
+        self.description= json_data['description']
 
+    @property
+    def serialize_profilepicture(self):
+        if self.rel_profilepicture is not None:
+            return self.rel_profilepicture.serialize
+        else:
+            return ""
     @property
     def serialize(self):
         return {
@@ -545,10 +650,14 @@ class Profile(db.Model):
             'mobilephone': self.mobilephone,
             'phone': self.phone,
             'birthdate': self.birthdate,
-            'profilepicture' : self.rel_profilepicture.serialize,
-            #'email' : self.email,
-            'position' : self.position
+            'profilepicture' : self.serialize_profilepicture,
+            'email' : self.email,
+            'position' : self.position,
+            'description' : self.description,
+            'descriptive_header': self.firstname + ' ' + self.lastname,
+            'descriptive_subheader': self.position
         }
+
 
 class File(db.Model):
     __tablename__ = "file"
@@ -556,7 +665,6 @@ class File(db.Model):
     data = db.Column(db.VARBINARY(None))
     extension = db.Column(db.String(72))
     filename = db.Column(db.String(72))
-    timestamp = db.Column(db.DateTime, default=datetime.now())
 
     @property
     def get_data(self):
@@ -602,6 +710,26 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
+
+    def generate_auth_token(self, expiration = 86400):
+        try:
+            s = Serializer(config.secret_key, expires_in = expiration)
+        except Exception as err:
+            print(err)
+        return s.dumps({ 'iduser': self.iduser })
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(config.secret_key)
+        try:
+            data = s.loads(token)
+        except SignatureExpired:
+            return None # valid token, but expired
+        except BadSignature:
+            return None # invalid token
+        user = User.query.get(data['iduser'])
+        return user
+
 
 if __name__ == '__main__':
     manager.run()

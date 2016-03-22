@@ -443,13 +443,24 @@ def get_resourcerequests():
 def save_resourcerequest():
     idresourcerequest = request.json['idresourcerequest']
 
+    customer = request.json['customer']
+
+    if customer is None:
+        customer = Customer({'name' : request.json['customername']})
+        db.session.add(customer)
+        db.session.commit()
+    else:
+        customer = Customer.query.get(customer['idcustomer'])
+
     if idresourcerequest is None:
         resourceRequest = ResourceRequest(request.json)
+        resourceRequest.customer = customer.idcustomer
         db.session.add(resourceRequest)
     else:
         resourceRequest = ResourceRequest.query.get(idresourcerequest)
         resourceRequest.update(request.json)
 
+    resourceRequest.customer = request.json['customer']['idcustomer']
     db.session.commit()
 
     return jsonify(idrecord="{idrecord}".format(idrecord=resourceRequest.idresourcerequest))
@@ -493,12 +504,12 @@ def save_competenceprofiles():
     merits = request.json['merits']
     idcompetenceprofile = request.json['idcompetenceprofile']
     if idcompetenceprofile is None:
-        competenceProfile = CompetenceProfile(request.json['name'],profile.idprofile)
+        competenceProfile = CompetenceProfile(request.json,profile.idprofile)
         db.session.add(competenceProfile)
         db.session.commit()
     else:
         competenceProfile = CompetenceProfile.query.get(idcompetenceprofile)
-        competenceProfile.name = request.json['name']
+        competenceProfile.update(request.json)
 
     competenceProfile.workexperiences = [WorkExperience.query.get(w['idworkexperience'])  for w in workExperiences]
     competenceProfile.educations = [Education.query.get(e['ideducation'])  for e in educations]
@@ -511,6 +522,13 @@ def save_competenceprofiles():
 
     db.session.commit()
     return jsonify(idrecord="{idrecord}".format(idrecord=competenceProfile.idcompetenceprofile))
+
+@app.after_request
+def after_request(response):
+  response.headers.add('Access-Control-Allow-Origin', '*')
+  response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
+  response.headers.add('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE')
+  return response
 
 @app.route('/api/project', methods=['POST'])
 @auth.login_required

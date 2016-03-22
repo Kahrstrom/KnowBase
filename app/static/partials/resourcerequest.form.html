@@ -34,6 +34,24 @@
         <label>{{descriptionLabel}}</label>
         <textarea rows="12" md-maxlength="4000" type="text" name="description" ng-model="resourceRequest.description"></textarea>
     </md-input-container>
+    <md-autocomplete flex required
+        md-input-name="customerAutoComplete"
+        md-min-length="0"
+        md-input-maxlength="64"
+        md-input-minlength="0"
+        md-no-cache="false"
+        md-selected-item="selectedCustomer"
+        md-search-text="customerSearchText"
+        md-items="item in customerQueryFilter(customerSearchText)"
+        md-item-text="item.display"
+        md-floating-label="{{customerLabel}}"
+        md-selected-item-change="customerSelectChanged(item)"
+        md-search-text-change="customerSearchTextChanged(customerSearchText)"
+        md-select-on-match="true">
+      <md-item-template>
+        <span md-highlight-text="customerSearchText" md-highlight-flags="^i">{{item.display}}</span>
+      </md-item-template>
+    </md-autocomplete>
     <md-input-container class="md-block md-icon-float">
         <label>{{externallinkLabel}}</label>
         <input md-maxlength="72" type="text" name="externallink" ng-model="resourceRequest.externallink">

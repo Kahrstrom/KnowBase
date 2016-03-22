@@ -199,13 +199,24 @@ angular.module('knowBase').controller('resourceRequestFormController',
     $scope.externallinkLabel = 'External link';
     $scope.enddateLabel = 'End date';
     $scope.descriptionLabel = 'Description';
+    $scope.customerLabel = 'Customer';
 
+    //Customer autocomplete stuff
+    $scope.customers = [];
+    $scope.selectedCustomer = null;
+    $scope.customerSearchText = null;
+    $scope.customerSearchTextChanged = customerSearchTextChanged;
+    $scope.customerSelectChanged = customerSelectChanged;
+    $scope.customerQueryFilter = customerQueryFilter;
 
     $scope.$parent.$watch('selected',function(newVal,oldVal){
       $scope.resourceRequest = newVal;
+      $scope.customerSearchText = newVal ? newVal.customername : null;
+      getOptions();
     });
 
     $scope.saveResourceRequest = function(){
+      console.log($scope.resourceRequest)
       DataService.saveSkill($scope.resourceRequest,'resourcerequest')
         .then(function (data) {
             $state.go('resourcerequest',{},{reload:true});
@@ -220,6 +231,51 @@ angular.module('knowBase').controller('resourceRequestFormController',
                 position: 'bottom left'
             }); 
         });
+    }
+
+    $scope.createFilterFor = function(query) {
+      var lowercaseQuery = angular.lowercase(query);
+      return function filterFn(option) {
+        return (option.value.indexOf(lowercaseQuery) > -1);
+      };
+    }
+
+    function customerQueryFilter (query) {
+      return query ? $scope.customers.filter( $scope.createFilterFor(query) ) : $scope.customers;
+    }
+
+    function customerSearchTextChanged(text){
+      var matches = customerQueryFilter(text);
+      if(matches.length > 0){
+        $scope.resourceRequest.customer = matches[0].value == angular.lowercase(text) ? matches[0] : null;
+      }
+      else{
+        $scope.resourceRequest.customer = null;
+      }
+      
+      $scope.resourceRequest.customername = text;
+    }
+
+    function customerSelectChanged(item){
+      if(item){
+        $scope.selectedCustomer = item;
+        $scope.resourceRequest.customer = item;
+        $scope.resourceRequest.customername = item.display;
+      }
+    }
+
+    function getOptions(){
+      // Customers
+      $http(DataService.request('GET','customers')).
+        then(function(response) {
+
+          $scope.customers = response.data.data.map(function(t){
+            return {display: t.name, value: t.name.toLowerCase(), idcustomer : t.idcustomer}
+          });
+          console.log($scope.customers)
+        }, function(response) {
+              
+      });
     }
     
     $scope.cancel = function(){
@@ -239,7 +295,7 @@ angular.module('knowBase').controller('resourceRequestFormController',
             }); 
       });
     }
-
+    
   }
 );
 
