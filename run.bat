@@ -1,0 +1,1 @@
+C:\Users\Jonatan\Documents\GitHub\KnowBase\venv\scripts\python.exe C:\Users\Jonatan\Documents\GitHub\KnowBase\app\app.py

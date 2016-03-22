@@ -189,6 +189,102 @@ angular.module('knowBase').controller('activityfeedController',
 }]);
 
 
+angular.module('knowBase').controller('resourceRequestFormController',
+  function ($scope,$state,$http,$templateCache,DataService,$mdToast){
+    $scope.submitText = 'Update work experience';
+    $scope.titleLabel = 'Title';
+    $scope.contactnameLabel = 'Contact name';
+    $scope.contactemailLabel = 'Contact email';
+    $scope.startdateLabel = 'Start date';
+    $scope.externallinkLabel = 'External link';
+    $scope.enddateLabel = 'End date';
+    $scope.descriptionLabel = 'Description';
+
+
+    $scope.$parent.$watch('selected',function(newVal,oldVal){
+      $scope.resourceRequest = newVal;
+    });
+
+    $scope.saveResourceRequest = function(){
+      DataService.saveSkill($scope.resourceRequest,'resourcerequest')
+        .then(function (data) {
+            $state.go('resourcerequest',{},{reload:true});
+        },
+        // handle error
+        function (reason) {
+            $scope.errorMessage = reason; 
+            $scope.error = true;
+            $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to save resource request!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+        });
+    }
+    
+    $scope.cancel = function(){
+      $scope.$parent.toggleRight();
+    }
+
+    $scope.deleteRecord = function(){
+      $http(DataRequest.request('DELETE', 'deleterecord?table=resourceRequest&idrecord=' + $scope.resourceRequest.idresourcerequest))
+        .then(function() {
+            $state.go('resourcerequest');
+        }, 
+        function(response) {
+          $mdToast.show({
+                template: '<md-toast class="md-toast-error">Failed to remove work experience!</md-toast>',
+                hideDelay: 3000,
+                position: 'bottom left'
+            }); 
+      });
+    }
+
+  }
+);
+
+
+angular.module('knowBase').controller('resourceRequestController',
+  function ($scope, $state, DataService, $cookies, $http, $mdSidenav) {
+    
+
+    DataService.getResourceRequests()
+    .then(function(response){
+      $scope.resourceRequests = [];
+      $scope.status = response.status;
+      $.each(response.data.data, function(i,r){
+        $scope.resourceRequests.push(new DataService.ResourceRequest(r));
+      });
+    }, function(){
+      console.log('error')
+    })
+
+    $scope.toggleRight = buildToggler('right');
+
+    function buildToggler(navID) {
+
+      return function() {
+        $mdSidenav(navID)
+          .toggle()
+          .then(function () {
+            
+          });
+      }
+    }
+
+    $scope.edit = function(e){
+      $scope.selected = e;
+      $scope.toggleRight();
+      
+    }
+
+    $scope.new = function(){
+      $scope.selected = new DataService.ResourceRequest(null);
+      $scope.toggleRight();
+    }
+});
+
+
 angular.module('knowBase').controller('toolbarController',
 
   function ($scope, $state, $mdDialog, LocaleService, $cookies) {
@@ -406,7 +502,7 @@ angular.module('knowBase').controller('educationFormController',
     }
 
     $scope.deleteRecord = function(){
-      $http({method: 'DELETE', url: '/api/deleterecord?table=education&idrecord=' + $scope.education.ideducation})
+      $http(DataRequest.request('DELETE', 'deleterecord?table=education&idrecord=' + $scope.education.ideducation))
         .then(function() {
             $state.go('education',{},{reload:true});
         }, 
@@ -466,7 +562,7 @@ angular.module('knowBase').controller('educationFormController',
 
     function getOptions(){
       // Titles
-      $http({method: 'GET', url: '/api/options?table=education&field=title', cache: $templateCache}).
+      $http(DataService.request('GET','options?table=education&field=title')).
         then(function(response) {
           $scope.titles = response.data.data.map(function(t){
             return {display: t.option, value: t.option.toLowerCase()}
@@ -475,7 +571,7 @@ angular.module('knowBase').controller('educationFormController',
 
       });
       // Schools
-      $http({method: 'GET', url: '/api/options?table=education&field=school', cache: $templateCache}).
+      $http(DataService.request('GET','options?table=education&field=school')).
         then(function(response) {
           $scope.schools = response.data.data.map(function(t){
             return {display: t.option, value: t.option.toLowerCase()}
@@ -485,7 +581,7 @@ angular.module('knowBase').controller('educationFormController',
       });
 
       //Educations
-      $http({method: 'GET', url: '/api/options?table=education&field=education', cache: $templateCache}).
+      $http(DataService.request('GET','options?table=education&field=education')).
         then(function(response) {
           $scope.educationValues = response.data.data.map(function(t){
             return {display: t.option, value: t.option.toLowerCase()}
@@ -516,7 +612,8 @@ angular.module('knowBase').controller('educationController',
 
     function getEducations() {
       $scope.educations = [];
-      $http({method: 'GET', url: '/api/educations'}).
+      console.log(DataService.request('GET','educations'))
+      $http(DataService.request('GET','educations')).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,e){
@@ -602,7 +699,7 @@ angular.module('knowBase').controller('workExperienceFormController',
     }
 
     $scope.deleteRecord = function(){
-      $http({method: 'DELETE', url: '/api/deleterecord?table=workexperience&idrecord=' + $scope.workExperience.idworkexperience})
+      $http(DataRequest.request('DELETE', 'deleterecord?table=workExperience&idrecord=' + $scope.workExperience.idworkexperience))
         .then(function() {
             $state.go('workexperience');
         }, 
@@ -647,7 +744,7 @@ angular.module('knowBase').controller('workExperienceFormController',
 
     function getOptions(){
       // Titles
-      $http({method: 'GET', url: '/api/options?table=workExperience&field=title', cache: $templateCache}).
+      $http(DataService.request('GET','options?table=workExperience&field=title')).
         then(function(response) {
           $scope.titles = response.data.data.map(function(t){
             return {display: t.option, value: t.option.toLowerCase()}
@@ -657,7 +754,7 @@ angular.module('knowBase').controller('workExperienceFormController',
               
       });
       // Employers
-      $http({method: 'GET', url: '/api/options?table=workExperience&field=employer', cache: $templateCache}).
+      $http(DataService.request('GET','options?table=workExperience&field=employer')).
         then(function(response) {
           $scope.employers = response.data.data.map(function(t){
             return {display: t.option, value: t.option.toLowerCase()}
@@ -691,7 +788,7 @@ angular.module('knowBase').controller('workExperienceController',
     
     function getWorkExperiences() {
       $scope.workExperiences = [];
-      $http({method: 'GET', url: '/api/workexperience'})
+      $http(DataService.request('GET','workexperience'))
         .then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,w){
@@ -759,7 +856,7 @@ angular.module('knowBase').controller('experienceFormController',
     }
 
     $scope.deleteRecord = function(){
-      $http({method: 'DELETE', url: '/api/deleterecord?table=experience&idrecord=' + $scope.experience.idexperience})
+      $http(DataRequest.request('DELETE', 'deleterecord?table=experience&idrecord=' + $scope.experience.idexperience))
         .then(function() {
             $state.go('experience',{},{reload:true});
         }, 
@@ -796,7 +893,7 @@ angular.module('knowBase').controller('experienceFormController',
 
     function getOptions(){
       // Names
-      $http({method: 'GET', url: '/api/options?table=experience&field=name', cache: $templateCache}).
+      $http(DataService.request('GET','options?table=experience&field=name')).
         then(function(response) {
           $scope.names = response.data.data.map(function(t){
             return {display: t.option, value: t.option.toLowerCase()}
@@ -827,7 +924,7 @@ angular.module('knowBase').controller('experienceController',
     
     function getExperiences() {
       $scope.experiences = [];
-      $http({method: 'GET', url: '/api/experiences'}).
+      $http(DataService.request('GET','experiences')).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,e){
@@ -897,7 +994,7 @@ angular.module('knowBase').controller('publicationFormController',
     }
 
     $scope.deleteRecord = function(){
-      $http({method: 'DELETE', url: '/api/deleterecord?table=publication&idrecord=' + $scope.publication.idpublication})
+      $http(DataRequest.request('DELETE', 'deleterecord?table=publication&idrecord=' + $scope.publication.idpublication))
         .then(function() {
             $state.go('publication',{},{reload:true});
         }, 
@@ -936,7 +1033,7 @@ angular.module('knowBase').controller('publicationFormController',
 
     function getOptions(){
       // Titles
-      $http({method: 'GET', url: '/api/options?table=publication&field=title', cache: $templateCache}).
+      $http(DataService.request('GET','options?table=publication&field=title')).
         then(function(response) {
           $scope.titles = response.data.data.map(function(t){
             return {display: t.option, value: t.option.toLowerCase()}
@@ -969,7 +1066,7 @@ angular.module('knowBase').controller('publicationController',
     
     function getPublications() {
       $scope.publications = [];
-      $http({method: 'GET', url: '/api/publications'}).
+      $http(DataService.request('GET','publications')).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,p){
@@ -1051,7 +1148,7 @@ angular.module('knowBase').controller('projectFormController',
     }
 
     $scope.deleteRecord = function(){
-      $http({method: 'DELETE', url: '/api/deleterecord?table=project&idrecord=' + $scope.project.idproject})
+      $http(DataRequest.request('DELETE', 'deleterecord?table=workExperience&idrecord=' + $scope.workExperience.idworkexperience))
         .then(function() {
             $state.go('project',{},{reload:true});
         }, 
@@ -1112,7 +1209,7 @@ angular.module('knowBase').controller('projectFormController',
 
     function getOptions(){
       // Names
-      $http({method: 'GET', url: '/api/options?table=project&field=name', cache: $templateCache}).
+      $http(DataService.request('GET','options?table=project&field=name')).
         then(function(response) {
           $scope.names = response.data.data.map(function(t){
             return {display: t.option, value: t.option.toLowerCase()}
@@ -1121,7 +1218,7 @@ angular.module('knowBase').controller('projectFormController',
               
       });
       // Customers
-      $http({method: 'GET', url: '/api/customers', cache: $templateCache}).
+      $http(DataService.request('GET','customers')).
         then(function(response) {
           $scope.customers = response.data.data.map(function(t){
             return {display: t.name, value: t.name.toLowerCase(), idcustomer : t.idcustomer}
@@ -1153,7 +1250,7 @@ angular.module('knowBase').controller('projectController',
     
     function getProjects() {
       $scope.projects = [];
-      $http({method: 'GET', url: '/api/projects'}).
+      $http(DataService.request('GET','projects')).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,p){
@@ -1258,7 +1355,7 @@ angular.module('knowBase').controller('meritFormController',
 
     function getOptions(){
       // Names
-      $http({method: 'GET', url: '/api/options?table=merit&field=name', cache: $templateCache}).
+      $http(DataService.request('GET','options?table=merit&field=name')).
         then(function(response) {
           $scope.names = response.data.data.map(function(t){
             return {display: t.option, value: t.option.toLowerCase()}
@@ -1291,7 +1388,7 @@ angular.module('knowBase').controller('meritController',
     
     function getMerits() {
       $scope.merits = [];
-      $http({method: 'GET', url: '/api/merits'}).
+      $http(DataService.request('GET','merits')).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,p){
@@ -1408,7 +1505,7 @@ angular.module('knowBase').controller('languageFormController',
 
     function getOptions(){
       // Names
-      $http({method: 'GET', url: '/api/options?table=language&field=language', cache: $templateCache}).
+      $http(DataService.request('GET','options?table=language&field=language')).
         then(function(response) {
           $scope.languageValues = response.data.data.map(function(t){
             return {display: t.option, value: t.option.toLowerCase()}
@@ -1441,7 +1538,7 @@ angular.module('knowBase').controller('languageController',
     
     function getLanguages() {
       $scope.languages = [];
-      $http({method: 'GET', url: '/api/languages'}).
+      $http(DataService.request('GET','languages')).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,l){
@@ -1502,7 +1599,7 @@ angular.module('knowBase').controller('skillFormController',
     $scope.saveSkill = function(){
       DataService.saveSkill($scope.skill,'skill')
         .then(function (data) {
-            $state.go('skills',{},{reload:true});
+            $state.go('skill',{},{reload:true});
         },
         // handle error
         function (reason) {
@@ -1557,7 +1654,7 @@ angular.module('knowBase').controller('skillFormController',
 
     function getOptions(){
       // Names
-      $http({method: 'GET', url: '/api/options?table=skill&field=name', cache: $templateCache}).
+      $http(DataService.request('GET','options?table=skill&field=name')).
         then(function(response) {
           $scope.names = response.data.data.map(function(t){
             return {display: t.option, value: t.option.toLowerCase()}
@@ -1589,7 +1686,7 @@ angular.module('knowBase').controller('skillController',
     
     function getSkills() {
       $scope.skills = [];
-      $http({method: 'GET', url: '/api/skills'}).
+      $http(DataService.request('GET','skills')).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,s){
@@ -1615,11 +1712,11 @@ angular.module('knowBase').controller('skillController',
 
 
 angular.module('knowBase').controller('skillsController',
-  function ($scope, $state, SkillService) {
+  function ($scope, $state, SkillService, DataService) {
 
     $scope.activeSkill = '';
     function getSkillTypes() {
-        SkillService.getSkillTypes()
+        DataService.getSkillTypes()
             .success(function (response) {
                 $scope.skillTypes = response.data;
                 $scope.tiles = SkillService.buildGridModel($scope,{
@@ -1747,7 +1844,7 @@ angular.module('knowBase').controller('profileController',
 
     
 
-    $http({method: 'GET', url: '/api/profilepicture', cache: $templateCache})
+    $http(DataService.request('GET','profilepicture'))
     .then(function(response) {
 
         $scope.status = response.status;
@@ -1857,8 +1954,8 @@ angular.module('knowBase').controller('competenceProfilesController',
 
     function getData() {
 
-      $http({method: 'GET', url: '/api/competenceprofiles', cache: $templateCache}).
-        then(function(response) {
+      $http(DataService.request('GET','competenceprofiles'))
+      .then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,p){
             $scope.competenceProfiles.push(new DataService.CompetenceProfile(p));
@@ -1867,7 +1964,7 @@ angular.module('knowBase').controller('competenceProfilesController',
           $scope.data = response.data || "Request failed";
           $scope.status = response.status;
       });
-      $http({method: 'GET', url: '/api/educations', cache: $templateCache}).
+      $http(DataService.request('GET','educations')).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,e){
@@ -1879,7 +1976,7 @@ angular.module('knowBase').controller('competenceProfilesController',
           $scope.data = response.data || "Request failed";
           $scope.status = response.status;
       });
-      $http({method: 'GET', url: '/api/workexperience', cache: $templateCache}).
+      $http(DataService.request('GET','workexperience')).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,w){
@@ -1890,7 +1987,7 @@ angular.module('knowBase').controller('competenceProfilesController',
           $scope.data = response.data || "Request failed";
           $scope.status = response.status;
       });
-      $http({method: 'GET', url: '/api/languages', cache: $templateCache}).
+      $http(DataService.request('GET','languages')).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,l){
@@ -1901,7 +1998,7 @@ angular.module('knowBase').controller('competenceProfilesController',
           $scope.data = response.data || "Request failed";
           $scope.status = response.status;
       });
-      $http({method: 'GET', url: '/api/skills', cache: $templateCache}).
+      $http(DataService.request('GET','skills')).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,s){
@@ -1912,7 +2009,7 @@ angular.module('knowBase').controller('competenceProfilesController',
           $scope.data = response.data || "Request failed";
           $scope.status = response.status;
       });
-      $http({method: 'GET', url: '/api/projects', cache: $templateCache}).
+      $http(DataService.request('GET','projects')).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,p){
@@ -1923,7 +2020,7 @@ angular.module('knowBase').controller('competenceProfilesController',
           $scope.data = response.data || "Request failed";
           $scope.status = response.status;
       });
-      $http({method: 'GET', url: '/api/experiences', cache: $templateCache}).
+      $http(DataService.request('GET','experiences')).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,e){
@@ -1934,7 +2031,7 @@ angular.module('knowBase').controller('competenceProfilesController',
           $scope.data = response.data || "Request failed";
           $scope.status = response.status;
       });
-      $http({method: 'GET', url: '/api/merits', cache: $templateCache}).
+      $http(DataService.request('GET','merits')).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,m){
@@ -1945,7 +2042,7 @@ angular.module('knowBase').controller('competenceProfilesController',
           $scope.data = response.data || "Request failed";
           $scope.status = response.status;
       });
-      $http({method: 'GET', url: '/api/publications', cache: $templateCache}).
+      $http(DataService.request('GET','publications')).
         then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,p){

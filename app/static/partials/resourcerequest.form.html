@@ -1,0 +1,70 @@
+<md-toolbar class="md-hue-2 md-toolbar-grande" layout="column">
+    <div layout="row" flex layout-padding >
+        <div flex="20">
+            <md-button class="md-button-small" ng-click="cancel()">
+                <md-icon class="material-icons md-light md-24">arrow_forward</md-icon>
+            </md-button>
+        </div>
+        <div flex="60" layout="row" layout-align="center center">
+            <md-icon class="material-icons md-light md-72 center vertical-nudge-top">group_add</md-icon>
+        </div>
+        <div flex layout="row" layout-align="end">
+            <md-button ng-if="resourceRequest.idresourcerequest" class="md-button-small" ng-click="deleteRecord()">
+                <md-icon class="material-icons md-light">delete_forever</md-icon>
+            </md-button>
+        </div>
+  
+    </div>
+    
+    <md-list-item class="md-2-line">
+      <div class="md-list-item-text">
+            <h3 layout="row" ng-if="resourceRequest.idresourcerequest" layout-align="center center">{{resourceRequest.title}}</h3>
+            <h3 layout="row" ng-if="!resourceRequest.idresourcerequest" layout-align="center center">Add resource request</h3>
+      </div>
+    </md-list-item> 
+</md-toolbar>
+
+<form flex layout-margin layout-padding flex ng-submit="saveResourceRequest()" name="resourceRequestForm">
+	
+	<md-input-container class="md-block md-icon-float">
+        <label>{{titleLabel}}</label>
+        <input md-maxlength="72" type="text" name="title" ng-model="resourceRequest.title">
+    </md-input-container>
+    <md-input-container class="md-block md-icon-float">
+        <label>{{descriptionLabel}}</label>
+        <textarea rows="12" md-maxlength="4000" type="text" name="description" ng-model="resourceRequest.description"></textarea>
+    </md-input-container>
+    <md-input-container class="md-block md-icon-float">
+        <label>{{externallinkLabel}}</label>
+        <input md-maxlength="72" type="text" name="externallink" ng-model="resourceRequest.externallink">
+    </md-input-container>
+    <md-input-container class="md-block md-icon-float">
+        <label>{{contactnameLabel}}</label>
+        <input md-maxlength="128" type="text" name="contactname" ng-model="resourceRequest.contactname">
+    </md-input-container>
+    <md-input-container class="md-block md-icon-float">
+        <label>{{contactemailLabel}}</label>
+        <input md-maxlength="128" type="email" name="contactemail" ng-model="resourceRequest.contactemail">
+    </md-input-container>
+	<div layout="row">
+
+        <am-date-picker flex ng-model="resourceRequest.startdate"
+                am-input-date-format="L"
+                am-input-label="{{startdateLabel}}"
+                am-today-button="Today"
+                am-show-input-icon="true">
+        </am-date-picker>
+        <am-date-picker flex ng-model="resourceRequest.enddate"
+            am-input-date-format="L"
+            am-input-label="{{enddateLabel}}"
+            am-today-button="Today"
+            am-show-input-icon="true">
+        </am-date-picker>
+    </div>
+
+
+	<div layout="row" class="vertical-nudge-top">
+    	<div flex="33" flex="20"></div>
+        <md-button  flex-gt-md="33" flex="60" type="submit" class="md-raised md-primary" flex>Save</md-button>
+  	</div>
+</form>

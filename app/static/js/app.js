@@ -150,6 +150,26 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
             
         })
 
+        .state('resourcerequest', {
+            url: '/resourcerequest',
+            views: {
+                '' : {
+                    templateUrl: 'static/partials/resource_request.html',
+                    controller: 'resourceRequestController'
+                },
+                'toolbar@resourcerequest' : {
+                    controller: 'toolbarController',
+                    templateUrl: 'static/partials/toolbar.html'
+                },
+                'edit@resourcerequest' : {
+                    controller: 'resourceRequestFormController',
+                    templateUrl: 'static/partials/resourcerequest.form.html'
+                }
+            },
+            access: 'restricted'
+            
+        })
+
         .state('signup', {
             url: '/signup',
             views: {

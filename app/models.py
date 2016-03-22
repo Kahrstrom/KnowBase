@@ -3,7 +3,10 @@ from datetime import *
 from app import db
 from sqlalchemy import event
 from elasticsearch import Elasticsearch
+from itsdangerous import (TimedJSONWebSignatureSerializer
+                            as Serializer, BadSignature, SignatureExpired)
 import base64
+import config
 
 ######## DATABASE MODEL #########
 
@@ -47,6 +50,56 @@ publicationProfiles = db.Table('publicationprofiles',
       db.Column('idpublication',db.Integer,db.ForeignKey('publication.idpublication')),
       db.Column('idcompetenceprofile',db.Integer,db.ForeignKey('competenceprofile.idcompetenceprofile'))
 )
+
+class ResourceRequest(db.Model):
+    __tablename__ = "resourcerequest"
+    idresourcerequest = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(72))
+    startdate = db.Column(db.DateTime)
+    enddate = db.Column(db.DateTime)
+    description = db.Column(db.String(4000))
+    externallink = db.Column(db.String(72))
+    customer = db.Column(db.Integer, db.ForeignKey('customer.idcustomer'))
+    rel_customer = db.relationship('Customer', primaryjoin='ResourceRequest.customer == Customer.idcustomer',
+                                  backref=db.backref('resourcerequest', lazy='dynamic'))
+    contactname = db.Column(db.String(128))
+    contactemail = db.Column(db.String(128))
+
+    def __init__(self, json_data=None):
+        self.title = json_data['title']
+        self.title = json_data['title']
+        self.startdate = json_data['startdate']
+        self.enddate = json_data['enddate']
+        self.description = json_data['description']
+        self.externallink = json_data['externallink']
+        self.contactname = json_data['contactname']
+        self.contactemail = json_data['contactemail']
+
+    def __repr__(self):
+        return '<ResourceRequest %r>' % (self.title)
+
+    def update(self, json_data):
+        self.title = json_data['title']
+        self.title = json_data['title']
+        self.startdate = json_data['startdate']
+        self.enddate = json_data['enddate']
+        self.description = json_data['description']
+        self.externallink = json_data['externallink']
+        self.contactname = json_data['contactname']
+        self.contactemail = json_data['contactemail']
+
+    @property
+    def serialize(self):
+        return {
+            'idresourcerequest' : self.idresourcerequest,
+            'title' : self.title,
+            'startdate' : self.startdate,
+            'enddate' : self.enddate,
+            'description' : self.description,
+            'externallink' : self.externallink,
+            'contactname' : self.contactname,
+            'contactemail' : self.contactemail
+        }
 
 
 # Create our database model
@@ -604,6 +657,25 @@ class User(db.Model):
 
     def check_password(self, password):
         return check_password_hash(self.password, password)
+
+    def generate_auth_token(self, expiration = 86400):
+        try:
+            s = Serializer(config.secret_key, expires_in = expiration)
+        except Exception as err:
+            print(err)
+        return s.dumps({ 'iduser': self.iduser })
+
+    @staticmethod
+    def verify_auth_token(token):
+        s = Serializer(config.secret_key)
+        try:
+            data = s.loads(token)
+        except SignatureExpired:
+            return None # valid token, but expired
+        except BadSignature:
+            return None # invalid token
+        user = User.query.get(data['iduser'])
+        return user
 
 
 ######## DATABASE MODEL #########

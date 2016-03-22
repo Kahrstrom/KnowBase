@@ -1,28 +1,41 @@
-angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', function ($q,$timeout,$http) {
+angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$cookies', function ($q,$timeout,$http, $cookies) {
     var dataservice = this;
-    dataservice.urlBase = '/api/';
+    dataservice.host = 'http://localhost:8080';
+    dataservice.urlBase = dataservice.host + '/api/';
 
     dataservice.getProfile = function (idprofile) {
       var args = idprofile ? "?idprofile=" + idprofile : "";
-      return $http.get(dataservice.urlBase + 'profile' + args);
+      return $http({method: 'GET', url : dataservice.urlBase + 'profile' + args, headers : {Authorization : 'Basic ' + btoa($cookies.get('token') + ':youwish!')}});
     };
 
     dataservice.getCompetenceProfiles = function (idprofile) {
       var args = idprofile ? "?idprofile=" + idprofile : "";
-      return $http.get(dataservice.urlBase + 'competenceprofiles' + args);
+      return $http({method: 'GET', url : dataservice.urlBase + 'competenceprofiles' + args, headers : {Authorization : 'Basic ' + btoa($cookies.get('token') + ':youwish!')}});
     };
 
+    dataservice.getSkillTypes = function(){
+      return $http(dataservice.request('GET','skilltypes'));
+    }
 
+    dataservice.request = function(method, url){
+      return {
+        method : method,
+        url : dataservice.urlBase + url,
+        headers : {Authorization : 'Basic ' + btoa($cookies.get('token')+':youwish!')}
+      };
+    }
 
+    dataservice.getResourceRequests = function(){
+      return $http(dataservice.request('GET','resourcerequest'));
+    }
 
-    dataservice.getEducations = function () {
-  
-      return $http.get(dataservice.urlBase + 'educations');
-    };
+    // dataservice.getSkills = function () {
+    //   return $http(dataservice.request('GET','educations'));
+    // };
 
     dataservice.searchData = function(query){
       var deferred = $q.defer();
-      $http.post(dataservice.urlBase + 'search', query)
+      $http({method : 'POST', url : dataservice.urlBase + 'search', data: query, headers : {Authorization : 'Basic ' + btoa($cookies.get('token') + ':sdfsdf')}})
         .success(function (data, status) {
           if(status === 200){
             deferred.resolve(data);
@@ -39,9 +52,8 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
     }
 
     dataservice.updateProfile = function(profile){
-      console.log(profile)
       var deferred = $q.defer();
-      $http.post(dataservice.urlBase + 'profile', profile)
+      $http({method: 'POST', url : dataservice.urlBase + 'profile', data : profile, headers : {Authorization : 'Basic ' + btoa($cookies.get('token') + ':sdfsdf')}})
         .success(function (data, status) {
           if(status === 200){
             deferred.resolve();
@@ -59,7 +71,7 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
     dataservice.saveSkill = function(json,type){
       var deferred = $q.defer();
       console.log(json)
-      $http.post(dataservice.urlBase + type, json)
+      $http({method: 'POST', url: dataservice.urlBase + type, data : json, headers : {Authorization : 'Basic ' + btoa($cookies.get('token') + ':sdfsdf')}})
         .success(function (data, status) {
           
           if(status === 200){
@@ -79,7 +91,7 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
     dataservice.uploadPicture = function(img){
       var deferred = $q.defer();
       console.log(img)
-      $http.post(dataservice.urlBase + 'profilepicture', img)
+      $http.post({method: 'POST', url: dataservice.urlBase + 'profilepicture', data : img, headers : {Authorization : 'Basic ' + btoa($cookies.get('token') + ':youwish!')}})
         .success(function(data,status){
           if(status === 200 && data.response){
             deferred.resolve();
@@ -124,6 +136,18 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
       self.languages = p ? p.languages : [];
     }
 
+    dataservice.ResourceRequest = function(r){
+      var self = this;
+      self.idresourcerequest = r ? r.idresourcerequest : null;
+      self.title = r ? r.title : '';
+      self.contactemail = r ? r.contactemail : '';
+      self.contactname = r ? r.contactname : '';
+      self.startdate = r ? (r.startdate ? new Date(r.startdate) : null) : null;
+      self.enddate = r ? (r.enddate ? new Date(r.enddate) : null) : null;
+      self.externallink = r ? r.externallink : '';
+      self.description = r ? r.description : '';
+    }
+
     dataservice.Education = function(e){
       var self = this;
       self.ideducation = e ? e.ideducation : null;
@@ -133,7 +157,6 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http', fun
       self.startdate = e ? (e.startdate ? new Date(e.startdate) : null) : null;
       self.enddate = e ? (e.enddate ? new Date(e.enddate) : null) : null;
       self.description = e ? e.description : '';
-      self.image = '../static/resources/icons/png/ic_school_black_24dp_1x.png';
     }
 
     dataservice.WorkExperience = function(w){
@@ -231,13 +254,11 @@ angular.module('knowBase').service('LocaleService', ['$q', '$timeout','$http', '
 }]);
 
 
-angular.module('knowBase').service('SkillService', ['$q', '$timeout','$http', 
-  function ($q,$timeout,$http) {
+angular.module('knowBase').service('SkillService', ['$q', '$timeout','$http','$cookies', 
+  function ($q,$timeout,$http, $cookies) {
     var self = this;
-
-    self.getSkillTypes = function(){
-      return $http.get('/api/skilltypes')
-    }
+    self.host = 'http://localhost:8080';
+    self.urlBase = self.host + '/api/';
 
     self.buildGridModel = function($scope, tileTmpl){
       var it, results = [ ];
@@ -298,7 +319,10 @@ angular.module('knowBase').service('SkillService', ['$q', '$timeout','$http',
 angular.module('knowBase').factory('AuthService',
   ['$q', '$timeout', '$http', '$cookies',
   function ($q, $timeout, $http, $cookies) {
+    var self = this;
 
+    self.server = 'http://localhost:8080';
+    self.urlBase = self.server + '/api';
     // create user variable
     var user = null;
 
@@ -318,6 +342,8 @@ angular.module('knowBase').factory('AuthService',
     }
   }
 
+  
+
   function login(request) {
 
     // create a new instance of deferred
@@ -326,13 +352,24 @@ angular.module('knowBase').factory('AuthService',
     var expired = new Date(today);
     console.log( {email: request.email, password: request.password})
     // send a post request to the server
-    $http.post('/api/login', {email: request.email, password: request.password})
+    console.log(btoa({email: request.email, password: request.password}))
+    $http.post(self.urlBase + '/login', {email: request.email, password: request.password})
       // handle success
       .success(function (data, status) {
-        
+
         if(status === 200 && data.response){
-          user = true;
           expired.setDate(today.getDate() + 1);
+          $http({method: 'GET', url: self.urlBase + '/token', headers: {'Authorization' : 'Basic ' +  btoa(request.email + ':' + request.password)}})
+          .success(function(data, status){
+            $cookies.put('token', data.token, {expires:expired});
+            console.log(expired)
+            console.log($cookies.get('token'));
+          })
+          .error(function(t){
+            console.log(t)
+          });
+          user = true;
+          
           $cookies.put('user', user, {expires : expired});
           deferred.resolve();
         } else {
@@ -344,8 +381,9 @@ angular.module('knowBase').factory('AuthService',
       .error(function (data) {
         user = false;
         deferred.reject();
+        console.log(data)
       });
-
+    console.log("wtf");
     // return promise object
     return deferred.promise;
 
