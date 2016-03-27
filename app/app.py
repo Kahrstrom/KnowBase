@@ -599,7 +599,6 @@ def search():
             }
         }
     }
-    print(data)
 
     for e in es.search(body=search_body).get('hits').get('hits'):
         src = e.get('_source')
@@ -635,10 +634,9 @@ def search():
     for p in set(profiles):
         res.profiles.append(Profile.query.get(p).serialize)
 
-    print(res.serialize)
     return jsonify(res.serialize)
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 8080))
-    app.run(host=config.host_ip, port=port, debug=False)
+    port = int(os.environ.get('PORT', 8000))
+    app.run(host=config.host_ip, port=port, debug=False, threaded=True)

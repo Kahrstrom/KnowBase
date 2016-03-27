@@ -112,21 +112,48 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
                     templateUrl: 'static/partials/details.html',
                     controller: 'detailsController'
                 },
-                'listEducation@search' : {
-                    controller: 'educationFormController',
-                    templateUrl: 'static/partials/education.list.html'
-                }
-                ,
-                'listWorkExperience@search' : {
-                    controller: 'workExperienceFormController',
-                    templateUrl: 'static/partials/workexperience.list.html'
-                }
-                ,
-                'listExperience@search' : {
-                    controller: 'experienceFormController',
-                    templateUrl: 'static/partials/experience.list.html'
+                'resourcerequests@search' : {
+                    templateUrl: 'static/partials/resourcerequest.list.html',
+                    controller: 'resourceRequestController'
                 },
-                
+                'competenceprofile@search' : {
+                    templateUrl: 'static/partials/competenceprofile.view.html',
+                    controller: 'detailsController'
+                },
+                'viewEducation@search' : {
+                    controller: 'educationFormController',
+                    templateUrl: 'static/partials/education.view.html'
+                }
+                ,
+                'viewWorkExperience@search' : {
+                    controller: 'workExperienceFormController',
+                    templateUrl: 'static/partials/workexperience.view.html'
+                }
+                ,
+                'viewExperience@search' : {
+                    controller: 'experienceFormController',
+                    templateUrl: 'static/partials/experience.view.html'
+                },
+                'viewMerit@search' : {
+                    controller: 'meritFormController',
+                    templateUrl: 'static/partials/merit.view.html'
+                },
+                'viewSkill@search' : {
+                    controller: 'skillFormController',
+                    templateUrl: 'static/partials/skill.view.html'
+                },
+                'viewLanguage@search' : {
+                    controller: 'languageFormController',
+                    templateUrl: 'static/partials/language.view.html'
+                },
+                'viewPublication@search' : {
+                    controller: 'publicationFormController',
+                    templateUrl: 'static/partials/publication.view.html'
+                },
+                'viewProject@search' : {
+                    controller: 'projectFormController',
+                    templateUrl: 'static/partials/project.view.html'
+                },
               
                 'competences@search' : {
                     templateUrl: 'static/partials/search.competences.html'
@@ -154,7 +181,7 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
             url: '/resourcerequest',
             views: {
                 '' : {
-                    templateUrl: 'static/partials/resource_request.html',
+                    templateUrl: 'static/partials/resourcerequest.html',
                     controller: 'resourceRequestController'
                 },
                 'toolbar@resourcerequest' : {
@@ -390,6 +417,10 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
                 'competenceprofiles@profile' : {
                     controller: 'competenceProfilesController',
                     templateUrl: 'static/partials/competenceprofiles.html'
+                },
+                'editcompetenceprofile@profile' : {
+                    controller: 'competenceProfilesController',
+                    templateUrl: 'static/partials/competenceprofile.form.html'
                 }
 
             },

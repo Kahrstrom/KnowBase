@@ -1,0 +1,56 @@
+<md-toolbar class="md-hue-2 md-toolbar-grande" layout="column">
+    <div layout="row" flex layout-padding >
+        <div flex="20">
+            <md-button class="md-button-small" ng-click="cancelSkill()">
+                <md-icon class="material-icons md-light md-24">arrow_forward</md-icon>
+            </md-button>
+        </div>
+        <div flex="60" layout="row" layout-align="center center">
+            <md-icon class="material-icons md-light md-72 center vertical-nudge-top">forum</md-icon>
+        </div>
+    </div>
+    <md-list-item class="md-2-line">
+      <div class="md-list-item-text">
+            <h3 layout="row" ng-if="language.idlanguage" layout-align="center center">{{language.language}}</h3>
+      </div>
+    </md-list-item> 
+</md-toolbar>
+<md-list class="md-dense vertical-nudge-top" flex>
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+            <h4>Language</h4>
+            <p >{{language.language}}</p>
+        </div>
+    </md-list-item>
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+            <h4>Listening proficiency</h4>
+            <p >{{language.listening}}</p>
+        </div>
+    </md-list-item>
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+            <h4>Writing proficiency</h4>
+            <p >{{language.writing}}</p>
+        </div>
+    </md-list-item>
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+            <h4>Reading proficiency</h4>
+            <p >{{language.reading}}</p>
+        </div>
+    </md-list-item>
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+            <h4>Conversation proficiency</h4>
+            <p >{{language.conversation}}</p>
+        </div>
+    </md-list-item>
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+            <h4>Verbal proficiency</h4>
+            <p >{{language.verbal}}</p>
+        </div>
+    </md-list-item>
+</md-list>
+

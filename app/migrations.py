@@ -94,6 +94,8 @@ class ResourceRequest(db.Model):
         self.externallink = json_data['externallink']
         self.contactname = json_data['contactname']
         self.contactemail = json_data['contactemail']
+        self.customer = json_data['customer']['idcustomer']
+
     @property
     def serialize_customer(self):
         if self.rel_customer is not None:
@@ -113,7 +115,7 @@ class ResourceRequest(db.Model):
             'customer' : self.serialize_customer,
             'contactname' : self.contactname,
             'contactemail' : self.contactemail,
-            'descriptive_header': self.title,
+            'descriptive_header': self.serialize_customer['descriptive_header'] + ' - ' + self.title,
             'descriptive_subheader': self.description
         }
 
@@ -214,6 +216,55 @@ class WorkExperience(db.Model):
             'timestamp': self.timestamp,
             'descriptive_header': self.title,
             'descriptive_subheader': self.employer
+        }
+
+class Candidate(db.Model):
+    __tablename__ = "candidate"
+    idcandidate = db.Column(db.Integer, primary_key=True)
+    rate = db.Column(db.Integer)
+    approved = db.Column(db.Integer)
+
+    competenceprofile = db.Column(db.Integer, db.ForeignKey('competenceprofile.idcompetenceprofile'))
+    rel_competenceprofile = db.relationship('CompetenceProfile', primaryjoin='Candidate.competenceprofile == CompetenceProfile.idcompetenceprofile',
+                                  backref=db.backref('candidate', lazy='dynamic'))
+
+    resourcerequest = db.Column(db.Integer, db.ForeignKey('resourcerequest.idresourcerequest'))
+    rel_resourcerequest = db.relationship('ResourceRequest', primaryjoin='Candidate.resourcerequest == ResourceRequest.idresourcerequest',
+                                  backref=db.backref('candidate', lazy='dynamic'))
+
+    def __init__(self, json_data):
+        self.approved = 0
+
+    def __repr__(self):
+        return '<Candidate %r>' % (self.rel_competenceprofile.profile.serialize['descriptive_header'])
+
+    def update(self, json_data=None):
+        self.rate = json_data['rate']
+        self.approved = json_data['approved']
+
+    @property
+    def serialize_competenceprofile(self):
+        if self.rel_competenceprofile is not None:
+            return self.rel_competenceprofile.serialize
+        else:
+            return ''
+
+    @property
+    def serialize_resourcerequest(self):
+        if self.rel_resourcerequest is not None:
+            return self.rel_resourcerequest.serialize
+        else:
+            return ''
+    @property
+    def serialize(self):
+        return {
+            'idcustomer':self.idcustomer,
+            'approved':self.approved,
+            'rate' : self.rate,
+            'competenceprofile' : self.serialize_competenceprofile,
+            'resourcerequest' : self.serialize_resourcerequest,
+            'descriptive_header': self.rel_competenceprofile.profile.serialize['descriptive_header'],
+            'descriptive_subheader': self.rel_competenceprofile.profile.serialize['descriptive_subheader']
         }
 
 

@@ -25,7 +25,8 @@
     </div>
     <div layout="row">
       <md-sidenav class="md-sidenav-left md-whiteframe-z2 full-height" md-component-id="left" set-class-when-at-top="fix-to-top">
-        <div flex ui-view="details" />
+        <div ng-if="idprofile"  ui-view="details" />
+        <div ng-if="competenceprofile"  ui-view="competenceprofile" />
       </md-sidenav>
       <div flex-gt-sm="20" flex-sm="0"></div>
       <div flex-gt-sm="60" flex layout="column" layout-margin-layout-padding class="vertical-nudge-top ">
@@ -33,9 +34,18 @@
         <div ng-if="groupProfiles" ui-view="profiles" />
       </div>
       <md-sidenav class="md-sidenav-right md-sidenav-right-small md-whiteframe-z2" md-component-id="right" set-class-when-at-top="fix-to-top">
-        <div ng-if="selected.ideducation" ui-view="listEducation"/>
-        <div ng-if="selected.idworkexperience" ui-view="listWorkExperience"/>
-        <div ng-if="selected.idexperience" ui-view="listExperience"/>
+        <div ng-if="selected.ideducation" ui-view="viewEducation"/>
+        <div ng-if="selected.idworkexperience" ui-view="viewWorkExperience"/>
+        <div ng-if="selected.idmerit" ui-view="viewMerit"/>
+        <div ng-if="selected.idskill" ui-view="viewSkill"/>
+        <div ng-if="selected.idpublication" ui-view="viewPublication"/>
+        <div ng-if="selected.idproject" ui-view="viewProject"/>
+        <div ng-if="selected.idlanguage" ui-view="viewLanguage"/>
+        <div ng-if="selected.idexperience" ui-view="viewExperience"/>
+        <div ng-if="!selected" ui-view="resourcerequests"/>
+      </md-sidenav>
+      <md-sidenav class="md-sidenav-right md-whiteframe-z2" md-component-id="right-wide" set-class-when-at-top="fix-to-top">
+        <div ng-if="!selected" ui-view="resourcerequests"/>
       </md-sidenav>
     </div>
 </md-content>

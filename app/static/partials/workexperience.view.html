@@ -1,10 +1,13 @@
 <md-toolbar class="md-hue-2 md-toolbar-grande" layout="column">
     <div layout="row" flex layout-padding >
-
-        <div flex= layout="row" layout-align="center center">
+        <div flex="20">
+            <md-button class="md-button-small" ng-click="cancelSkill()">
+                <md-icon class="material-icons md-light md-24">arrow_forward</md-icon>
+            </md-button>
+        </div>
+        <div flex="60" layout="row" layout-align="center center">
             <md-icon class="material-icons md-light md-72 center vertical-nudge-top">work</md-icon>
         </div>
-
     </div>
     
     <md-list-item class="md-2-line">
@@ -36,7 +39,7 @@
     <md-list-item class="md-2-line">
         <div class="md-list-item-text">
             <h4>Period</h4>
-            <p >{{workExperience.startdate}} - {{workExperience.enddate}}</p>
+            <p >{{workExperience.startdate | date : 'yyyy-MM'}} - {{workExperience.enddate | date : 'yyyy-MM'}}</p>
         </div>
     </md-list-item>
 </md-list>

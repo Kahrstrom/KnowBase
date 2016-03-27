@@ -158,15 +158,15 @@ md-icon.md-icons-empty-state{
 }
 
 #profilepicture{
-    width: 240px;
-    height: 240px;
+    width: 160px;
+    height: 160px;
     margin-left: -6px;
 }
 
 .md-button.md-fab.btn-huge{
-    width: 238px;
-    height: 238px;
-    margin-left: -119px;
+    width: 160px;
+    height: 160px;
+    margin-left: -79px;
 }
 
 md-grid-tile.hue-1 {
@@ -383,6 +383,19 @@ md-toolbar.md-toolbar-grande{
     height: 220px;
 }
 
+md-tabs.sidenav-grande-content{
+
+    
+    >md-tabs-content-wrapper{
+        
+        >md-tab-content{
+            max-height: calc(~'100vh - 270px');
+            overflow-y: auto;
+        }
+    }
+    
+}
+
 .md-sidenav-right {
     min-width: 200px !important;
     width: 85vw !important;
@@ -406,3 +419,6 @@ md-toolbar.md-toolbar-grande{
     color: #121212;
 }
 
+textarea{
+    overflow: auto !important;
+}

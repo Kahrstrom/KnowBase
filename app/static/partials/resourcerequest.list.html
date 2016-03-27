@@ -1,0 +1,19 @@
+<md-toolbar class="md-hue-2 md-toolbar-grande" layout="column">
+	<div class="vertical-nudge-top" />
+	<md-icon layout-align="center center" class="material-icons md-light md-72 center vertical-nudge-top">group_add</md-icon>
+    <md-list-item class="md-2-line">
+      <div class="md-list-item-text">
+	        <h3 layout="row" layout-align="center center">Resource requests</h3>
+      </div>
+    </md-list-item>
+</md-toolbar>
+<md-list class="md-dense vertical-nudge-top" flex>
+    <md-list-item class="md-3-line secondary-button-padding" ng-repeat="resourceRequest in resourceRequests" ng-click="addCandidate(resourceRequest)">
+        <md-icon class="material-icons avatar">group_add</md-icon>
+        <div class="md-list-item-text" flex >
+            <h3> {{resourceRequest.descriptive_header}}</h3>
+            <p>{{resourceRequest.descriptive_subheader}}</p>
+        </div>
+    </md-list-item>
+   
+</md-list>

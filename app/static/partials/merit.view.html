@@ -1,33 +1,38 @@
 <md-toolbar class="md-hue-2 md-toolbar-grande" layout="column">
     <div layout="row" flex layout-padding >
-        <div flex layout="row" layout-align="center center">
-            <md-icon class="material-icons md-light md-72 center vertical-nudge-top">star</md-icon>
+        <div flex="20">
+            <md-button class="md-button-small" ng-click="cancelSkill()">
+                <md-icon class="material-icons md-light md-24">arrow_forward</md-icon>
+            </md-button>
+        </div>
+        <div flex="60" layout="row" layout-align="center center">
+            <md-icon class="material-icons md-light md-72 center vertical-nudge-top">local_activity</md-icon>
         </div>
     </div>
     <md-list-item class="md-2-line">
       <div class="md-list-item-text">
-            <h3 layout="row" ng-if="experience.idexperience" layout-align="center center">{{experience.name}}</h3>
+            <h3 layout="row" ng-if="merit.idmerit" layout-align="center center">{{merit.name}}</h3>
       </div>
     </md-list-item> 
 </md-toolbar>
 <md-list class="md-dense vertical-nudge-top" flex>
     <md-list-item class="md-2-line">
         <div class="md-list-item-text">
-            <h4>Experience</h4>
-            <p >{{experience.name}}</p>
+            <h4>Merit</h4>
+            <p >{{merit.name}}</p>
         </div>
     </md-list-item>
 
     <md-list-item class="md-2-line">
         <div class="md-list-item-text">
             <h4>Description</h4>
-            <p >{{experience.description}}</p>
+            <p >{{merit.description}}</p>
         </div>
     </md-list-item>
     <md-list-item class="md-2-line">
         <div class="md-list-item-text">
-            <h4>Period</h4>
-            <p >{{experience.startdate}} - {{experience.enddate}}</p>
+            <h4>Date</h4>
+            <p >{{merit.date | date : 'yyyy-MM'}}</p>
         </div>
     </md-list-item>
 </md-list>

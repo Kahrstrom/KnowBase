@@ -1,44 +1,49 @@
 <md-toolbar class="md-hue-2 md-toolbar-grande" layout="column">
     <div layout="row" flex layout-padding >
-        <div flex layout="row" layout-align="center center">
-            <md-icon class="material-icons md-light md-72 center vertical-nudge-top">school</md-icon>
+        <div flex="20">
+            <md-button class="md-button-small" ng-click="cancelSkill()">
+                <md-icon class="material-icons md-light md-24">arrow_forward</md-icon>
+            </md-button>
+        </div>
+        <div flex="60" layout="row" layout-align="center center">
+            <md-icon class="material-icons md-light md-72 center vertical-nudge-top">list</md-icon>
         </div>
     </div>
     <md-list-item class="md-2-line">
       <div class="md-list-item-text">
-            <h3 layout="row" ng-if="education.ideducation" layout-align="center center">{{education.education}}</h3>
+            <h3 layout="row" ng-if="project.idproject" layout-align="center center">{{project.name}}</h3>
       </div>
     </md-list-item> 
 </md-toolbar>
 <md-list class="md-dense vertical-nudge-top" flex>
     <md-list-item class="md-2-line">
         <div class="md-list-item-text">
-            <h4>Title</h4>
-            <p >{{education.title}}</p>
+            <h4>Project name</h4>
+            <p >{{project.name}}</p>
         </div>
     </md-list-item>
     <md-list-item class="md-2-line">
         <div class="md-list-item-text">
-            <h4>Education</h4>
-            <p >{{education.education}}</p>
+            <h4>Customer</h4>
+            <p >{{project.customername}}</p>
         </div>
     </md-list-item>
     <md-list-item class="md-2-line">
         <div class="md-list-item-text">
-            <h4>School</h4>
-            <p >{{education.school}}</p>
+            <h4>Hours</h4>
+            <p >{{project.hours}}</p>
         </div>
     </md-list-item>
     <md-list-item class="md-2-line">
         <div class="md-list-item-text">
             <h4>Description</h4>
-            <p >{{education.description}}</p>
+            <p >{{project.description}}</p>
         </div>
     </md-list-item>
     <md-list-item class="md-2-line">
         <div class="md-list-item-text">
             <h4>Period</h4>
-            <p >{{education.startdate}} - {{education.enddate}}</p>
+            <p >{{project.startdate | date : 'yyyy-MM'}} - {{project.enddate | date : 'yyyy-MM'}}</p>
         </div>
     </md-list-item>
 </md-list>

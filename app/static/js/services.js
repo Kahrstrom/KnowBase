@@ -1,6 +1,6 @@
 angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$cookies', function ($q,$timeout,$http, $cookies) {
     var dataservice = this;
-    dataservice.host = 'http://213.112.209.12:8080';
+    dataservice.host = 'http://213.112.209.12:8000';
     dataservice.urlBase = dataservice.host + '/api/';
 
     dataservice.getProfile = function (idprofile) {
@@ -91,7 +91,8 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$co
     dataservice.uploadPicture = function(img){
       var deferred = $q.defer();
       console.log(img)
-      $http.post({method: 'POST', url: dataservice.urlBase + 'profilepicture', data : img, headers : {Authorization : 'Basic ' + btoa($cookies.get('token') + ':youwish!')}})
+      console.log({method: 'POST', url: dataservice.urlBase + 'profilepicture', data : img, headers : {Authorization : 'Basic ' + btoa($cookies.get('token') + ':youwish!')}})
+      $http({method: 'POST', url: dataservice.urlBase + 'profilepicture', data : img, headers : {Authorization : 'Basic ' + btoa($cookies.get('token') + ':youwish!')}})
         .success(function(data,status){
           if(status === 200 && data.response){
             deferred.resolve();
@@ -120,12 +121,15 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$co
       self.email = p.email;
       self.description = p.description;
       self.birthdate = p ? (p.birthdate ? new Date(p.birthdate) : null) : null;
+      self.descriptive_header = p ? p.descriptive_header : '';
     }
 
     dataservice.CompetenceProfile = function(p){
       var self = this;
       self.idcompetenceprofile = p ? p.idcompetenceprofile : null;
       self.name = p ? p.name : '';
+      self.profile = p ? p.profile : null;
+      self.description = p ? p.description : '';
       self.workExperiences = p ? p.workexperiences : [];
       self.educations = p ? p.educations : [];
       self.publications = p ? p.publications : [];
@@ -150,8 +154,17 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$co
       self.description = r ? r.description : '';
       self.descriptive_header = r ? r.descriptive_header : '';
       self.descriptive_subheader = r ? r.descriptive_subheader : '';
-      console.log(self.descriptive_header)
-      console.log(self.descriptive_subheader)
+    }
+
+    dataservice.Candidate = function(o){
+      var self = this;
+      self.idcandidate = o ? o.idcandidate : null;
+      self.rate = o ? o.rate : 0;
+      self.approved = o ? o.approved : 0;
+      self.competenceprofile = o ? new CompetenceProfile(o.competenceprofile) : null;
+      self.resourcerequest = o ? new ResourceRequest(o.resourcerequest) : null;
+      self.descriptive_header = o ? o.descriptive_header : '';
+      self.descriptive_subheader = o ? o.descriptive_subheader : '';
     }
 
     dataservice.Education = function(e){
@@ -209,6 +222,16 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$co
       self.idskill = o ? o.idskill : null;
       self.name = o ? o.name : '';
       self.level = o ? o.level : null;
+      self.description = o ? o.description : '';
+      self.descriptive_header = o ? o.descriptive_header : '';
+      self.descriptive_subheader = o ? o.descriptive_subheader : '';
+    }
+
+    dataservice.Customer = function(o){
+      var self = this;
+      self.idcustomer = o ? o.idcustomer : null;
+      self.name = o ? o.name : '';
+      self.customerno = o ? o.customerno : '';
       self.description = o ? o.description : '';
       self.descriptive_header = o ? o.descriptive_header : '';
       self.descriptive_subheader = o ? o.descriptive_subheader : '';
@@ -279,7 +302,7 @@ angular.module('knowBase').service('LocaleService', ['$q', '$timeout','$http', '
 angular.module('knowBase').service('SkillService', ['$q', '$timeout','$http','$cookies', 
   function ($q,$timeout,$http, $cookies) {
     var self = this;
-    self.host = 'http://213.112.209.12:8080';
+    self.host = 'http://213.112.209.12:8000';
     self.urlBase = self.host + '/api/';
 
     self.buildGridModel = function($scope, tileTmpl){
@@ -343,7 +366,7 @@ angular.module('knowBase').factory('AuthService',
   function ($q, $timeout, $http, $cookies) {
     var self = this;
 
-    self.server = 'http://213.112.209.12:8080';
+    self.server = 'http://213.112.209.12:8000';
     self.urlBase = self.server + '/api';
     // create user variable
     var user = null;

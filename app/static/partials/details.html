@@ -1,14 +1,24 @@
 <md-toolbar class="md-hue-2">
 	<div  layout="column" ng-if="profile">
-		<div layout="row" layout-align="center center" flex ng-if="profile" layout-padding class="vertical-nudge-top">
-			<img ng-if="profile.profilepicture" ng-style="{'background':'url(' + imgData + ')'}" class="circle bordered profilepicture"></img>
-			<div ng-if="!profile.profilepicture" class="circle bordered img-placeholder">
-				<md-icon class="material-icons md-72 img-placeholder">image</md-icon>
 
-			</div>
-			
-			 
-		</div>
+		<div layout="row" flex layout-padding >
+	        <div flex layout="row" layout-align="end">
+	          
+	        </div>
+	        <div flex="60" layout="row" layout-align="center center">
+	            <img ng-if="profile.profilepicture" ng-style="{'background':'url(' + imgData + ')'}" class="circle bordered profilepicture"></img>
+				<div ng-if="!profile.profilepicture" class="circle bordered img-placeholder">
+					<md-icon class="material-icons md-72 img-placeholder">image</md-icon>
+				</div>
+	        </div>
+	        <div flex="20" layout="row" layout-align="end">
+	            <md-button ng-if="hasParent" class="md-button-small" ng-click="cancelProfile()">
+	                <md-icon class="material-icons md-light md-24">arrow_back</md-icon>
+	            </md-button>
+	        </div>
+	        
+
+	    </div>
 		<md-list-item class="md-3-line">
 	      <div class="md-list-item-text">
 	      		
@@ -18,7 +28,7 @@
 	    </md-list-item>
 	</div>
 </md-toolbar>
-<md-tabs md-dynamic-height md-border-bottom>
+<md-tabs md-dynamic-height md-border-bottom md-selected="tabIndex">
 	<md-tab label="Contact">
 		<md-list class="md-dense vertical-nudge-top" flex>
 			<md-list-item ng-click="openGoogleMaps()">
@@ -55,11 +65,13 @@
 	</md-tab>
 	<md-tab label="Profiles">
 		<md-list class="md-dense vertical-nudge-top" flex>
-			<md-list-item  ng-repeat="competenceProfile in competenceProfiles" ng-click="showProfile(competenceProfile)">
-		    	<md-icon class="material-icons avatar">public</md-icon>
-
-	      			<p> {{ competenceProfile.name }}</p>
-
+			<md-list-item  ng-repeat="competenceProfile in competenceProfiles" ng-click="showCompetenceProfile(competenceProfile)">
+		    	<md-icon class="material-icons avatar">folder_special</md-icon>
+      			<p> {{ competenceProfile.name }}</p>
+      			<md-icon ng-if="hasParent" class="md-secondary material-icons avatar" ng-click="setCompetenceProfile(competenceProfile)" aria-label="setCandidate">
+      				group_add
+      				<md-tooltip>Add to resource request</md-tooltip>
+      			</md-icon>
 		  	</md-list-item>
 	  	</md-list>
 	</md-tab>

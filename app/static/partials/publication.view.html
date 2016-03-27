@@ -1,0 +1,50 @@
+<md-toolbar class="md-hue-2 md-toolbar-grande" layout="column">
+    <div layout="row" flex layout-padding >
+        <div flex="20">
+            <md-button class="md-button-small" ng-click="cancelSkill()">
+                <md-icon class="material-icons md-light md-24">arrow_forward</md-icon>
+            </md-button>
+        </div>
+        <div flex="60" layout="row" layout-align="center center">
+            <md-icon class="material-icons md-light md-72 center vertical-nudge-top">book</md-icon>
+        </div>
+    </div>
+    <md-list-item class="md-2-line">
+      <div class="md-list-item-text">
+            <h3 layout="row" ng-if="publication.idpublication" layout-align="center center">{{publication.title}}</h3>
+      </div>
+    </md-list-item> 
+</md-toolbar>
+<md-list class="md-dense vertical-nudge-top" flex>
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+            <h4>Publication</h4>
+            <p >{{publication.title}}</p>
+        </div>
+    </md-list-item>
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+            <h4>Published in</h4>
+            <p >{{publication.publication}}</p>
+        </div>
+    </md-list-item>
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+            <h4>Authors</h4>
+            <p >{{publication.authors}}</p>
+        </div>
+    </md-list-item>
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+            <h4>Description</h4>
+            <p >{{publication.description}}</p>
+        </div>
+    </md-list-item>
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+            <h4>Publication date</h4>
+            <p >{{publication.date | date : 'yyyy-MM'}}</p>
+        </div>
+    </md-list-item>
+</md-list>
+

@@ -1,0 +1,40 @@
+<md-toolbar class="md-hue-2 md-toolbar-grande" layout="column">
+    <div layout="row" flex layout-padding >
+        <div flex="20">
+            <md-button class="md-button-small" ng-click="cancelSkill()">
+                <md-icon class="material-icons md-light md-24">arrow_forward</md-icon>
+            </md-button>
+        </div>
+        <div flex="60" layout="row" layout-align="center center">
+            <md-icon class="material-icons md-light md-72 center vertical-nudge-top">vpn_key</md-icon>
+        </div>
+    </div>
+    <md-list-item class="md-2-line">
+      <div class="md-list-item-text">
+            <h3 layout="row" ng-if="skill.idskill" layout-align="center center">{{skill.name}}</h3>
+      </div>
+    </md-list-item> 
+</md-toolbar>
+<md-list class="md-dense vertical-nudge-top" flex>
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+            <h4>Key skill</h4>
+            <p >{{skill.name}}</p>
+        </div>
+    </md-list-item>
+
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+            <h4>Level</h4>
+            <p >{{skill.level}}</p>
+        </div>
+    </md-list-item>
+
+    <md-list-item class="md-2-line">
+        <div class="md-list-item-text">
+            <h4>Description</h4>
+            <p >{{skill.description}}</p>
+        </div>
+    </md-list-item>
+</md-list>
+
