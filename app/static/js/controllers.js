@@ -50,7 +50,7 @@ angular.module('knowBase').controller('logoutController',
 
 
 angular.module('knowBase').controller('searchController',
-  function ($scope, $state, $http, $templateCache, DataService, $mdToast, $cookies, $mdSidenav) {
+  function ($scope, $state, $http,  DataService, $mdToast, $cookies, $mdSidenav, $mdDialog) {
     $scope.searchval = "";
     $scope.competenceProfileTabIndex = 2;
     $scope.profileTabIndex = 3;
@@ -117,6 +117,31 @@ angular.module('knowBase').controller('searchController',
         }
     }
 
+    $scope.showConfirm = function(ev, resourceRequest) {
+      
+      var confirm = $mdDialog.confirm()
+            .title('Add candidate?')
+            .textContent('Do you want to add ' + $scope.candidate.descriptive_header + ' as a candidate to the resource request?')
+            .ariaLabel('Add Candidate')
+            .targetEvent(ev)
+            .ok('Yes')
+            .cancel('No');
+      $mdDialog.show(confirm).then(function() {
+        var candidate = new DataService.Candidate(null)
+        candidate.competenceprofile = $scope.candidate; 
+        candidate.resourcerequest =  resourceRequest;
+        candidate.rate = 0;
+        DataService.saveSkill(candidate,'candidates')
+          .then(function(response){
+            $scope.toggleRightWide();
+          },function(response){
+
+          });
+      }, function() {
+        
+      });
+    };
+
     $scope.edit = function(item){
       $scope.selected = item;
       $scope.toggleRight();
@@ -131,6 +156,7 @@ angular.module('knowBase').controller('searchController',
     $scope.setCompetenceProfile = function(competenceprofile){
       $scope.selected = null;
       $scope.idcompetenceprofile = competenceprofile.idcompetenceprofile;
+      $scope.candidate = competenceprofile;
       $scope.toggleRightWide();
     }
 
@@ -219,7 +245,7 @@ angular.module('knowBase').controller('activityfeedController',
 
 
 angular.module('knowBase').controller('resourceRequestFormController',
-  function ($scope,$state,$http,$templateCache,DataService,$mdToast){
+  function ($scope,$state,$http,DataService,$mdToast){
     $scope.submitText = 'Update work experience';
     $scope.titleLabel = 'Title';
     $scope.contactnameLabel = 'Contact name';
@@ -238,10 +264,13 @@ angular.module('knowBase').controller('resourceRequestFormController',
     $scope.customerSelectChanged = customerSelectChanged;
     $scope.customerQueryFilter = customerQueryFilter;
 
+    $scope.candidates = [];
+
     $scope.$parent.$watch('selected',function(newVal,oldVal){
-      $scope.resourceRequest = newVal;
-      $scope.customerSearchText = newVal ? newVal.customername : null;
+      $scope.resourceRequest = new DataService.ResourceRequest(newVal);
+      $scope.customerSearchText = newVal ? $scope.resourceRequest.customer.name : null;
       getOptions();
+      getCandidates();
     });
 
     $scope.saveResourceRequest = function(){
@@ -249,6 +278,7 @@ angular.module('knowBase').controller('resourceRequestFormController',
       DataService.saveSkill($scope.resourceRequest,'resourcerequest')
         .then(function (data) {
             $state.go('resourcerequest',{},{reload:true});
+
         },
         // handle error
         function (reason) {
@@ -306,6 +336,20 @@ angular.module('knowBase').controller('resourceRequestFormController',
               
       });
     }
+
+    function getCandidates(){
+      // Candidates
+      $http(DataService.request('GET','candidates?resourcerequest=' + $scope.resourceRequest.idresourcerequest))
+        .then(function(response){
+          $scope.candidates = [];
+          $scope.status = response.status;
+          $.each(response.data.data, function(i,c){
+            $scope.candidates.push(new DataService.Candidate(c));
+          });
+        }, function(response){
+
+        });
+    }
     
     $scope.cancel = function(){
       $scope.$parent.toggleRight();
@@ -355,6 +399,10 @@ angular.module('knowBase').controller('resourceRequestController',
             
           });
       }
+    }
+
+    $scope.addCandidate = function($event,resourceRequest){
+      $scope.$parent.showConfirm($event,resourceRequest);
     }
 
     $scope.edit = function(e){
@@ -423,28 +471,31 @@ angular.module('knowBase').controller('toolbarController',
 });
 
 angular.module('knowBase').controller('detailsController',
-  function ($scope, $state, DataService, $window, $http, $templateCache) {
-    
+  function ($scope, $state, DataService, $window, $http) {
+    $scope.profile = null;
     $scope.$parent.$watch('idprofile', function(newValue, oldValue){
       if(newValue !== undefined){
         $scope.hasParent = true;
       }else{
         $scope.hasParent = false;
       }
-      
+      console.log($scope.profile)
       $scope.idprofile = newValue;
       $scope.tabIndex = $scope.$parent.profileTabIndex;
       $scope.imgData = null;
       getProfile();
+      console.log($scope.profile)
     });
     
     function getProfile() {
         DataService.getProfile($scope.idprofile)
           .success(function (response) {
               $scope.profile = response.data;
+
               var response = response.data;
-        
+              console.log($scope.profile)
               $scope.imgData = 'data:image/' + $scope.profile.profilepicture.extension + ';base64,' + $scope.profile.profilepicture.data;
+              
               $scope.competenceProfiles = [];
               DataService.getCompetenceProfiles($scope.idprofile)
                 .success(function (response) {
@@ -455,6 +506,7 @@ angular.module('knowBase').controller('detailsController',
                 .error(function (error) {
                   $scope.status = 'Unable to load profile data: ' + error.message;
                 });
+                
           })
           .error(function (error) {
               $scope.status = 'Unable to load profile data: ' + error.message;
@@ -541,7 +593,7 @@ angular.module('knowBase').controller('dashboardController',
 
 
 angular.module('knowBase').controller('educationFormController',
-  function ($scope,$state,$http,$templateCache,DataService,$mdToast){
+  function ($scope,$state,$http,DataService,$mdToast){
     $scope.submitText = 'Update education';
     $scope.titleLabel = 'Title';
     $scope.educationLabel = 'Education';
@@ -704,7 +756,7 @@ angular.module('knowBase').controller('educationFormController',
 )
 
 angular.module('knowBase').controller('educationController',
-  function ($scope, $state, $http, $templateCache, DataService, $mdToast, $mdSidenav) {
+  function ($scope, $state, $http,  DataService, $mdToast, $mdSidenav) {
 
     $scope.toggleRight = buildToggler('right');
     $scope.siteLabel = 'My Educations';
@@ -748,7 +800,7 @@ angular.module('knowBase').controller('educationController',
 });
 
 angular.module('knowBase').controller('workExperienceFormController',
-  function ($scope,$state,$http,$templateCache,DataService,$mdToast){
+  function ($scope,$state,$http,DataService,$mdToast){
     $scope.submitText = 'Update work experience';
     $scope.titleLabel = 'Title';
     $scope.employerLabel = 'Employer';
@@ -880,7 +932,7 @@ angular.module('knowBase').controller('workExperienceFormController',
 angular.module('knowBase').controller('workExperienceController',
 
 
-  function ($scope, $state, $http, $templateCache, DataService, $mdToast, $mdSidenav) {
+  function ($scope, $state, $http,  DataService, $mdToast, $mdSidenav) {
     $scope.workExperiences = [];
     $scope.toggleRight = buildToggler('right');
     $scope.siteLabel = 'My Work experience';
@@ -922,7 +974,7 @@ angular.module('knowBase').controller('workExperienceController',
 });
 
 angular.module('knowBase').controller('experienceFormController',
-  function ($scope, $state, $http, $templateCache, DataService, $mdToast) {
+  function ($scope, $state, $http,  DataService, $mdToast) {
     $scope.submitText = 'Upstartdate experience';
     $scope.nameLabel = 'Name';
     $scope.startdateLabel = 'Start date';
@@ -1015,7 +1067,7 @@ angular.module('knowBase').controller('experienceFormController',
 });
 
 angular.module('knowBase').controller('experienceController',
-  function ($scope, $state, $http, $templateCache, DataService, $mdToast, $mdSidenav) {
+  function ($scope, $state, $http,  DataService, $mdToast, $mdSidenav) {
     
     $scope.experiences = [];
     $scope.toggleRight = buildToggler('right');
@@ -1061,7 +1113,7 @@ angular.module('knowBase').controller('experienceController',
 
 
 angular.module('knowBase').controller('publicationFormController',
-  function ($scope, $state, $http, $templateCache, DataService, $mdToast) {
+  function ($scope, $state, $http,  DataService, $mdToast) {
     $scope.submitText = 'Update publication';
     $scope.titleLabel = 'Title';
     $scope.authorLabel = 'Author list';
@@ -1158,7 +1210,7 @@ angular.module('knowBase').controller('publicationFormController',
 
 
 angular.module('knowBase').controller('publicationController',
-  function ($scope, $state, $http, $templateCache, DataService, $mdToast, $mdSidenav) {
+  function ($scope, $state, $http,  DataService, $mdToast, $mdSidenav) {
     
     $scope.publications = [];
     $scope.toggleRight = buildToggler('right');
@@ -1204,7 +1256,7 @@ angular.module('knowBase').controller('publicationController',
 
 
 angular.module('knowBase').controller('projectFormController',
-  function ($scope, $state, $http, $templateCache, DataService, $mdToast) {
+  function ($scope, $state, $http,  DataService, $mdToast) {
     $scope.submitText = 'Update project';
     $scope.nameLabel = 'Name';
     $scope.customerLabel = 'Customer';
@@ -1343,7 +1395,7 @@ angular.module('knowBase').controller('projectFormController',
 
 
 angular.module('knowBase').controller('projectController',
-  function ($scope, $state, $http, $templateCache, DataService, $mdToast, $mdSidenav) {
+  function ($scope, $state, $http,  DataService, $mdToast, $mdSidenav) {
     
     $scope.projects = [];
     $scope.toggleRight = buildToggler('right');
@@ -1388,7 +1440,7 @@ angular.module('knowBase').controller('projectController',
 
 
 angular.module('knowBase').controller('meritFormController',
-  function ($scope, $state, $http, $templateCache, DataService, $mdToast) {
+  function ($scope, $state, $http,  DataService, $mdToast) {
     $scope.submitText = 'Update merit';
     $scope.nameLabel = 'Name';
     $scope.dateLabel = 'Start date';
@@ -1482,7 +1534,7 @@ angular.module('knowBase').controller('meritFormController',
 
 
 angular.module('knowBase').controller('meritController',
-  function ($scope, $state, $http, $templateCache, DataService, $mdToast, $mdSidenav) {
+  function ($scope, $state, $http,  DataService, $mdToast, $mdSidenav) {
     
     $scope.merits = [];
     $scope.toggleRight = buildToggler('right');
@@ -1526,7 +1578,7 @@ angular.module('knowBase').controller('meritController',
 });
 
 angular.module('knowBase').controller('languageFormController',
-  function ($scope, $state, $http, $templateCache, DataService, $mdToast, $timeout) {
+  function ($scope, $state, $http,  DataService, $mdToast, $timeout) {
     $scope.submitText = 'Update language';
     $scope.languageLabel = 'Language';
     $scope.writingLabel = 'Writing proficiency';
@@ -1633,7 +1685,7 @@ angular.module('knowBase').controller('languageFormController',
 
 
 angular.module('knowBase').controller('languageController',
-  function ($scope, $state, $http, $templateCache, DataService, $mdToast, $mdSidenav) {
+  function ($scope, $state, $http,  DataService, $mdToast, $mdSidenav) {
     
     $scope.languages = [];
     $scope.toggleRight = buildToggler('right');
@@ -1679,7 +1731,7 @@ angular.module('knowBase').controller('languageController',
 
 
 angular.module('knowBase').controller('skillFormController',
-  function ($scope, $state, $http, $templateCache, DataService, $mdToast, $timeout) {
+  function ($scope, $state, $http,  DataService, $mdToast, $timeout) {
     $scope.submitText = 'Update skill';
     $scope.skills = [];
     $scope.nameLabel = 'Name';
@@ -1782,7 +1834,7 @@ angular.module('knowBase').controller('skillFormController',
 });
 
 angular.module('knowBase').controller('skillController',
-  function ($scope, $state, $http, $templateCache, DataService, $mdToast, $mdSidenav) {
+  function ($scope, $state, $http,  DataService, $mdToast, $mdSidenav) {
     
     $scope.skills = [];
     $scope.toggleRight = buildToggler('right');
@@ -1920,7 +1972,7 @@ function profilePictureController($scope, $mdDialog, DataService) {
 
 
 angular.module('knowBase').controller('profileController',
-  function ($scope, $state, $timeout, DataService, $mdDialog, $mdMedia, $http, $templateCache, $mdToast) {
+  function ($scope, $state, $timeout, DataService, $mdDialog, $mdMedia, $http,  $mdToast) {
     $scope.title = 'Profile';
     $scope.profileTab = 'info';
     $scope.imgsrc = '';
@@ -2012,7 +2064,7 @@ angular.module('knowBase').controller('profileController',
 
 
 angular.module('knowBase').controller('competenceProfilesController',
-  function ($scope, $state, $http, $templateCache, DataService, $mdToast, $mdSidenav) {
+  function ($scope, $state, $http,  DataService, $mdToast, $mdSidenav) {
     $scope.nameLabel = 'Name';
     $scope.querySearch = querySearch;
     $scope.competenceProfiles = [];
@@ -2064,7 +2116,7 @@ angular.module('knowBase').controller('competenceProfilesController',
 
     function getData() {
 
-      $http(DataService.request('GET','competenceprofiles'))
+      $http(DataService.request('GET','competenceprofiles?idprofile=' + $scope.$parent.profile.idprofile))
       .then(function(response) {
           $scope.status = response.status;
           $.each(response.data.data, function(i,p){
@@ -2285,22 +2337,9 @@ angular.module('knowBase').controller('competenceProfilesController',
     $scope.saveCompetenceProfile = function(){
 
 
-      DataService.saveSkill($scope.competenceProfile,'competenceProfile')
+      DataService.saveSkill($scope.selected,'competenceProfile')
         .then(function (data) {
-            $scope.success = true;
-            $mdToast.show({
-                template: '<md-toast class="md-toast-success">Successfully saved competence profile!</md-toast>',
-                hideDelay: 3000,
-                position: 'bottom left'
-            });
-            if(!$scope.competenceProfile.idcompetenceprofile){
-              $scope.competenceProfile.idcompetenceprofile = data.idrecord;
-              $scope.competenceProfiles.push($scope.competenceProfile);
-            }
-            $scope.competenceProfile = null;
-            $scope.nameSearchText = null;
-            $scope.focused.skilltype = '';
-            // $state.transitionTo($state.current, params, { reload: true, inherit: true, notify: true })
+            $state.go('profile',{},{reload:true});
 
         },
         // handle error
@@ -2319,7 +2358,6 @@ angular.module('knowBase').controller('competenceProfilesController',
     }
 
     $scope.cancelCompetenceProfile = function(){
-      $scope.selected = null;
       $scope.nameSearchText = null;
       $scope.focused.skilltype = '';
       $scope.toggleRight();
@@ -2335,10 +2373,15 @@ angular.module('knowBase').controller('competenceProfilesController',
     $scope.newCompetenceProfile = function(){
       $scope.nameSearchText = null;
       $scope.focused.skilltype = '';
-      $scope.selected = null;
       $scope.selected = new DataService.CompetenceProfile(null);
       $scope.toggleRight();
     }
     
-    getData();
+    $scope.$parent.$watch('profile',function(newValue, oldValue){
+      console.log($scope.$parent.profile)
+      if(newValue){
+        getData();
+      }
+    });
+    
 });

@@ -152,6 +152,7 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$co
       self.enddate = r ? (r.enddate ? new Date(r.enddate) : null) : null;
       self.externallink = r ? r.externallink : '';
       self.description = r ? r.description : '';
+      self.customer = r ? new dataservice.Customer(r.customer) : null;
       self.descriptive_header = r ? r.descriptive_header : '';
       self.descriptive_subheader = r ? r.descriptive_subheader : '';
     }
@@ -161,8 +162,9 @@ angular.module('knowBase').service('DataService', ['$q', '$timeout','$http','$co
       self.idcandidate = o ? o.idcandidate : null;
       self.rate = o ? o.rate : 0;
       self.approved = o ? o.approved : 0;
-      self.competenceprofile = o ? new CompetenceProfile(o.competenceprofile) : null;
-      self.resourcerequest = o ? new ResourceRequest(o.resourcerequest) : null;
+      self.profile = o ? new dataservice.Profile(o.profile) : new dataservice.Profile(null);
+      self.competenceprofile = o ? new dataservice.CompetenceProfile(o.competenceprofile) : new dataservice.CompetenceProfile(null);
+      self.resourcerequest = o ? new dataservice.ResourceRequest(o.resourcerequest) : new dataservice.ResourceRequest(null);
       self.descriptive_header = o ? o.descriptive_header : '';
       self.descriptive_subheader = o ? o.descriptive_subheader : '';
     }

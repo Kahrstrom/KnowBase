@@ -8,7 +8,7 @@
     </md-list-item>
 </md-toolbar>
 <md-list class="md-dense vertical-nudge-top" flex>
-    <md-list-item class="md-3-line secondary-button-padding" ng-repeat="resourceRequest in resourceRequests" ng-click="addCandidate(resourceRequest)">
+    <md-list-item class="md-3-line secondary-button-padding" ng-repeat="resourceRequest in resourceRequests" ng-click="addCandidate($event,resourceRequest)">
         <md-icon class="material-icons avatar">group_add</md-icon>
         <div class="md-list-item-text" flex >
             <h3> {{resourceRequest.descriptive_header}}</h3>

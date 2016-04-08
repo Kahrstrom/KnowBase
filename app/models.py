@@ -227,13 +227,16 @@ class Candidate(db.Model):
 
     def __init__(self, json_data):
         self.approved = 0
+        self.rate = 0
 
     def __repr__(self):
-        return '<Candidate %r>' % (self.rel_competenceprofile.profile.serialize['descriptive_header'])
+        return '<Candidate %r>' % (self.rel_competenceprofile.rel_profile.serialize['descriptive_header'])
 
     def update(self, json_data=None):
         self.rate = json_data['rate']
         self.approved = json_data['approved']
+        self.resourcerequest = json_data['resourcerequest']['idresourcerequest']
+        self.competenceprofile = json_data['competenceprofile']['idcompetenceprofile']
 
     @property
     def serialize_competenceprofile(self):
@@ -251,13 +254,15 @@ class Candidate(db.Model):
     @property
     def serialize(self):
         return {
-            'idcustomer':self.idcustomer,
+            'idcandidate':self.idcandidate,
             'approved':self.approved,
             'rate' : self.rate,
             'competenceprofile' : self.serialize_competenceprofile,
             'resourcerequest' : self.serialize_resourcerequest,
-            'descriptive_header': self.rel_competenceprofile.profile.serialize['descriptive_header'],
-            'descriptive_subheader': self.rel_competenceprofile.profile.serialize['descriptive_subheader']
+            'profile' : self.rel_competenceprofile.rel_profile.serialize,
+            'descriptive_header': self.rel_competenceprofile.rel_profile.serialize['descriptive_header'] + ' - '
+                                  + self.rel_competenceprofile.serialize['descriptive_header'],
+            'descriptive_subheader': self.rel_competenceprofile.rel_profile.serialize['descriptive_subheader']
         }
 
 

@@ -470,24 +470,14 @@ def save_resourcerequest():
 def get_competenceprofiles():
     #TODO: kontrollera admin
     idprofile = request.args.get('idprofile')
-    if idprofile is None:
-        profile = g.user.rel_profile
-    else:
+
+    if idprofile is not None:
         profile = Profile.query.get(idprofile)
+        profiles = CompetenceProfile.query.filter_by(profile=profile.idprofile).all()
+    else:
+        profiles = CompetenceProfile.query.all()
 
-    if profile is None:
-
-        return abort(401)
-
-    profiles = CompetenceProfile.query.filter_by(profile=profile.idprofile).all()
-
-    retval = []
-    for p in profiles:
-
-        retval.append(p.serialize)
-
-
-    return jsonify(data=retval)
+    return jsonify(data=[p.serialize for p in profiles])
 
 @app.route('/api/competenceProfile',methods=['POST'])
 @auth.login_required
@@ -498,13 +488,17 @@ def save_competenceprofiles():
     publications = request.json['publications']
     projects = request.json['projects']
     educations = request.json['educations']
+
     workExperiences = request.json['workExperiences']
     languages = request.json['languages']
+
     skills = request.json['skills']
     merits = request.json['merits']
+
     idcompetenceprofile = request.json['idcompetenceprofile']
+
     if idcompetenceprofile is None:
-        competenceProfile = CompetenceProfile(request.json,profile.idprofile)
+        competenceProfile = CompetenceProfile(request.json, profile.idprofile)
         db.session.add(competenceProfile)
         db.session.commit()
     else:
@@ -522,6 +516,53 @@ def save_competenceprofiles():
 
     db.session.commit()
     return jsonify(idrecord="{idrecord}".format(idrecord=competenceProfile.idcompetenceprofile))
+
+@app.route('/api/candidates',methods=['GET'])
+@auth.login_required
+def get_candidates():
+    #TODO: kontrollera admin
+    idcandidate = request.args.get('idcandidate')
+
+    if idcandidate is not None:
+        return jsonify(data=Candidate.query.get(idcandidate).serialize)
+
+    idresourcerequest = request.args.get('resourcerequest')
+
+    if idresourcerequest is not None:
+        candidates = Candidate.query.filter_by(resourcerequest=idresourcerequest).all()
+    else:
+        candidates = Candidate.query.all()
+    try:
+        print([c.serialize for c in candidates])
+    except Exception as err:
+        print(err)
+    return jsonify(data=[c.serialize for c in candidates])
+
+@app.route('/api/candidates',methods=["POST"])
+@auth.login_required
+def save_candidate():
+
+    idcandidate = request.json['idcandidate']
+
+    resourcerequest = ResourceRequest.query.get(request.json['resourcerequest']['idresourcerequest'])
+
+    competenceprofile = CompetenceProfile.query.get(request.json['competenceprofile']['idcompetenceprofile'])
+
+    if resourcerequest is None or competenceprofile is None:
+        abort(404)
+
+    if idcandidate is None:
+        candidate = Candidate(request.json)
+        candidate.resourcerequest = resourcerequest.idresourcerequest
+        candidate.competenceprofile = competenceprofile.idcompetenceprofile
+        db.session.add(candidate)
+    else:
+        candidate = Candidate.query.get(idcandidate)
+        candidate.update(request.json)
+
+    db.session.commit()
+
+    return jsonify(idrecord="{idrecord}".format(idrecord=candidate.idcandidate))
 
 @app.after_request
 def after_request(response):

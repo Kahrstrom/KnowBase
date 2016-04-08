@@ -37,10 +37,7 @@
 							<label>Position</label>
 							<input md-maxlength="128" type="text" name="position" ng-model="profile.position">
 						</md-input-container>
-						<md-input-container class="md-block">
-							<label>About</label>
-							<textarea md-maxlength="4000" rows="6" type="text" name="position" ng-model="profile.description" />
-						</md-input-container>
+						
 						<div layout="row" layout-align="center center">
 							<am-date-picker ng-model="profile.birthdate"
 						                am-input-date-format="L"
@@ -50,6 +47,12 @@
 							</am-date-picker>
 						</div>
 					</div>
+				</md-tab>
+				<md-tab label="About me">
+					<md-input-container class="md-block">
+						<label>Description</label>
+						<textarea md-maxlength="4000" rows="12" type="text" name="position" ng-model="profile.description" />
+					</md-input-container>
 				</md-tab>
 				<md-tab layout-margin label="Contact info">
 					<div layout="column" layout-margin>
