@@ -333,7 +333,7 @@ class CompetenceProfile(db.Model):
         self.description = json_data['description']
 
     @property
-    def serialize(self):
+    def serialize_relations(self):
         return {
             "idcompetenceprofile":self.idcompetenceprofile,
             "name":self.name,
@@ -346,6 +346,24 @@ class CompetenceProfile(db.Model):
             "projects":[p.serialize for p in self.projects],
             "merits":[m.serialize for m in self.merits],
             "publications":[p.serialize for p in self.publications],
+            'description' : self.description,
+            'descriptive_header': self.name,
+            'descriptive_subheader': self.description
+        }
+    @property
+    def serialize(self):
+        return {
+            "idcompetenceprofile":self.idcompetenceprofile,
+            "name":self.name,
+            "profile" : self.profile,
+            "workexperiences":[w.idworkexperience for w in self.workexperiences],
+            "educations":[e.ideducation for e in self.educations],
+            "languages":[l.idlanguage for l in self.languages],
+            "skills":[s.idskill for s in self.skills],
+            "experiences":[e.idexperience for e in self.experiences],
+            "projects":[p.idproject for p in self.projects],
+            "merits":[m.idmerit for m in self.merits],
+            "publications":[p.idpublication for p in self.publications],
             'description' : self.description,
             'descriptive_header': self.name,
             'descriptive_subheader': self.description

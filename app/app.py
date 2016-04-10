@@ -477,7 +477,7 @@ def get_competenceprofiles():
     else:
         profiles = CompetenceProfile.query.all()
 
-    return jsonify(data=[p.serialize for p in profiles])
+    return jsonify(data=[p.serialize_relations for p in profiles])
 
 @app.route('/api/competenceProfile',methods=['POST'])
 @auth.login_required

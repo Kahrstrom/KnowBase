@@ -1,8 +1,8 @@
-@color-primary: #512DA8; /*700*/
-@color-hue-1: #B39DDB; /*200*/
-@color-hue-2: #7E57C2; /*400*/
-@color-hue-3: #673AB7; /*500*/
-@color-hue-4: #4527A0; /*800*/
+@color-primary: #455A64; /*700*/
+@color-hue-1: #B0BEC5; /*200*/
+@color-hue-2: #78909C; /*400*/
+@color-hue-3: #607D8B; /*500*/
+@color-hue-4: #37474F; /*800*/
 
 @color-accent-primary: #FFA000;
 @color-accent-hue-1: #FFE082;
@@ -17,6 +17,36 @@
     font-family: Gidole;
     src: url('../fonts/GidoleFont/Gidole-Regular.ttf');
 }
+
+.animate{
+    &.animate-quick{
+        -webkit-transition: all 0.2s ease; /* Safari and Chrome */
+        -moz-transition: all 0.2s ease; /* Firefox */
+        -o-transition: all 0.2s ease; /* IE 9 */
+        -ms-transition: all 0.2s ease; /* Opera */
+        transition: all 0.2s ease;
+    }
+}
+
+
+
+.grow.spin:hover{
+    -webkit-transform: scale(1.15) rotate(90deg); /* Safari and Chrome */
+    -moz-transform:scale(1.15) rotate(90deg); /* Firefox */
+    -ms-transform:scale(1.15) rotate(90deg); /* IE 9 */
+    -o-transform:scale(1.15) rotate(90deg); /* Opera */
+     transform:scale(1.15) rotate(90deg);
+}
+
+.spin:hover{
+    -webkit-transform: rotate(180deg); /* Safari and Chrome */
+    -moz-transform: rotate(180deg); /* Firefox */
+    -ms-transform: rotate(180deg); /* IE 9 */
+    -o-transform: rotate(180deg); /* Opera */
+     transform: rotate(180deg);
+}
+
+
 
 .fix-to-top {
     position: fixed;

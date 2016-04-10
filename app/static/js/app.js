@@ -11,13 +11,13 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
 
     $urlRouterProvider.otherwise('/home');
     $mdThemingProvider.theme('default')
-        .primaryPalette('deep-purple', {
+        .primaryPalette('blue-grey', {
           'default': '700', // primary
           'hue-1': '200', // md-hue-1
           'hue-2': '600', // md-hue-2
           'hue-3': 'A200' // md-hue-3
-        }).accentPalette('amber', {
-          'default': '700' // use shade 200 for default, and keep all other shades the same
+        }).accentPalette('pink', {
+          'default': '600' // use shade 200 for default, and keep all other shades the same
     });
    
 
@@ -35,10 +35,7 @@ knowBase.config(function($stateProvider, $urlRouterProvider,$mdThemingProvider, 
 
     self.locale = $cookies.get('locale');
     self.locale = self.locale ? JSON.parse(self.locale).value : 'en';
-    
 
-    
-    console.log(self.locale)
 
     amDatePickerConfigProvider.setOptions({
         popupDateFormat: 'LL',

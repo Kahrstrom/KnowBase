@@ -495,7 +495,7 @@ angular.module('knowBase').controller('detailsController',
               var response = response.data;
               console.log($scope.profile)
               $scope.imgData = 'data:image/' + $scope.profile.profilepicture.extension + ';base64,' + $scope.profile.profilepicture.data;
-              
+
               $scope.competenceProfiles = [];
               DataService.getCompetenceProfiles($scope.idprofile)
                 .success(function (response) {
@@ -506,7 +506,7 @@ angular.module('knowBase').controller('detailsController',
                 .error(function (error) {
                   $scope.status = 'Unable to load profile data: ' + error.message;
                 });
-                
+                1
           })
           .error(function (error) {
               $scope.status = 'Unable to load profile data: ' + error.message;
@@ -1900,22 +1900,22 @@ angular.module('knowBase').controller('skillsController',
     
     
 
-    $scope.togglePage = function(){
+    // $scope.togglePage = function(){
 
-      $('#list-column').toggleClass("hide");
-      $('#skill-column').toggleClass("hide");
+    //   $('#list-column').toggleClass("hide");
+    //   $('#skill-column').toggleClass("hide");
 
-      $('.tab-selector').toggleClass("selected");
+    //   $('.tab-selector').toggleClass("selected");
       
-      if($('#skill-column').attr('hide')){
+    //   if($('#skill-column').attr('hide')){
 
-        $('#skill-column').removeAttr('hide');
-      }else{
-        $('#skill-column').attr('hide','true');
-      }
+    //     $('#skill-column').removeAttr('hide');
+    //   }else{
+    //     $('#skill-column').attr('hide','true');
+    //   }
 
 
-    }
+    // }
 
     $scope.skillView = function(skill){
       $state.go(skill)
